@@ -4,6 +4,7 @@
 /* Main directories options */
 define("PROJECT_DIR", 			"D:/koni/home/koni/");
 define("LIBRARIES_DIR", 		PROJECT_DIR . "libraries/");
+define("CORE_DIR",				PROJECT_DIR . "core/");
 
 /* Smarty options */
 define("SMARTY_TEMPLATES_DIR", 	PROJECT_DIR . "templates/templates/");
@@ -18,5 +19,3 @@ define("MYSQL_DB", "test");
 
 /* SPHINX options*/
 define("SPHINX_PORT", 1337);
-
-include (LIBRARIES_DIR . "smarty/smarty.php");
