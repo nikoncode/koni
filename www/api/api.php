@@ -3,6 +3,9 @@
 
 /* Include all api modules */
 include ("../../core/config.php");
+include (LIBRARIES_DIR . "safe_mysql/safemysql.php");
+include (CORE_DIR . "core_includes/validate.php");
+include (CORE_DIR . "api_includes/auth.php");
 
 /* Api response function */
 function aok($response, $redirect = NULL) {

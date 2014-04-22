@@ -34,7 +34,7 @@ function validate_fields($array, $fields, $required, $filters, &$errors){
 		if (isset($result[$key])) {
 			$validate_function = "validate_" . $value;
 			if (!$validate_function($result[$key])) {
-				$errors[] = "Поле '{$value}' не соответствует формату.";
+				$errors[] = "Поле '{$key}' не соответствует формату.";
 			}
 		}
 	}
@@ -70,15 +70,15 @@ function validate_phone($phone) {
 /* maybe not safe, this is standart function */
 function validate_email($mail) { 
 	if (filter_var($mail, FILTER_VALIDATE_EMAIL) === false)
-		return true;
-	else
 		return false;
+	else
+		return true;
 }
 
 /* maybe not safe, this is standart function */
 function validate_url($url) {
 	if (filter_var($url, FILTER_VALIDATE_URL) === false)
-		return true;
-	else
 		return false;
+	else
+		return true;
 }

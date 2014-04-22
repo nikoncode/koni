@@ -1,0 +1,9 @@
+body {margin-top: 100px; font-family: tahoma, sans; }
+input, button, select, textarea {font-family: tahoma, sans;}
+.lthr-bg, .lthr-bgborder, .lthr-bgbordertitle {background: #efe1cd url(images/bg-lthr-block.jpg) repeat top left;}
+.main-menu .navbar-inner .main-nav-1 li a{padding: 10px 4px}
+.block {padding: 0px; border: #3b1c06 8px solid}
+#bra-1 {margin-left: -170px; height: 300px; left: 50%}
+#bra-2 {margin-left: -253px; height: 1100px; left: 50%}
+#bra-3 {margin-left: 228px; height: 1100px; left: 50%;}
+.my-block ul.my-actions-menu li a{font-weight: 400}

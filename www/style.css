@@ -1,0 +1,878 @@
+/* common */
+body {background: #9e9793 url(images/bg.jpg) top center repeat-x; font-family: 'Open Sans', tahoma, sans; font-size: 13px; line-height: 1.2em; overflow-x: hidden;}
+table {font-size: 13px}
+.clear {display: block;  visibility: hidden;  content: ".";  height: 0px;  clear: both;  overflow: hidden; float: none}
+a {text-decoration: underline; color: #930; font-weight: 600}
+a:hover {color: #630}
+a.btn {text-decoration: none}
+.tab-pane {overflow-x: hidden}
+
+/*boot-fix*/
+select, input[type="file"] {height: 28px;  line-height: 28px; padding: 2px 6px; vertical-align: middle}
+select, textarea,input[type="text"],input[type="password"],input[type="datetime"],input[type="datetime-local"],input[type="date"],input[type="month"],input[type="time"],input[type="week"],
+input[type="number"],input[type="email"],input[type="url"],input[type="search"],input[type="tel"],
+input[type="color"],.uneditable-input {box-sizing: content-box;}
+
+.flr {float: right}
+.fll {float: left}
+ul.nodots {list-style: none; margin-left: 0}
+.row.mrg10 {margin-bottom: 10px}
+.row.mrg20 {margin-bottom: 20px}
+.row.nomrg {margin-bottom: 0px !important}
+h2, h3, h4, h5, h6 {line-height: 1.1em; margin: 0 0 10px 0}
+h2 {font-size: 20px}
+h3 {font-size: 15px}
+label, input, button, select, textarea {font-size: 13px;}
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"],.uneditable-input {font-size: 13px}
+.btn-warning-primary {background: #993300}
+.btn-warning-primary:hover, .btn-warning-primary:focus {background: #792800 !important}
+.fileupload {height: 30px; float: left; position: relative; overflow: hidden; margin-right: 5px; width: 150px}
+.fileupload input {position: absolute;  top: 0;   right: 0;  cursor: pointer;  opacity: 0.0; filter: alpha(opacity=0);  font-size: 300px; height: 200px;}
+
+.gallery-upload p.upload-descr {font-size: 11px; margin-top: 15px}
+.gallery-upload .fileupload {height: auto; float: none; position: relative; overflow: hidden; width: 430px; margin-top: 15px;}
+.gallery-upload .fileupload input {position: absolute;  top: 0;   right: 0;  cursor: pointer;  opacity: 0.0; filter: alpha(opacity=0);  font-size: 300px; height: 200px;}
+.gallery-upload .new-uploaded-img {position: relative;}
+.gallery-upload .new-uploaded-img img.remove-image-icon{position: absolute; top: 0px; left: 0px;display: none}
+.gallery-upload .new-uploaded-img:hover img.remove-image-icon{display: block}
+.gallery-upload .uploaded-img-area .new-uploaded-img {margin-right: 6px; margin-bottom: 10px}
+.gallery-upload .uploaded-img-area .new-uploaded-img img.img-polaroid{max-height: 100px; height: auto}
+.gallery-upload div.span2, .gallery-upload img.span2 {margin-left: 0px !important}
+.gallery-upload div.span4 {padding-left: 10px; width: 290px}
+.gallery-upload div.span4 textarea { width: 270px; height: 90px}
+.gallery-upload .uploaded-img-area ul > li {height: 100px; padding: 10px 0}
+.gallery-upload .span3{width: 180px}
+.gallery-upload > .row {padding-bottom: 15px}
+
+.block-descr {font-style: italic; color: #666; margin: 10px 0}
+span.req-field {color: #c00}
+.multi-select select, .multi-select input {margin-bottom: 6px}
+
+/* UI */
+.block {border-radius: 5px; margin: 0 -8px 0 12px ;	padding: 8px}
+.block .row {margin-left: 0px}
+.block .row [class*="span"] {margin-left: 8px;} 
+.controls-row, .controls {margin-left: -2px; overflow: hidden}
+.span6 input.span6 {width: 434px}
+.span6 select.span6 {width: 434px} 
+.span6 textarea.span6 {width: 434px}
+.controls-row a.span3 {width: 180px;}
+.controls-row a.span2 {width: 100px;}
+.form-horizontal .controls {margin-bottom: 8px}
+.modal .controls-row hr {margin: 8px 0 0 0; border: none; border-top: 1px #d6cbc9 solid}
+
+.block .row [class*="span"].offset12, .block.offset12 {margin-left: 972px;}
+.block .row [class*="span"].offset11,.block.offset11 {margin-left: 892px;}
+.block .row [class*="span"].offset100,.block.offset10 {margin-left: 812px;}
+.block .row [class*="span"].offset9,.block.offset9 {margin-left: 732px;}
+.block .row [class*="span"].offset8,.block.offset8 {margin-left: 652px;}
+.block .row [class*="span"].offset7,.block.offset7 {margin-left: 572px;}
+.block .row [class*="span"].offset6,.block.offset6 {margin-left: 492px;}
+.block .row [class*="span"].offset5,.block.offset5 {margin-left: 412px;}
+.block .row [class*="span"].offset4,.block.offset4 {margin-left: 332px;}
+.block .row [class*="span"].offset3,.block.offset3 {margin-left: 252px;}
+.block .row [class*="span"].offset2,.block.offset2 {margin-left: 172px;}
+.block .row [class*="span"].offset1,.block.offset1 {margin-left: 92px;}
+.block .offset12 {margin-left: 972px;}
+.block .offset11 {margin-left: 892px;}
+.block .offset10 {margin-left: 812px;}
+.block .offset9 {margin-left: 732px;}
+.block .offset8 {margin-left: 652px;}
+.block .offset7 {margin-left: 572px;}
+.block .offset6 {margin-left: 492px;}
+.block .offset5 {margin-left: 412px;}
+.block .offset4 {margin-left: 332px;}
+.block .offset3 {margin-left: 252px;}
+.block .offset2 {margin-left: 172px;}
+.block .offset1 {margin-left: 92px;}
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus, .dropdown-submenu:hover > a, .dropdown-submenu:focus > a { background: #930;}
+.brackets {background: url(images/bg-brackets.png) top right repeat-y; width: 24px; position: absolute; z-index: 9}
+#bra-1 {margin-left: 317px; height: 300px; }
+#bra-2 {margin-left: 237px; height: 1100px; }
+#bra-3 {margin-left: 717px; height: 1100px; }
+.bg-white {background: #fff}
+.brackets-horizontal {background: url(images/bg-brackets-horizontal.png) center left repeat-x; z-index: 9; position: relative; min-height: 24px; margin-top: -10px; margin-bottom: -10px}
+
+i.icon-like {background-image: url("images/icon-like-no.png"); background-position: 0 0}
+i.icon-like:hover {background-image: url("images/icon-like-yes.png");}
+.likebox:hover i.icon-like.liked {background-image: url("images/icon-like-no.png");}
+.likebox:hover i.icon-like {background-image: url("images/icon-like-yes.png");}
+i.icon-like.liked {background-image: url("images/icon-like-yes.png");}
+i.icon-like.liked:hover {background-image: url("images/icon-like-no.png"); }
+
+.lthr-indent {padding: 0px 5px}
+.lthr-border {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top.png), url(images/bg-bottom.png); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x; background-position: left, right, top, bottom;}
+.lthr-bg {background: url(images/bg-lthr-block.jpg) repeat top left}
+.lthr-bgborder {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 3px 10px #000;}
+.lthr-bgbordertitle {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000;}
+
+.title-bg h3.block-title {margin-bottom: 0}
+td.tl {background: url(images/bg-lthr-block-tl.png) top right repeat-x; width: 10px; height: 10px}
+td.t {background: #eee4d1 url(images/bg-lthr-block-t.png) top left repeat-x; width: auto; height: 10px}
+td.tr {background: url(images/bg-lthr-block-tr.png) top left repeat-x; width: 10px; height: 10px}
+td.cl {background: #eee4d1 url(images/bg-lthr-block-cl.png) top left repeat-y; width: auto; height: auto}
+td.c {background: #eee4d1 url(images/bg-lthr-block.jpg); width: auto; height: auto; padding: 0px; overflow: hidden}
+td.cr {background: #eee4d1 url(images/bg-lthr-block-cr.png) top right repeat-y;width: 10px; height: auto}
+td.bl {background: url(images/bg-lthr-block-bl.png) top left repeat-x; width: 10px; height: 10px}
+td.b {background: #eee4d1 url(images/bg-lthr-block-b.png) bottom left repeat-x;width: auto; height: 10px}
+td.br {background: url(images/bg-lthr-block-br.png) top right repeat-x;width: 10px; height: 10px}
+
+/* text */
+.tal {text-align: left}
+.tac {text-align: center}
+.tar {text-align: right}
+.ttu {text-transform: uppercase}
+.tdu {text-decoration: underline}
+.tdn {text-decoration: none}
+.nobmrg {margin-bottom: 0}
+.pad-h-5 {padding-left: 5px; padding-right: 5px}
+.pad-v-5 {padding-top: 5px; padding-bottom: 5px}
+.pad5 {padding: 5px}
+.fwb {font-weight: 800}
+.fwsb {font-weight: 600}
+.fsi {font-style: italic}
+.white-color {color: #fff}
+
+/* header */
+.my-header-block {background: url(images/bg-header-block.png) top left repeat-x; color: #fff; position: fixed; top: 0; left: 0; width: 100%; padding-top: 8px; z-index: 1041}
+.my-header-block .nav li.dropdown.open > .dropdown-toggle, .my-header-block .nav li.dropdown.active > .dropdown-toggle, .my-header-block .nav li.dropdown.open.active > .dropdown-toggle {background: transparent}
+.my-header-block .navbar{background: #191919; z-index: 1041;}
+.my-header-block .nav{margin-top: -6px}
+.my-header-block .nav > li > a{color: #fff; background-color: transparent !important; box-shadow: none !important}
+.my-header-block .nav > li {padding-right: 10px; margin-right: 5px}
+.my-header-block .nav li.my-cab {padding-left: 0px; width: 220px}
+.my-header-block .nav li.my-cab > a{padding-left: 0px}
+.my-header-block .nav li.my-cab img{margin: 0px 10px 0 0; width: 24px; height: 24px}
+.my-header-block .nav li.my-events a{background: url(images/icon-events.png) center left no-repeat; padding-left: 8px}
+.my-header-block .nav li.my-messages a{background: url(images/icon-messages.png) 10px center no-repeat; padding-left: 35px; width: 110px; }
+.my-header-block .nav li.my-messages:hover {background: url(images/bg-h3-inner.jpg) top left repeat-x}
+.my-header-block .nav li.my-info a{background: url(images/icon-info.png) 10px center no-repeat; padding-left: 35px; width: 110px}
+.my-header-block .nav li.my-info:hover{background: url(images/bg-h3-inner.jpg) top left repeat-x}
+.my-header-block, .my-header-block a {color: #fff}
+.my-header-block input.search-query {padding: 4px 0 4px 15px}
+.my-header-block ul.my-menu li{float: left; margin-right: 10px;}
+.my-avatar-small {margin-right: 10px; }
+header {padding-top: 100px}
+header.header-mini {padding-top: 40px}
+header .site-descr, header .soc-share {font-size: 12px; color: #fff; line-height: 1em;}
+.soc-share p{margin-bottom: 0}
+.uzd-left, .uzd-right {width: 50px; height: 75px; position: absolute; z-index: 9; margin-top: -6px;}
+.uzd-left {background: url(images/bg-uzd-left.png) center right no-repeat; margin-left: -40px;}
+.uzd-right {background: url(images/bg-uzd-right.png) center left no-repeat; margin-left: 950px;}
+
+.main-menu .navbar-inner {border: 0; box-shadow: none}
+.main-menu .navbar-inner {padding-right: 0px; margin-bottom: 50px; background: url(images/bg-main-menu.png) top left repeat-x; border-radius: 5px}
+.main-menu .navbar-inner .nav li a{color: #973d00; text-transform: uppercase; font-size: 15px; font-weight: 600; text-shadow:  0 -1px 1px #4b1e00;}
+.main-menu .navbar-inner .main-nav-1 li a{padding: 10px 7px}
+.main-menu .navbar-inner .main-nav-2 li a{padding: 10px 8px}
+.main-menu .navbar-inner .nav li{padding: 10px 0px;}
+.main-menu .navbar .nav > .active > a, .main-menu .navbar .nav > .active > a:hover,.main-menu .navbar .nav > .active > a:focus {color: #fff; border-radius: 5px; background-color: #6f3612;  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);}
+.main-menu .navbar-inner .nav li a:hover {color: #fff}
+.main-menu .logo {position: relative; top: -70px; margin-bottom: -130px}
+
+/* home-page */
+.home-page.main-blocks-area .row {margin-bottom: 20px}
+.home-page.main-blocks-area h3.inner-bg {margin-top: 0px;}
+.block-1-1 img {z-index: 1; position: relative}
+.block-1-1 h2 {font-size: 20px; font-weight: 600; line-height: 1.1em; color: #fff;}
+.block-1-1 div.title {position: relative; background: rgba( 0, 0, 0, 0.6); padding: 2px 5px; height: 70px; overflow: hidden; margin: -72px 0 10px 0; z-index: 10;}
+
+.block-1-2 .rating-block {background: #fff; min-height: 140px; padding: 5px; margin-bottom: 10px}
+.block-1-2 h3 {list-style: none; margin-left: 0; margin-bottom: 0}
+.block-1-2 ul.ratings-list {list-style: none; margin-left: 0}
+.block-1-2 ul.ratings-list li{float: left; width: 100px; background: url(images/li-rating-list.png) left center no-repeat; padding: 2px 15px 2px 15px}
+.block-1-2 ul.ratings-list li:hover{background: #ff9900; background-image: none; border-radius: 4px}
+.block-1-2 ul.ratings-list li:hover a{color: #fff; text-decoration: none}
+.block-1-2 .club-of-week img{float: left; padding: 0 10px 10px 0}
+.block-1-2 .club-of-week {padding: 5px}
+
+.block-1-3 {margin-top: 8px}
+
+.block-1-1, .block-1-2 {height: 310px; overflow: hidden;}
+.block-3-1, .block-3-3 {height: 275px; overflow: hidden;}
+.block-3-1, .block-3-3 h3.inner-bg{text-align: center; padding-bottom: 5px}
+
+.gallery-block {border-left: 8px #1c2120 solid; border-right: 8px #1c2120 solid; margin-bottom: 10px}
+.gallery-block h3 span{color: #999999}
+.gallery-block div.top{background: url(images/bg-gallery.png) top left repeat-x; padding-top: 30px}
+.gallery-block div.gallery-content{background: #fff; padding: 5px}
+.gallery-block div.bottom{background: url(images/bg-gallery.png) bottom left repeat-x; padding-bottom: 30px}
+
+#gallery-club {margin-top: -20px}
+#gallery-club #gallery-tabs, #gallery-club #gallery-tabs > li > a {background: #6d3512 !important;}
+#gallery-club #gallery-tabs > li {width: 470px}
+#gallery-club #gallery-tabs, #gallery-club #gallery-tabs > li.active > a {background: #fff !important}
+.users-albums ul li{width: 295px; line-height: 32px}
+.users-albums ul li img.avatar{max-height: 32px; max-width: 32px;}
+
+.news-block {background: url(images/bg-news.jpg) !important;}
+.news-content {padding: 5px}
+ul.news-category {margin-left: 10px; list-style: none}
+ul.news-category li {float: left;}
+ul.news-category li a{padding: 2px 12px; border-radius: 2px}
+ul.news-category li a:hover {background: #ff9900; text-decoration: none; color: #fff}
+ul.news-category li.active a {background: #ff9900; text-decoration: none;  color: #fff}
+ul.news-list {margin: 0 10px; list-style: none; font-size: 12px; }
+ul.news-list li {border-bottom: #cccccc 1px solid; margin: 9px 0; width: 100%}
+ul.news-list li p {margin-bottom: 5px; line-height: 1.2em}
+ul.news-list li p a{text-decoration: none; color: #333}
+ul.news-list li p.date {color: #ff3333; font-weight: bold}
+
+.friends-news-block {height: 225px; overflow-y: scroll; font-size: 12px !important; padding: 5px;}
+.fn-bg {background: #fff; background-image: none}
+.fn-bg .title-bg{margin-bottom: 0}
+.avatar {width: 32px; height: 32px; float: left; margin-right: 10px; margin-bottom: 5px}
+ul.friends-news {list-style: none; margin-left: 0}
+ul.friends-news li {width: 100%; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px #cccccc solid}
+ul.friends-news p {margin-bottom: 5px; line-height: 1.2em}
+ul.friends-news p.user-name {font-weight: bold}
+ul.friends-news p.date {color: #727272}
+ul.friends-news p.message img{width: auto; height: auto; margin: 10px 0 0 0;}
+
+.block-2 h3.block-title{text-align: left; padding-left: 16px; }
+table.calendar {margin-left: 20px}
+table.calendar td{padding: 8px; border: 1px #bfb5a3 solid; text-align: center}
+table.calendar td.muted{color: #bfb5a3}
+table.calendar td:hover{background: #ffcc99}
+table.calendar td.today{font-weight: bold; color: #fff; background: #ff9900}
+table.calendar tr.days th{background: #ff9900; color: #fff; padding: 4px 8px}
+table.calendar tr.days{padding-right: 1px; border: 1px #f90 solid}
+table.calendar tr.month th{padding: 8px 0}
+table.calendar tr.month th a{text-transform: uppercase; text-decoration: none; font-weight: bold}
+
+ul.event-filter {list-style: none; margin-top: 3px; margin-bottom: 0;}
+ul.event-filter li {float: left; padding: 3px 10px; border-radius: 3px}
+ul.event-filter li.active {background: #f90}
+ul.event-filter li.active a{text-decoration: none;}
+ul.event-filter li a{color: #fff; font-weight: bold; font-size: 12px}
+ul.event-filter li a:hover{color: #f90}
+ul.event-filter li input{margin-top: -3px}
+
+.block-2 .event a.date {text-decoration: none; font-weight: bold;}
+.block-2 .event p.time-left {margin: 0 0 5px 0; font-size: 12px; line-height: 1.1em}
+.block-2 ul.event-list {list-style: none}
+.block-2 li.event {float: left; margin-right: 15px; max-width: 190px; margin-top: 20px; width: 100%}
+.block-2 .event .event-img img {height: 90px; width: 170px; padding: 10px; background: url(images/bg-event-img.png) center center no-repeat; margin: 5px 0 10px 0}
+.block-2 .event a.event-name {font-size: 16px; font-weight: bold; line-height: 1.3em}
+
+/* login reg sms*/
+.login-page  {margin-top: 100px; margin-bottom: 100px}
+.login-block {padding: 10px 20px; margin-left: 320px !important; margin-bottom: 10px}
+.login-block input[class*="span"], .login-block button[class*="span"] {margin-left: 0px !important;}
+.reg-block {margin-bottom: 20px;} 
+.reg-block .row form [class*="span"] {margin-left: 20px;} 
+.reg-block .row form {margin-left: 60px;} 
+.reg-block select.span3 {width: 206px} 
+.reg-block .row form hr{margin-left: -60px;} 
+.sms-page button[type="submit"] {width: 300px; margin-left: 0px !important}
+
+/* news-page */
+.my-block img.my-avatar {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 200px; height: 200px}
+.my-block img.guest-avatar {margin: 8px 0 23px 0; width: 200px; height: 200px}
+.my-avatar-block {position: relative;}
+.my-avatar-block .change-avatar-block{display: none; position: absolute; left: 2px; bottom:22px; width: 180px; padding: 8px 10px; background: rgba(0, 0, 0, 0.8);}
+.my-avatar-block .change-avatar-block a{color: #fff}
+.my-avatar-block:hover .change-avatar-block{display: block;}
+.my-block ul.my-actions-menu {list-style: none; margin-left: 0; border-top: 1px #d7d5d6 solid; margin-top: 10px}
+.my-block ul.my-actions-menu li{border-bottom: 1px #d7d5d6 solid; padding: 3px 0 3px 24px}
+.my-block ul.my-actions-menu li a{text-decoration: none; color: #000; font-weight: 600}
+.my-block ul.my-actions-menu li a:hover{color: #930}
+ul.my-actions-menu li.my-messages {background: url(images/icon-my-messages.png) left center no-repeat}
+ul.my-actions-menu li.my-clubs {background: url(images/icon-my-clubs.png) left center no-repeat}
+ul.my-actions-menu li.my-events {background: url(images/icon-my-events.png) left center no-repeat}
+ul.my-actions-menu li.my-news {background: url(images/icon-my-news.png) left center no-repeat}
+ul.my-actions-menu li.my-contacts {background: url(images/icon-my-contacts.png) left center no-repeat}
+ul.my-actions-menu li.my-horses {background: url(images/icon-my-horses.png) left center no-repeat}
+ul.my-actions-menu li.my-gallery {background: url(images/icon-my-gallery.png) left center no-repeat}
+ul.my-actions-menu li.my-adv {background: url(images/icon-my-adv.png) left center no-repeat}
+ul.my-actions-menu li.my-profile {background: url(images/icon-my-profile.png) left center no-repeat}
+h3.inner-bg {background: url(images/bg-h3-inner.jpg) top left repeat-x; padding: 10px; margin: 0 -2px 10px -2px; color: #fff; text-shadow: 0 1px 0 #000; margin-top: -1px; text-transform: uppercase;}
+h3.inner-bg span, h3.inner-bg span a {font-size: 13px; font-style: italic; font-weight: normal; text-transform: none; text-decoration: none; color: #fff}
+h2 {font-size: 20px; font-weight: 600; margin: 5px 0}
+.my-block p.my-info {font-size: 13px; font-style: italic; color: #444; margin-bottom: 0}
+.my-block .my-profs {list-style: none; margin-left: 0; margin-bottom: 0px}
+.my-block .my-profs li{padding: 0 1px; font-style: italic; font-size: 13px}
+.my-block .my-club {font-style: italic; font-size: 13px}
+.my-block .my-actions {padding: 0 5px}
+ul.my-friends-menu {list-style: none; margin-left: 0}
+ul.my-friends-menu li{float: left; width: 70px; height: 100px; overflow: hidden; margin-left: 3px; font-size: 11px; line-height: 12px}
+ul.my-friends-menu li img{width: 50px; height: 50px; margin-bottom: 5px}
+ul.my-friends-menu li a{text-decoration: none}
+
+.my-groups-block {margin-bottom: 10px;}
+.my-groups-block ol.my-groups-menu{margin-bottom: 10px;}
+.my-groups-block ol.my-groups-menu li{margin-bottom: 3px;}
+.my-groups-block a.to-all-groups{margin-left: 26px; font-weight: bold;}
+
+.my-horses {padding: 5px}
+.my-horses h2 {font-size: 20px; font-weight: 600; margin: 0 0 5px 0}
+.my-horses  p.my-horse-info {font-size: 13px; font-style: italic; color: #444; margin: 0 0 8px 0}
+.my-horses img.avatar-my-horse-top {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 200px; height: 200px; float: left; margin: 0 10px 10px 0}
+.my-horses.friend-horse img.avatar-my-horse-top {float: right}
+.my-horses img.avatar-my-horse-bottom {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 50px; height: 50px; margin-right: 10px}
+ul.my-horse-award {list-style: none; margin-left: 0; height: 32px;}
+ul.my-horse-award li{float: left}
+.my-horses hr {margin: 2px 0}
+.my-horses p.more-horses {font-style: italic; color: #773c16; float: right; width: 80px; padding: 15px 0 15px 20px; background: url(images/icon-more-horses.png) left center no-repeat}
+.my-horses div.without-horse {background: url(images/bg-block-horse-without.png) left center no-repeat; min-height: 90px; padding-left: 120px; padding-top: 30px}
+
+.current-horse-page {padding: 5px}
+.current-horse-page h2 {font-size: 20px; font-weight: 600; margin: 0 0 5px 0}
+.current-horse-page  p.my-horse-info {font-size: 13px; font-style: italic; color: #444; margin: 0 0 8px 0}
+.current-horse-page img.avatar-my-horse-top {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 200px; height: 200px; float: left; margin: 0 10px 10px 0}
+.current-horse-page img.avatar-my-horse-bottom {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 50px; height: 50px; margin-right: 10px}
+ul.my-horse-award {list-style: none; margin-left: 0; height: 32px;}
+ul.my-horse-award li{float: left}
+.current-horse-page hr {margin: 2px 0}
+.current-horse-page p.more-horses {font-style: italic; color: #773c16; float: right; width: 80px; padding: 15px 0 15px 20px; background: url(images/icon-more-horses.png) left center no-repeat}
+.current-horse-page div.without-horse {background: url(images/bg-block-horse-without.png) left center no-repeat; min-height: 90px; padding-left: 120px; padding-top: 30px}
+
+
+.add-news {background: #faf5ec; padding-bottom: 20px; margin-bottom: 10px; }
+ul.my-news-wall {list-style: none; margin-left: 0}
+ul.my-news-wall div.postpost{position: relative; line-height: 1.2em}
+ul.my-news-wall > li {width: 100%; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px #cccccc solid}
+ul.my-news-wall li .post {padding: 0 5px}
+ul.my-news-wall p,div.comments ul.comments-lists > li p {margin-bottom: 5px; line-height: 1.2em}
+ul.my-news-wall p.user-name, div.comments ul.comments-lists > li p.user-name {font-weight: bold}
+ul.my-news-wall p.date, div.comments ul.comments-lists > li p.date {color: #727272}
+ul.my-news-wall p.message img{width: auto; height: auto; margin: 10px auto 0 auto; max-height: 320px; display: block}
+div.answer-block {font-size: 12px; color: #ccc; clear: both; float: none; height: 20px}
+div.answer-block p{float: right;}
+div.answer-block a{text-decoration: none}
+.post {position: relative;}
+ul.comments-lists > li.comment {position: relative}
+.edit-my-topic {position: absolute; top: 5px; right: 5px; display: none;}
+.edit-my-topic ul li {opacity: 0.3}
+.edit-my-topic ul li:hover {opacity: 0.7}
+.post:hover > .edit-my-topic, ul.comments-lists > li.comment:hover .edit-my-topic {display: block}
+
+.my-awards {margin-bottom: 10px}
+.my-awards img.my-award-top {width: 200px; height: 200px;}
+.my-awards img.my-award-bottom {width: 70px; height: 70px; float: left}
+.my-awards h2 {font-size: 20px; font-weight: 600; margin: 0 0 5px 0; color: #930; font-style: italic}
+.my-awards  p.my-award-info {font-size: 13px; margin: 0 0 8px 0}
+.my-awards  a.goto-all-awards {font-size: 11px; text-align: center;}
+
+.my-events dl.dl-horizontal dt {width: 40px}
+.my-events dl.dl-horizontal dd {margin-left: 50px}
+.my-events h4 {font-size: 14px; font-weight: 600; padding-left: 20px; line-height: 20px; margin-bottom: 0; }
+.my-events .my-events-list {padding: 0 5px}
+.my-events h4.event-next {background: url(images/icon-event-next.png) center left no-repeat;}
+.my-events h4.event-fav {background: url(images/icon-event-fav.png) center left no-repeat;}
+.my-events hr {margin: 0 0 10px 0; border-top: 1px #ccc solid; border-bottom: 0}
+
+.my-adv dl.dl-horizontal dt {width: 40px;}
+.my-adv dl.dl-horizontal dd {margin-left: 50px}
+.my-adv h4 {font-size: 14px; font-weight: 600; padding-left: 20px; line-height: 20px;}
+.my-adv .my-adv-list {padding: 0 5px}
+.my-adv h4.adv-fav {background: url(images/icon-adv-fav.png) center left no-repeat;}
+.my-adv h4.adv-my {background: url(images/icon-adv-my.png) center left no-repeat;}
+.my-adv hr {margin: 0 0 10px 0; border-top: 1px #ccc solid; border-bottom: 0}
+.my-adv img.adv-img-small {width: 40px; height: 40px;}
+.my-adv p.adv-date {font-size: 11px; color: #777}
+.my-adv a.adv-cat {font-size: 11px; color: #000}
+.my-adv dl.dl-horizontal dd p {margin-bottom: 5px; line-height: 1.1em}
+
+/* comments */
+div.comments {border-top: 1px #e0c0b1 solid;padding: 10px; margin-top: 10px}
+div.comments > ul.comments-lists {list-style: none; margin-left: 0px}
+div.comments ul.comments-lists > li{border-bottom: #ccc solid 1px; margin-bottom: 10px; margin-left: 40px; }
+div.comments ul.comments-lists > li:last-child{border-bottom: none; margin-bottom: 0px}
+div.comments ul.comments-lists > li p.message{margin-left: 45px}
+div.comments ul.comments-lists > li a.comment-reply {font-weight: 600;}
+div.comments ul.comments-lists > li.answer-form form {position: relative; margin-bottom: 0; background: #f0ded6; padding: 5px}
+div.comments ul.comments-lists > li.answer-form form textarea.answer-message:focus {box-shadow: none}
+div.comments ul.comments-lists > li.answer-form form textarea.answer-message {height: 36px; width: 377px; border: #b9a094 solid 1px; border-radius: 0px; margin-bottom: 0; margin-left: 3px}
+div.comments ul.comments-lists > li.answer-form form.min img.my-avatar {display: none}
+div.comments ul.comments-lists > li.answer-form form.min input.comment-submit {display: none}
+div.comments ul.comments-lists > li.answer-form form.max textarea.answer-message {margin-left: 40px; width: 340px; height: 70px; margin-top: -32px; margin-bottom: 5px}
+div.comments ul.comments-lists > li.answer-form form.max img.my-avatar {width: 32px; height: 32px; margin-left: 2px; float: left}
+div.comments ul.comments-lists > li.answer-form form.max input.comment-submit {margin-left: 40px}
+div.comments ul.comments-lists > li.show-all-comments {background: #f9f2ef; padding: 10px; text-align: center; cursor: pointer; color: #930; font-size: 12px; font-weight: 600}
+
+.current-horse-page  div.comments ul.comments-lists > li{margin-left: 0px; }
+.current-horse-page  div.comments ul.comments-lists > li.answer-form form textarea.answer-message {width: 405px;}
+.current-horse-page div.comments ul.comments-lists > li.answer-form form.max textarea.answer-message {width: 365px;}
+
+/* gallery */
+ul.album-wall {margin-left: 0px; padding-left: 10px}
+ul.album-wall li{float: left; list-style: none; margin-right: 10px; margin-bottom: 10px; width: 210px; height: 230px; overflow: hidden}
+ul.album-wall img{width: 190px; height: 130px; border: 3px #fff solid; box-shadow: 0px 2px 5px #999, 0 4px 0px #fff,  0px 7px 5px #999, 0 9px 0px #fff,  0px 9px 5px #999; margin: 0 auto; display:block; margin-bottom: 15px; margin-top: 5px}
+ul.album-wall p{margin-bottom: 5px; line-height: 1.1em; margin-left: 10px}
+ul.photo-wall {margin-left: 0px; border-top: 1px #ccc solid; padding-top: 10px; padding-left: 10px}
+ul.photo-wall li{float: left; list-style: none; margin-right: 10px; margin-bottom: 10px; width: 140px; height: 105px; overflow: hidden}
+ul.photo-wall img{max-height: 95px;  max-width: 130px; height: auto; border: 3px #fff solid; box-shadow: 0 1px 3px rgba(0,0,0,0.2); margin: 2px;}
+ul.photo-wall img:hover{box-shadow: 0 0px 2px rgba(0,0,0,0.7);}
+
+/* footer */
+footer {padding: 40px 0 20px 0; }
+footer hr {border-top: 1px #cfcbc9 solid; border-bottom: 0}
+footer, footer a {color: #fff; font-size: 11px; line-height: 1.1em}
+.foo-menu {margin-bottom: 10px}
+.foo-menu li {float: left; margin-right: 10px}
+footer p.site-descr {margin-top: 10px}
+
+/* sidebar-left */
+.sidebar-guest-auth a.btn{width: 180px; margin: 5px 8px}
+
+/* Profile */
+.title-hr {border-bottom: 1px #eee solid}
+h5.title-hr {font-size: 13px; font-weight: 600; padding-left: 8px}
+
+/*tabs */
+.nav-tabs {border-bottom: none; }
+.nav-tabs a{font-size: 13px;}
+.nav.nav-tabs {margin-bottom: 0 !important}
+.tab-content {padding: 20px 0 0 0; margin-bottom: 20px; box-shadow: 0px 0px 2px #555; overflow-x: hidden}
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover, .nav-tabs > .active > a:focus {background: #fff}
+.nav-tabs > li > a:hover, .nav-tabs > li > a:focus  {background: #fff4e4; border-bottom: 0}
+.nav-tabs > li > a, .nav-tabs > li > a  {background: #f6f3ed; text-decoration: none; }
+
+.new-tabs.tabs2 > li {width: 153px;}
+.new-tabs > li a{border: 0; border-right: 1px #a7836c solid; border-radius: 0; margin: 0; font-size: 13px; font-weight: bold; text-align: center;}
+.new-tabs.tab-content {padding: 0; margin-bottom: 0; box-shadow: none}
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover, .nav-tabs > .active > a:focus {background: #fff; color: #6d3512;}
+.nav-tabs > li > a:hover, .nav-tabs > li > a:focus  {background: #663300; border: 0; border-right: 1px #a7836c solid; }
+.nav-tabs > li > a, .nav-tabs > li > a  {background: #b79a88; text-decoration: none; color: #fff}
+
+#horseTab {margin-top: -10px;}
+
+/* messages */ 
+.msg-last-dialog p.user-name {font-weight: bold}
+.msg-last-dialog p.date {color: #999; font-size: 11px}
+.msg-last-dialog p {margin-bottom: 5px; line-height: 1.2em; font-size: 12px}
+.msg-last-dialog p.not-readed {background: #f6f3ed; padding: 5px}
+.msg-last-dialog {border-bottom: 1px #eee solid; padding-bottom: 10px; margin-bottom: 10px; margin-left: 0 !important}
+.msg-last-dialog p.last-message a{text-decoration: none; color: #333; font-weight: normal;}
+.msg-last-dialog p.last-message a:hover {text-decoration: underline;}
+.msg-last-dialog .avatar {margin-right: 5px; margin-bottom: 25px}
+.msg-last-dialog img.avatar.my-avatar {margin-bottom: 5px}
+.form-in-messages {border-bottom: 1px #eee solid; margin-bottom: 10px; padding-bottom: 10px}
+
+/* chat */ 
+.chat-dialog p.user-name {font-weight: bold}
+.chat-dialog p.date {color: #999; font-size: 11px}
+.chat-dialog p {margin-bottom: 5px; line-height: 1.2em; font-size: 12px}
+.chat-dialog p.not-readed {background: #f6f3ed; padding: 5px}
+.chat-dialog .message {margin-bottom: 20px}
+.chat-dialog .avatar {margin-right: 5px; margin-bottom: 25px; width: 60px; height: 60px; float: left}
+.chat-dialog {border-bottom: 1px #eee solid; padding-bottom: 10px; margin-bottom: 10px; margin-left: 0 !important}
+.chat-window {height: 600px; overflow-y: scroll;}
+.chat-window .span5{width: 360px}
+form.add-chat-message {padding: 10px 0; margin-bottom: 0}
+form.add-chat-message .controls-row [class*="span"] {margin-left: 2px !important}
+form.add-chat-message .controls-row .offset1 {margin-left: 82px !important}
+form.add-chat-message img.avatar {width: 60px; height: 60px; margin-left: 8px}
+form.add-chat-message textarea {height: 52px;}
+
+/* groups */
+.group-div {border-bottom: 1px #f1f1f1 solid; padding: 10px 0; margin-left: 0 !important}
+.group-div .group-info > p{margin-bottom: 5px}
+.group-div .group-info p.group-pub {color: #aaa}
+.group-div .group-info p.group-n-members {color: #aaa}
+
+/* clubs */
+.club-div {border-bottom: 1px #f1f1f1 solid; padding: 10px 0; margin-left: 0 !important}
+.clubs-find-page .filter-block {padding-bottom: 20px}
+.clubs-page h3.inner-bg > span.pull-right a {text-decoration: underline}
+.club-div .club-info > p{margin-bottom: 5px}
+.club-div .club-info p.club-pub {color: #aaa}
+.club-div .club-info p.club-n-members {color: #aaa}
+.ajax-save-group {margin-bottom: 20px}
+.add-users-to-club .control-row{border-bottom: 1px #f1f1f1 solid}
+.current-club-avatar {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 200px; height: 200px}
+.club-info h2.club-name {text-align: right; padding-right: 5px}
+.club-info .club-controls{margin-top: 10px; border-top: #D7D5D6 solid 1px; text-align: right; padding-right: 10px}
+ul.club-members-menu {list-style: none; margin-left: 0}
+ul.club-members-menu li{float: left; width: 70px; height: 100px; overflow: hidden; margin-left: 7px; font-size: 11px; line-height: 12px}
+ul.club-members-menu li img{width: 50px; height: 50px; margin-bottom: 5px}
+ul.club-members-menu li a{text-decoration: none}
+.club-links-menu {list-style: none; margin-left: 0}
+.club-links-menu li{border-bottom: #D7D5D6 solid 1px; margin-bottom: 5px }
+.club-links-menu p{margin-bottom: 0}
+.club-description {background: #faf5ec; padding: 10px 0; margin: -10px 0 0 0;}
+ul.club-photo-wall {margin-left: 0px; padding-left: 10px}
+ul.club-photo-wall li{float: left; list-style: none; margin-right: 10px; margin-bottom: 10px; width: 140px; height: 105px; overflow: hidden}
+ul.club-photo-wall img{max-height: 105px; height: auto;}
+.club-info input.goto-club {width: 206px}
+.club-info img.club-avatar {margin-bottom: 10px !important}
+.club-info p.club-access-descr {font-style: italic; color: #666; margin: 10px 0}
+.club-info p.club-access-descr a{font-weight: normal; color: #666}
+.club-info p.current-club-descr {border-bottom: 1px #ccc solid; padding-bottom: 10px; margin-bottom: 10px}
+.club-info div.current-club-descr dl dt{width: 100px; text-align: left}
+.club-info div.current-club-descr dl dd{margin-left: 110px}
+.club-info .club-banners img{border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px;}
+.club-tabs ul.nav-tabs.new-tabs {background: #B79A88}
+.club-tabs ul.nav-tabs.new-tabs li{width: 156px}
+.club-tabs .tab-content {margin-bottom: 0px; }
+.club-tabs dl, .club-tabs dl dt, .club-tabs dl dd {line-height: 16px}
+.club-tabs dl dt {text-overflow: clip !important; clear: none !important; overflow: visible; white-space: normal; width: 200px; color: #6d3512}
+.club-tabs dl.dl-horizontal dd {margin-left: 210px; clear: right; margin-bottom: 20px}
+.club-tabs .comp-info dl dd {margin-left: 0px}
+.club-tabs ul.compt-members {padding-left: 0; color: #a0a0a0}
+.club-tabs table.compt-club ul.compt-members {color: #333}
+.club-tabs table.compt-club td.compt-date div {color: #a0a0a0}
+.current-compt .back-link {margin: 0 8px 15px 8px}
+.current-compt .back-link a{text-decoration: none !important}
+.current-compt .back-link a span{text-decoration: underline !important}
+.current-compt .compt-title h4 {margin-top: 10px}
+.current-compt dl.dl-horizontal dt{width: 60px; text-align: left}
+.current-compt dl.dl-horizontal dd{margin-left: 80px; margin-bottom: 5px}
+.current-compt dl.dl-horizontal dd p{margin-bottom: 0px}
+.current-compt .compt-descr .span6.descr-title {width: 450px}
+.current-compt .compt-descr .descr-title p {font-style: italic; margin-top: 10px}
+.current-compt .compt-descr a.span3 {width: 190px; margin-left: 0}
+.current-compt .compt-descr-tabs .tab-pane {overflow-x: hidden}
+table.compt-results.admin-compts {margin-bottom: 120px}
+table.compt-results.admin-compts .opt1 input, table.compt-results.admin-compts .opt2 input, table.compt-results.admin-compts .opt3 input, table.compt-results.admin-compts .opt4 input, table.compt-results.admin-compts .opt5 input {width: 55px}
+table.compt-results.admin-compts td.closebtn ul.dropdown-menu {width: 180px; margin-left: -180px}
+table.compt-results.admin-compts td.closebtn ul.dropdown-menu li > a {text-decoration: none; padding: 0 15px}
+table.compt-results.admin-compts td.closebtn a.dropdown-toggle {text-decoration: none;}
+ul.dropdown-menu {position: absolute; z-index: 9999;}
+.compt-descr a.btn-small.span2 {width: 125px; margin-left: 0}
+.current-compt .compt-descr a.span3 {width: 190px; margin-left: 0}
+table.competitions-table.curr-compt-levels {border-bottom: 1px #cccccc solid}
+table.competitions-table.curr-compt-levels td.td-complex {padding: 0}
+table.competitions-table.curr-compt-levels td.td-complex .curr-compt-date{font-size: 20px; font-weight: 200; color: #6d3512}
+table.competitions-table.curr-compt-levels td.td-complex .curr-compt-path{font-size: 20px; font-weight: 200; color: #bb7a1f}
+table.competitions-table.curr-compt-levels td.td-complex .curr-compt-more {display: none}
+table.competitions-table.curr-compt-levels td.td-complex:hover {background:  url(images/bg-curr-compt-select.jpg) top left}
+table.competitions-table.curr-compt-levels td.td-complex:hover .curr-compt-more{display: block}
+table.competitions-table.curr-compt-levels td.td-complex div.span2{padding: 8px; margin-left: 0}
+table.competitions-table.curr-compt-levels td.td-complex div.curr-compt-go {padding-top: 8px;}
+table.competitions-table.curr-compt-levels td.td-complex .curr-compt-more ul.span12{width: 932px; margin: 0}
+table.competitions-table.curr-compt-levels td.td-complex .curr-compt-more ul > li{float: left; width: 302px; margin-left: 8px}
+table.competitions-table.curr-compt-levels td.td-complex .curr-compt-more ul > li span {color: #8a390a}
+table.compt-results td.table-caption {background: #ffeed7; text-align: center;}
+table.compt-results td span {font-weight: bold}
+table.compt-results td.n, table.competitions-table.curr-compt-levels table.compt-results td.total, table.competitions-table.curr-compt-levels table.compt-results td.standarts {font-weight: bold}
+
+.my-compts td{line-height: 15px}
+.my-compts .compt-img img {min-width: 60px;}
+.my-compts .compt-date {min-width: 130px;}
+.my-compts .compt-date p{margin-bottom: 0px;}
+.my-compts .compt-date p.date {font-weight: bold}
+.my-compts .compt-date p.date span.rel-date {font-weight: normal; color: #919191}
+.my-compts .compt-date p.place {color: #919191}
+.my-compts .i-fan {padding: 3px 5px; background: #638e23; color: #fff; font-size: 12px; display: inline-block; margin-top: 5px}
+.my-compts .my-fans{ padding: 3px 5px; background: #23718e; color: #fff; font-size: 12px; display: inline-block; margin-top: 5px}
+
+.club-tabs #competitions-club table.calendar tr.month th {padding:  3px 0}
+.club-tabs ul#comptTab li {width: 232px; text-align: center}
+.club-tabs ul#comptTab li form {margin: 0px 0 7px 0}
+.club-tabs ul#comptTab li select {margin: 2px 0 0 7px}
+.club-tabs #comptTabContent.tab-content {padding-top: 0px}
+.club-tabs .tab-pane div.row div.span12 {width: 932px; margin-left: 4px}
+.club-tabs .tab-pane h4 {color: #6d3512; font-weight: bold; font-size: 16px; text-transform: uppercase}
+.club-tabs .tab-pane h4 span{font-size: 13px; font-style: italic; font-weight: normal; text-transform: none; text-decoration: none;}
+.club-tabs ul.clubs-members {list-style: none; margin-left: 0}
+.club-tabs ul.clubs-members li{float: left; width: 70px; height: 100px; overflow: hidden; margin-left: 3px; font-size: 11px; line-height: 12px}
+.club-tabs ul.clubs-members li img{width: 50px; height: 50px; margin-bottom: 5px}
+.club-tabs ul.clubs-members li a{text-decoration: none}
+.club-tabs ul.club-additional-features {list-style: none; margin: 0;}
+.club-tabs ul.club-additional-features li {background: url(images/icon-check-brown.png) center left no-repeat; padding: 5px 0 5px 20px; width: 210px; float: left; }
+ul.club-admins {list-style: none; margin: 0 0 10px 0;}
+ul.club-admins > li {margin-bottom: 10px}
+ul.club-admins li img{float: left; margin-right: 10px; max-width: 100px}
+.club-tabs .club-add-your-review textarea {margin-left: 0 !important}
+.club-tabs .club-review-rate {width: 290px}
+.club-tabs .club-review-rate >ul {list-style: none; margin-left: 0}
+.club-tabs .club-review-rate >ul li{float: left}
+ul.horseshoe-rate {margin-left: 0; list-style: none; clear: both}
+ul.horseshoe-rate li.title{line-height: 24px; color: #6d3512}
+ul.horseshoe-rate li {float: left}
+ul.horseshoe-rate li.horseshoe {background: url(images/icon-horseshoe.png) center center no-repeat; min-width: 22px; min-height: 22px; padding: 2px}
+ul.horseshoe-rate li.horseshoe:hover, ul.horseshoe-rate li.horseshoe.active {background: url(images/icon-horseshoe-active.png) center center no-repeat;}
+.club-reviews ul.comments-lists {margin-left: 0}
+.club-reviews ul.comments-lists > li.comment {margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px #ccc solid}
+.club-reviews ul.comments-lists > li.comment > p, .club-reviews ul.comments-lists > li.comment > div{margin-left: 50px}
+.club-reviews ul.comments-lists > li.comment > p {margin-bottom: 0px; line-height: 13px}
+.club-reviews ul.comments-lists > li.comment > p.message { line-height: 16px; margin-bottom: 10px}
+.club-reviews ul.comments-lists > li.comment > div.horseshoe-rate-block {margin-bottom: 10px;}
+.club-reviews ul.comments-lists > li.comment > div.useful-review {text-align: right}
+div.useful-review a{text-decoration: none}
+div.useful-review a.yes-useful{background: url(images/icon-useful-review-yes.png) center left no-repeat; padding-left: 22px; color: #0c0}
+div.useful-review a.not-useful{background: url(images/icon-useful-review-no.png) center left  no-repeat; padding-left: 22px; color: #c00}
+.pagination ul.page-list {margin: 0 auto; display: block; list-style: none;}
+.pagination ul.page-list li{float: left; margin-right: 5px}
+.pagination ul.page-list li.title{margin-left: 100px}
+.pagination ul.page-list li.page a{background: #ebd6cc; padding: 2px 8px; color: #930}
+.pagination ul.page-list li.page a:hover{background: #930; color: #ebd6cc}
+.pagination ul.page-list li.page.active a{background: #930; color: #ebd6cc}
+.club-admin select.span3 { width: 200px}
+#modal-edit-member { width: 510px}
+
+.c-results-btns {height: 50px}
+.c-results-btns ul {margin-left: 0; list-style: none}
+.c-results-btns ul li{float: left; margin-left: 10px; }
+.c-results-btns ul li a{width: 270px}
+.admin-compts td.errors input[type="text"], .admin-compts td.points input[type="text"], .admin-compts td.total input[type="text"],  .admin-compts td.standarts input[type="text"] {width: 50px}
+.admin-compts tr.first-place > td{background: #efdcce !important}
+.admin-compts td.table-caption {font-size: 16px; text-transform: uppercase; font-weight: bold}
+
+/* search-clubs-find */
+.search-clubs-filter-block {border-bottom: 1px #d7d5d6 solid; padding: 0 4px}
+.search-clubs-filter-block label.radio{padding-left: 0}
+.search-clubs-filter-block label.radio > input{margin-right: 5px}
+.search-clubs-filter-block > label{font-weight: 600}
+.search-clubs-filter-block label.radio, .search-clubs-filter-block label.checkbox{font-weight: 400}
+.search-clubs-filter-block input.span3{width: 210px; height: 24px}
+ .search-clubs-filter-block select.span3{width: 210px}
+.search-clubs-filter-block input.span-mini{width: 76px}
+.search-clubs-filter button.add-rem.span1{width: 40px}
+.search-clubs-filter-block input, .search-clubs-filter-block select{margin-left: 0 !important}
+.search-clubs-filter-block span.mini-separator{margin: 0 10px}
+.clubs-search-results h3 {margin-bottom: 0}
+table.clubs-results {background: #fff; margin-bottom: 0}
+table.clubs-results td.club-name img {max-width: 32px; max-height: 32px; margin-right: 5px}
+input.span-mini{width: 76px; }
+
+/* user-page */
+.user-about-me dt{font-weight: 400; color: #444; font-style: italic}
+.user-about-me dd a{font-weight: 400}
+.current-user-avatar {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 200px; height: 200px}
+.user-info .user-controls{margin-top: 10px; border-top: #D7D5D6 solid 1px; text-align: right; padding-right: 10px; padding-top: 10px}
+.user-info .user-controls button{width: 100%; margin: 5px 0 5px 4px}
+.user-info h2.user-name {text-align: right; margin-right: 10px}
+ul.user-friends-menu {list-style: none; margin-left: 0}
+ul.user-friends-menu li{float: left; width: 70px; height: 100px; overflow: hidden; margin-left: 3px; font-size: 11px; line-height: 12px}
+ul.user-friends-menu li img{width: 50px; height: 50px; margin-bottom: 5px}
+ul.user-friends-menu li a{text-decoration: none}
+
+
+/* friends-list */
+.friends-list {margin-left: -20px}
+.friends-list img.friend-avatar {}
+.friends-list ul {list-style: none; margin-left: 0}
+.friends-list .my-friend {border-bottom: 1px #e1e1e1 solid; margin-bottom: 10px}
+
+/* horses-list */
+.horses-list {margin-left: -20px}
+.horses-list img.horse-avatar {}
+.horses-list ul {list-style: none; margin-left: 0}
+.horses-list .horse-info-actions ul li {text-align: right}
+.horses-list .horse-info-actions ul li.comments-number a {text-decoration: none; color: #000; font-weight: bold;}
+.horses-list li.sex span, .horses-list li.spec span {font-weight: bold}
+.horses-list .my-horse {border-bottom: 1px #e1e1e1 solid; margin-bottom: 10px}
+
+/* mobile */
+@media (max-width: 979px) {
+.main-menu .navbar-inner {background-image: none; background: #c77e39}
+.main-menu .navbar-inner a.logo{display: none}
+.main-menu .navbar-inner .nav li{padding: 0px;}
+.block {margin: 0 0px 10px}
+.block .row {margin-left: 0px}
+.block[class*="offset"] {margin-left: 0px;} 
+.reg-block .row form {margin-left: 0px;} 
+.reg-block .row form [class*="span"] {margin-left: 0px;} 
+.block-2 ul.event-list li{width: 400px}
+.block-2 li.event {margin: 0; float: none; }
+.block-2 li.event .event-img {width: 100%;}
+.block-2 li.event .event-img img {width: 400px !important; margin: 5px auto; background-image: none; float: left}
+.login-block {margin-left: 0px !important;}
+.my-header-block .nav > li {padding-right: 5px}
+.brackets {display: none}
+.my-header-block {padding-top: 0px;}
+.my-header-block .navbar {margin-top: -10px}
+.my-header-block .nav li {background-image: none !important; padding: 3px 0}
+.my-header-block .nav li a {padding: 10px 5px}
+.uzd-left, .uzd-right {display: none}
+}
+
+/* modal */
+.modal {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; position: absolute !important}
+.modal form{margin-bottom: 0px}
+.modal.bg-white {background-image:  url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png); background-color: #fff; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x; background-position: left, right, top, bottom; box-shadow: inset 0px 0px 20px #000; position: absolute !important; border: 0}
+.modal-notitle {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg) !important; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; position: absolute !important}
+.modal700 {width: 700px; margin-left: -350px}
+.modal800 {width: 816px; margin-left: -408px}
+.modal900 {width: 900px; margin-left: -450px}
+.modal .modal-header {border-bottom: none; padding-bottom: 15px}
+.modal .modal-header h3{padding-bottom: 0px !important; margin-bottom: 0px !important}
+.modal .modal-header h3 span{font-size: 13px; font-style: italic; font-weight: normal; text-transform: none; text-decoration: none; color: #fff; margin-right: 20px}
+.modal .modal-body, .modal .modal-body-texture  {padding-top: 0px; max-height: auto}
+.modal .modal-header button.close {margin-top: 5px}
+.modal .modal-header h3 {padding: 10px; margin: -10px -2px 10px -2px; color: #fff; text-shadow: 0 1px 0 #000; text-transform: uppercase; }
+.modal-backdrop, .modal-backdrop.fade.in {opacity: 0.6; filter: alpha(opacity=60);}
+.modal .add-photo-descr {font-size: 12px; border-bottom: 1px #ccc solid; margin-bottom: 10px; padding-bottom: 10px}
+.modal form.form-horizontal .controls {margin-left: 30px}
+.tab-pane form.form-horizontal .controls {margin-left: 0px}
+#modal-myMessages .modal-body {padding: 0px 0 0px 15px;}
+#modal-myMessages form.form-in-messages {width: 790px}
+.modal.head-menu-modal {position: fixed !important; top: 40px}
+#modal-myEvents .event-user-avatar img.avatar {width: 140px; height: 140px}
+#modal-myEvents .event-user-avatar {margin-left: 0 !important}
+#modal-myEvents .event-block .btn-ignore-event {margin-left: 20px}
+#modal-myEvents .event-block {margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px #ccc solid; width: 790px}
+#modal-myEvents .event-message-block p{margin-bottom: 5px;}
+#modal-myEvents .event-message-block p.date{color: #999}
+#modal-myEvents .event-answer-area {margin-top: 20px}
+#modal-myEvents p.shared-friends a {color: #999; text-decoration: none; border-bottom: 1px #999 dashed}
+.modal-body form .controls .offset1 {margin-left: 8px !important}
+#createClub.modal form.form-horizontal .controls {margin-left: 16px}
+#i-am-fan .fans-member-list {height: 500px; overflow-y: scroll;}
+#i-am-fan .fans-member-list ul > li {}
+#i-am-fan table.member {background: #fff; width: 100%}
+#i-am-fan table.member:hover {background: #f4f2f1}
+#i-am-fan li.member-chosen > table.member {background: #ebf6e1}
+#i-am-fan table.member td {padding: 10px 10px 10px 5px;}
+#i-am-fan table.member td.m-photo img {width: 70px; height: 70px; padding-right: 0}
+#i-am-fan table.member td.m-photo {padding: 3px 10px 3px 5px;}
+#i-am-fan table.member td.m-name{width: 220px;}
+#i-am-fan table.member td.m-horse{width: 150px;}
+#i-am-fan table.member td.m-btn{width: 110px; padding-right: 5px; text-align: center}
+#i-am-fan .modal-header {padding-bottom: 6px}
+#i-am-fan .modal-body .row {margin: 0 -8px}
+#i-am-fan .foo-row {margin: 10px 0}
+
+/* modal change-avatar */
+.change-avatar-buttons {margin: 25px auto}
+.avatar-descr {font-size: 11px}
+.step1 .change-avatar-buttons, .step2 .change-avatar-buttons {border-bottom: 1px #ccc solid; margin-bottom: 10px; padding-bottom: 10px}
+.avatar-file {display: block; width: 340px !important}
+
+/* search-friends-filter */
+.search-friends-filter-block {border-bottom: 1px #d7d5d6 solid; padding: 0 4px}
+.search-friends-filter-block > label{font-weight: 600}
+.search-friends-filter-block label.radio, .search-friends-filter-block label.checkbox{font-weight: 400}
+.search-friends-filter-block input.span3{width: 186px}
+ .search-friends-filter-block select.span3{width: 210px}
+.search-friends-filter-block input.span-mini{width: 86px}
+
+/* club-page */
+.club-block img.club-avatar {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 200px; height: 200px}
+.club-block img.my-avatar {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 50px; height: 50px; position: absolute; left: 155px; top: 155px}
+.newclub-description {border-bottom: 1px #eee solid; padding-bottom: 10px}
+.newclub-adv {border: 2px #fff solid; box-shadow: 0px 1px 4px #777; margin: 5px 0 20px 0; border-radius: 3px; width: 200px; max-height: 500px}
+.club-admin h5 {font-weight: 800; font-size: 13px; color: #6d3512}
+.club-admin h3.inner-bg {margin-bottom: 0}
+.club-admin.club-add-comp div.title{font-size: 36px; color: #6d3512; font-weight: 200; line-height: 40px}
+.club-admin.club-add-comp div.title-hr{height: 45px; line-height: 50px; margin-bottom: 10px}
+.club-admin .option-row {margin-bottom: 20px}
+.comp-added-files {margin-top: 10px}
+.comp-added-files li {background: #f4f2f1 url(images/icon-pdf-file.png) 4px center no-repeat; border-radius: 5px; padding: 2px 5px 2px 24px !important; margin-bottom: 5px; max-width: 420px; overflow: hidden}
+#clubTabContent .comp-added-files li {max-width: 410px; }
+.comp-added-files li button.close{margin-left: 10px}
+.option-row ul.clubs-members {margin-top: 10px}
+.option-row h3.inner-bg span a.btn {color: #6d3512; padding: 2px 5px; font-style: normal; font-size: 11px; line-height: 12px}
+#about-admin .btn.span1 {width: 40px}
+.option-row > .row {border-bottom: 1px #eee solid; padding: 15px 0}
+
+/* modal-content-add-photo */
+ul.uploaded-photos-list {list-style: none; margin-left: 0px}
+ul.uploaded-photos-list li {margin-bottom: 10px}
+ul.uploaded-photos-list li textarea.add-photo-comment {width: 370px; height: 100px; margin-left: 20px}
+ul.uploaded-photos-list li .new-uploaded-img {margin-left: 0px;}
+ul.uploaded-photos-list li .new-uploaded-img img.img-polaroid {height: 90px; width: 140px}
+.new-uploaded-img {position: relative;}
+.new-uploaded-img img.remove-image-icon{position: absolute; top: 0px; left: 0px;display: none}
+.new-uploaded-img:hover img.remove-image-icon{display: block}
+.uploaded-img-area .new-uploaded-img {margin-right: 6px; margin-bottom: 10px}
+.uploaded-img-area .new-uploaded-img img.img-polaroid{height: 40px}
+.uploaded-img-area  .step1 .progress {width: 400px; margin: 0 auto 10px auto}
+.uploaded-img-area  .step1 p.upload-descr {font-size: 12px}
+.content-add-buttons {margin-right: 10px}
+
+/*modal-add-horse*/
+.add-files-to-gallery p {text-align: center}
+.add-files-to-gallery .fileupload {width: 160px; margin-left: 180px}
+
+/*gallery-tabs*/
+.gallery-table th {background: #c7c0bb !important; color: #444; text-transform: uppercase}
+.gallery-table td {border-top: 0}
+.gallery-table p {margin-bottom: 2px}
+.gallery-table tbody > tr:nth-child(odd) > td {background-color: #f4f2f1;} 
+.gallery-table td.date {width: 50px}
+.gallery-table td.competition {width: 280px}
+ .albums-head {min-height:30px; margin: 10px}
+.btn-create-album {margin-left: 10px}
+.gallery-page h3.inner-bg {margin-bottom: 0}
+.album-page p.album-descr {padding: 5px}
+.album-page .sys-album-btns {margin-top: 10px;}
+.album-page .sys-album-btns a.btn{margin: 0 5px}
+
+/* gallery-in-post */
+ul.gallery-in-post {margin-left: 0; list-style: none; height: 360px}
+ul.gallery-in-post li a >div{width: 85px !important; height: 85px; padding-bottom: 0px;margin-bottom: 3px !important; margin-left: 360px; background-size: cover !important; background-position: center center; background-repeat: no-repeat;}
+ul.gallery-in-post li:first-child a > div{width: 350px !important; height: 350px; float: left; margin-left: 0}
+.modal-gallery-post div.comments {margin: 0 10px}
+.modal-gallery-post div.comments ul.comments-lists > li {margin-left: 0}
+div.modal900.modal-gallery-post div.comments ul.comments-lists li.answer-form form.max {background: none}
+div.modal900.modal-gallery-post div.comments ul.comments-lists li.answer-form form.max textarea.answer-message {width: 812px}
+ul.my-news-wall div.post .modal {position: absolute; top: -100px}
+.modal-gallery-post  table.image-info {margin-top: 20px}
+.modal-gallery-post  table.image-info td{padding: 0 5px; vertical-align: top;}
+.modal-gallery-post  table.image-info td div.answer-block {margin-top: 10px; float: left}
+.modal-gallery-post  table.image-info td.info{width: 250px; border-left: 1px #ccc solid}
+.modal-gallery-post  table.image-info td.info ul{list-style: none; margin-left: 0}
+.modal-gallery-post  table.image-info td.info li p.dt{font-weight: 600}
+.modal-gallery-post  table.image-info td.info p.dd{margin-bottom: 10px; margin-left: 0px}
+.modal-gallery-post  table.image-info.without-descr td.info{width: auto;}
+.modal-gallery-post  table.image-info.without-descr td.info li{float: left; max-width: 150px; margin-left: 20px}
+.modal-images-gallery {background: #222; margin: 7px 7px 0 7px; position: relative;}
+.modal-gallery-post .modal-body {background: #fff !important; margin: 0 7px;}
+.modal-images-gallery button.close {color: #fff; text-shadow: none; position: absolute; top: 7px; right: 10px}
+.modal-images-gallery img{display: block; margin: 0 auto; padding: 0px 0; max-width: 886px0; height: auto}
+.gallery-slide-left, .gallery-slide-right {width: 26px; height: 52px; padding: 40px 20px; position: absolute; top: 50%; margin-top: -92px; opacity: 0.2}
+.gallery-slide-left:hover, .gallery-slide-right:hover {background-color: rgba(23, 23, 23, 0.3); opacity: 1}
+.gallery-slide-left {background: transparent url(images/gallery-arrow-left.png) center center no-repeat; left: 0}
+.gallery-slide-right {background: transparent url(images/gallery-arrow-right.png) center center no-repeat; right: 0}
+
+/* horse info */
+.current-horse-page hr {margin: 10px 0}
+.current-horse-page h5 {font-size: 16px; font-weight: 600; color: #993300; text-transform: uppercase; margin-top: 10px; margin-left: 8px}
+.current-horse-page div.comments {border-top: 0}
+.current-horse-page p.title {font-weight: bold; margin-bottom: 5px}
+ul.this-horse-info {list-style: none; margin-left: 0}
+ul.this-horse-info li span {font-weight: bold;}
+ul.this-horse-info.horse-breed li{margin-left: 60px}
+ul.this-horse-info.horse-breed li:first-child{margin-left: 0px}
+ul.horse-pedigree {list-style: none; margin-left: 0}
+ul.horse-pedigree li {float: left}
+ul.horse-pedigree li span {font-weight: bold;}
+ul.horse-pedigree li.place-birth {width: 450px;}
+ul.horse-pedigree li.pedigree-members {width: 220px}
+
+table.competitions-table p {margin-bottom: 2px}
+table.competitions-table p.comp-date {font-weight: bold}
+table.competitions-table tbody > tr:nth-child(odd) > td {background-color: #f4f2f1;} 
+table.competitions-table th {background: #c7c0bb !important; color: #444; text-transform: uppercase} 
+table.competitions-table td {border-top: 0}
+table.competitions-table td.competition {width: 300px}
+table.competitions-table td.place {width: 60px}
+table.competitions-table td.result {width: 100px}
+table.competitions-table.now-comp td{background: #d0f2aa !important}
+table.now-comp td.competition a, table.past-comp td.competition a, table.future-comp td.competition a, table.routes .route{color: #bb7a1f; font-size: 16px; font-weight: 300}
+table.routes th a{text-transform: none}
+table.routes .route {min-width: 200px}
+
+/* video-gallery */
+.video-wall {margin-left: 0px; padding-top: 10px; padding-left: 10px}
+.video-wall li{float: left; list-style: none; margin-right: 10px; margin-bottom: 10px; width: 140px; height: 105px; overflow: hidden;}
+.video-wall li img{max-height: 95px;  max-width: 130px; height: auto; border: 3px #fff solid; box-shadow: 0 1px 3px rgba(0,0,0,0.2); margin: 2px;}
+.video-wall li img:hover{box-shadow: 0 0px 2px rgba(0,0,0,0.7);}
+
+.video-wall li img, .video-wall li, .video-wall li div.video-thumb, .video-wall li div.video-thumb div.video-hover  {width: 140px; height: 90px !important; overflow: hidden;}
+.video-wall li {background-size: cover !important}
+.video-wall li div.video-thumb {position: relative}
+.video-wall li div.video-thumb div.video-hover:hover {background: rgba(0,0,0,0.5) url(images/video-play-btn.png) center center no-repeat;}
+.video-wall li div.video-thumb div.video-hover {background: rgba(0,0,0,0) url(images/video-play-btn.png) center center no-repeat; z-index: 150; top: 0; left: 0}
+.video-wall li div.video-thumb div.video-time {position: absolute; bottom: 2px; right: 2px; border-radius: 4px; background: rgba(0,0,0,0.5); color: #fff; z-index: 5; padding: 1px 5px; font-size: 11px; font-weight: bold}
+
+.users-find-block select.span4, .users-find-block input.span4 {width: 256px}
+
+
+/* 9-03-2014 */
+.adv-list {list-style: none; margin: 0; display: block; height: 420px; overflow: hidden; width: 100%; padding-top: 5px}
+.adv-list li{float: left; width: 172px; padding: 0 8px}
+.adv-list li.adv-card img{max-height: 270px; max-width: 200px; width: 100%; height: auto; margin: 0 auto; border: 3px #fff solid; border-radius: 4px; box-shadow: 0px 1px 5px rgba(0,0,0,0.5); margin-bottom: 5px}
+.adv-list li form input, .adv-list li form button {width: 100% !important}
+.adv-list li form input {box-sizing: border-box; height: 30px}
+.adv-list li form button {margin-bottom: 5px}
+.adv-list li.add-new-adv img{margin: 0 auto;}
+
+
+.member-admin {font-weight: bold}
+#club-members > li.active > a {background-color: #6f3612; color: #fff}
+#club-members > li > a {color: #6f3612; text-decoration: none}
