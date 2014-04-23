@@ -3,16 +3,28 @@
 
 <script>
 /* Send to api function */
+
 function register(form) {
 	api_query({
 		qmethod: "POST",
 		amethod: "register",
 		params:  $(form).serialize(),
 		success: function (response, data) {
-			console.log(data);
+			alert(response);
+			document.location.href = data.redirect;
 		},
 		fail:    "standart"
 	})
+}
+
+/* Autocomplete phone numbers */
+function change_country(select) {
+	phone = $("input[name=phone]");
+	country = $(select).val();
+	if (country == "Беларусь") phone.val("+375");
+	else if(country == "Россия") phone.val("+7");
+	else if(country == "Украина") phone.val("+380");
+	else phone.val("");
 }
 
 </script>
@@ -34,8 +46,8 @@ function register(form) {
 							
 							<div class="controls controls-row">
 								<label class="span7">Ваш пароль: <span class="req">*</span></label>
-								<input type="text" class="span3" placeholder="Введите пароль" name="passwd1">
-								<input type="text" class="span3 offset1" placeholder="Повторите пароль" rel="tooltip" data-placement="bottom" data-original-title="Проверьте правильность ввода паролей" name="passwd2">
+								<input type="password" class="span3" placeholder="Введите пароль" name="passwd1">
+								<input type="password" class="span3 offset1" placeholder="Повторите пароль" rel="tooltip" data-placement="bottom" data-original-title="Проверьте правильность ввода паролей" name="passwd2">
 							</div>
 							
 							<div class="controls controls-row">
@@ -59,14 +71,14 @@ function register(form) {
 							<div class="controls controls-row">
 								<label class="span6">Ваши контактные данные</label>
 								<label class="span6"><small class="muted">Прим: все ваши контактные данные конфиденциальны, нужны лишь для удобства пользования сайтом и не передаются третьим лицам.</small></label>
-								<select class="span3" name="country">
+								<select class="span3" name="country" onchange="change_country(this);">
 									{foreach $const_countries as $country}
 										<option value="{$country}">{$country}</option>
 									{/foreach}
 							   </select>
 								<input type="text" class="span3" placeholder="Город *" name="city">
 								<input type="text" class="span3" placeholder="E-mail *" name="mail">
-								<input type="text" class="span3" placeholder="Номер телефона *" name="phone">
+								<input type="text" class="span3" placeholder="Номер телефона *" name="phone" value="+7">
 								<input type="text" class="span3" placeholder="Улица и дом *" name="adress">
 								<input type="text" class="span3" placeholder="Ваш сайт" name="site">
 								

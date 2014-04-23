@@ -1,7 +1,7 @@
 <?php
 /* Validating function */
 
-function validate_fields($array, $fields, $required, $filters, &$errors){
+function validate_fields(&$result, $array, $fields, $required, $filters, &$errors){
 	$result = array();
 	$all_fields = array_merge($fields, $required);
 	foreach ($array as $key => $value) {
@@ -37,12 +37,6 @@ function validate_fields($array, $fields, $required, $filters, &$errors){
 				$errors[] = "Поле '{$key}' не соответствует формату.";
 			}
 		}
-	}
-
-	if (empty($errors)) {
-		return $result;
-	} else {
-		return false;
 	}
 }
 
