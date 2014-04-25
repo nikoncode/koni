@@ -1,5 +1,5 @@
 <?php
-/* Logic part of 'reg' page */
+/* Logic part of 'login' page */
 include ("../core/config.php");
 include (LIBRARIES_DIR . "smarty/smarty.php");
 include (CORE_DIR . "constant.php");
