@@ -2,7 +2,7 @@
 /* This is main configuration file. */
 
 /* Main directories options */
-define("PROJECT_DIR", 			"D:/koni/home/koni/");
+define("PROJECT_DIR", 			"D:/web_server/home/koni/");
 define("LIBRARIES_DIR", 		PROJECT_DIR . "libraries/");
 define("CORE_DIR",				PROJECT_DIR . "core/");
 
