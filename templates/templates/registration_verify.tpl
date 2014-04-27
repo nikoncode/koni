@@ -2,8 +2,7 @@
 {include "modules/header-mini.tpl"}
 
 <script>
-/* Check code */
-
+/* Send to api function */
 function validate(form) {
 	api_query({
 		qmethod: "POST",

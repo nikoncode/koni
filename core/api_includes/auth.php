@@ -4,6 +4,7 @@
 /* Including functional dependencies */
 include_once (LIBRARIES_DIR . "password_compat/password.php");
 include_once (CORE_DIR . "core_includes/others.php");
+include_once (CORE_DIR . "core_includes/session.php");
 
 function api_register() {
 	validate_fields($fields, $_POST, array(
@@ -34,8 +35,9 @@ function api_register() {
 		), 
 	$errors);
 
-	if ($fields["passwd1"] != $fields["passwd2"])
+	if ($fields["passwd1"] != $fields["passwd2"]) {
 		$errors[] = "Пароли не совпадают.";
+	}
 
 	$db = new db;
 	$check_uniq = $db->getOne("SELECT id FROM users WHERE mail=?s OR login=?s", $fields["mail"], $fields["login"]);
@@ -48,8 +50,9 @@ function api_register() {
 		$errors[] = "Дата рождения неверна.";
 	}
 
-	if (!empty($errors))
+	if (!empty($errors)) {
 		aerr($errors); 
+	}
 
 	unset($fields["accept"]);
 
@@ -71,7 +74,8 @@ function api_register() {
 	$db = new db;
 	$db->query("INSERT INTO users (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
 
-    mail($fields["mail"], "Odnokonniki", " 
+    mail($fields["mail"], "Odnokonniki", "
+    	Здравствуйте. 
 		Спасибо за регистрацию.
 		Логин: {$fields["login"]}
 		Код подтверждения: {$fields["hash"]}
@@ -99,4 +103,51 @@ function api_sms_validate() {
 		$db->query("UPDATE users SET hash='' WHERE login=?s", $fields["login"]);
 		aok(array("Регистрация подтверждена. Сейчас вас перенаправит на страницу входа. Спасибо."), "/login.php?login={$fields["login"]}");
 	}
+}
+
+function api_login() {
+	validate_fields($fields, $_POST, array(), array(
+			"login",
+			"pass"
+		), array(), $errors);
+
+	if (!empty($errors))
+		aerr($errors);
+
+	if (validate_email($fields["login"])) {
+		$field_name = "mail";
+	} else {
+		$field_name = "login";
+	}
+
+	$db = new db;
+	$details = $db->getRow("SELECT id, password FROM users WHERE ?n = ?s", $field_name, $fields["login"]);
+	if (password_verify($fields["pass"], $details["password"])) {
+		auth($details["id"]);
+		aok(array("Вход осуществлен успешно."), "/index.php");
+	} else {
+		aerr(array("Данные неверны или пользователь не зарегистрирован."));
+	}
+}
+
+function api_pass_restore() {
+	validate_fields($fields, $_POST, array(), array("mail"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors); 
+	}
+
+	$db = new db;
+	$code = md5(time() . generate_code(5));
+	$id = $db->getOne("SELECT * FROM users WHERE mail=?s", $fields["mail"]);
+	if ($id !== false) {
+		$db->query("UPDATE users SET restore = ?s WHERE id = ?s", $code, $id);
+	    mail($fields["mail"], "Odnokonniki", " 
+	    	Здравствуйте.
+			На вашем аккаунте была заказана смена пароля.
+			Для подтверждения смены пароля, пройдите по ссылке: http://odnokonniki.ru/restore.php?mail={$fields["mail"]}&code={$code}
+			Если вы этого не делали, просто проигнорируйте это письмо.
+		");
+	}
+	aok(array("Если такой пользователь существует, то ему выслано письмо с подтверждением."));
 }

@@ -3,8 +3,7 @@
 
 <script>
 /* Send to api function */
-
-function register(form) {
+function sign_up(form) {
 	api_query({
 		qmethod: "POST",
 		amethod: "register",
@@ -36,7 +35,7 @@ function change_country(select) {
 			<h3 class="inner-bg">Регистрация</h3>
 			
 			<div class="row">	
-					<form method="post" action="#" onsubmit="register(this);return false;">
+					<form method="post" action="#" onsubmit="sign_up(this);return false;">
 						<div class="row">	
 							
 							<div class="controls controls-row">

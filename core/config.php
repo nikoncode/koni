@@ -19,3 +19,8 @@ define("MYSQL_DB", "test");
 
 /* SPHINX options*/
 define("SPHINX_PORT", 1337);
+
+/* Session options */
+define("SESSION_NAME", "ODK");
+define("SESSION_LIFETIME", 300);
+define("SESSION_ID_LIFETIME", 60);
