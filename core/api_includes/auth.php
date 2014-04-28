@@ -66,7 +66,7 @@ function api_register() {
 	unset($fields["bday"]); 	
 
 	if (isset($fields["work"])){
-		$fields["work"] = implode(", ", $fields["work"]);
+		$fields["work"] = implode(",", $fields["work"]);
 	}
 
 	$fields["hash"] = generate_code(5);
@@ -121,13 +121,19 @@ function api_login() {
 	}
 
 	$db = new db;
-	$details = $db->getRow("SELECT id, password FROM users WHERE ?n = ?s", $field_name, $fields["login"]);
-	if (password_verify($fields["pass"], $details["password"])) {
+	$details = $db->getRow("SELECT id, password, hash FROM users WHERE ?n = ?s", $field_name, $fields["login"]);
+
+	if (password_verify($fields["pass"], $details["password"]) && strlen($details["hash"]) != 5) {
 		auth($details["id"]);
-		aok(array("Вход осуществлен успешно."), "/index.php");
+		aok(array("Вход осуществлен успешно."), "/inner.php");
 	} else {
-		aerr(array("Данные неверны или пользователь не зарегистрирован."));
+		aerr(array("Данные неверны или пользователь не зарегистрирован (не верифицирован)."));
 	}
+}
+
+function api_logout() {
+	logout();
+	aok(array("Все хорошо."), "/login.php");
 }
 
 function api_pass_restore() {

@@ -9,7 +9,7 @@ function sign_in(form) {
 		amethod: "login",
 		params: $(form).serialize(),
 		success: function (resp, data) {
-			console.log(data);
+			document.location.href = data.redirect;
 		},
 		fail: "standart"
 	})
