@@ -3,8 +3,10 @@
 
 /* Main directories options */
 define("PROJECT_DIR", 			"D:/web_server/home/koni/");
+define("WEB_ROOT_DIR",			PROJECT_DIR . "www/");
 define("LIBRARIES_DIR", 		PROJECT_DIR . "libraries/");
 define("CORE_DIR",				PROJECT_DIR . "core/");
+define("UPLOADS_DIR",			WEB_ROOT_DIR . "uploads/");
 
 /* Smarty options */
 define("SMARTY_TEMPLATES_DIR", 	PROJECT_DIR . "templates/templates/");

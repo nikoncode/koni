@@ -2,7 +2,6 @@
 /* Logic part of 'gallery' page */
 include ("../core/config.php");
 include (LIBRARIES_DIR . "smarty/smarty.php");
-include (CORE_DIR . "constant.php");
 
 /* Including functional dependencies */
 include_once (CORE_DIR . "core_includes/templates.php");

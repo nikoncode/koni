@@ -34,3 +34,19 @@ function tmpl_get_user_info($id) {
 
 	return $user;
 }
+
+function render_template($vars, $template_name) {
+	$tmpl = new templater;
+	foreach ($vars as $key => $value) {
+		$tmpl->assign($key, $value);
+	}
+	$tmpl->display($template_name);
+}
+
+function render_error($text) { //TO-DO: make errors constant
+	$variables = array(
+		"page_title" => "Ошибка > Одноконники",
+		"error_text" => $text
+	);
+	render_template($variables, "error.tpl");	
+}
