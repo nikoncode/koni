@@ -6,6 +6,7 @@
 <script src="js/upload/jquery.iframe-transport.js"></script>
 <script src="js/upload/jquery.fileupload.js"></script>
 <script>
+
 $(function () {
 	$("#gallery-upl").fileupload({
 		url: "/api/api.php?m=upload_gallery_photo&album_id={$album_id}",
@@ -14,7 +15,15 @@ $(function () {
 			resp = data.result;
 			console.log(resp);
 			if (resp.type == "success") {
-				console.log(resp);
+				$("<li class='new-uploaded-img row'> \
+					<div class='span2'> \
+						<img class='img-polaroid span2' src='" + resp.response.preview + "'> \
+						<a href='#remove-image' onclick='photo_delete(this, " + resp.response.id + "); return false;'><img class='remove-image-icon' src='images/icon-remove-image.png'></a> \
+					</div> \
+					<div class='span4'> \
+						<textarea placeholder='Введите описание к фото' name='desc[" + resp.response.id + "]'></textarea> \
+					</div> \
+				</li>").appendTo("#uploaded-photos");
 			} else {
 				alert(resp.response[0]);
 			}
@@ -24,7 +33,31 @@ $(function () {
 		}
 	});
 });
+{literal}
+function photo_delete(element, photo_id) {
+	api_query({
+		qmethod: "POST",
+		amethod: "photo_delete",
+		params: {id : photo_id},
+		success: function (resp) {
+			$(element).closest(".new-uploaded-img").remove();
+		},
+		fail: "standart"
+	})
+}
 
+function update_description(form) {
+	api_query({
+		qmethod: "POST",
+		amethod: "gallery_update_description",
+		params: $(form).serialize(),
+		success: function (resp) {
+			alert(resp[0]);
+		},
+		fail: "standart"
+	})
+}
+{/literal}
 </script>
 
 
@@ -51,7 +84,7 @@ $(function () {
 					</div>
 			
 						<div class="uploaded-img-area row">
-						<form onsubmit="gallery_upd_desc(this);return false;">	
+						<form onsubmit="update_description(this);return false;">	
 							<input type="hidden" name="album_id" value="{$album_id}" />
 							<div class="step1">
 								<div class="progress progress-striped active">
