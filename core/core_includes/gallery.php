@@ -4,7 +4,7 @@
 /* Including functional dependencies */
 include_once (LIBRARIES_DIR . "simple_image/SimpleImage.php");
 
-function upload_photo($photo, $name, $destname, $w=500, $h=500, $preview=false, $pname=NULL) { //TO-DO: MAKE CONFIG
+function gallery_upload_photo($photo, $name, $destname, $w=500, $h=500, $preview=false, $pname=NULL) { //TO-DO: MAKE CONFIG
 	$avaible_types = array('png' => 'image/png', 'gif' => 'image/gif', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg');
 	if((!empty($photo[$name])) && ($photo[$name]['error'] == 0)) {
 		$filename = basename($photo[$name]['name']);

@@ -6,10 +6,10 @@
 function validate(form) {
 	api_query({
 		qmethod: "POST",
-		amethod: "sms_validate",
+		amethod: "auth_sms_validate",
 		params:  $(form).serialize(),
 		success: function (response, data) {
-			alert(response);
+			alert(response[0]);
 			document.location.href = data.redirect;
 		},
 		fail:    "standart"
@@ -38,7 +38,7 @@ function validate(form) {
 		
 		<div class="row">
 			<div class="span4 offset4">
-				<center><a class="white-color" href="#">Отправить снова?</a></center>
+				<!--<center><a class="white-color" href="#">Отправить снова?</a></center>-->
 			</div>
 		</div>	
 </div>

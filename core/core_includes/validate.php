@@ -1,7 +1,14 @@
 <?php
-/* Validating function */
+/* Including functional dependencies */
+include_once (CORE_DIR . "core_includes/session.php");
 
-function validate_fields(&$result, $array, $fields, $required, $filters, &$errors){
+/* Validating function */
+function validate_fields(&$result, $array, $fields, $required, $filters, &$errors, $auth = true){
+	if ($auth && !session_check()) {
+		$errors[] = "Необходимо войти";
+		return;
+	}
+
 	$result = array();
 	$all_fields = array_merge($fields, $required);
 	foreach ($array as $key => $value) {

@@ -1,12 +1,15 @@
 <?php
-/* Logic part of 'reg' page */
-include ("../core/config.php");
-include (LIBRARIES_DIR . "smarty/smarty.php");
-include (CORE_DIR . "constant.php");
+/* Including functional dependencies */
+include_once ("../core/config.php");
+include_once (LIBRARIES_DIR . "smarty/smarty.php");
+include_once (CORE_DIR . "core_includes/templates.php");
+include_once (CORE_DIR . "constant.php");
 
-$tmpl = new templater;
-$tmpl->assign("page_title", "Регистрация > Одноконники");
-$tmpl->assign("const_mounth", $const_mounth);
-$tmpl->assign("const_work", $const_work);
-$tmpl->assign("const_countries", $const_countries);
-$tmpl->display("registration.tpl");
+/* Logic part of 'reg' page */
+$assigned_vars = array(
+	"page_title" 		=> "Регистрация > Одноконники",
+	"const_mounth" 		=> $const_mounth,
+	"const_work" 		=> $const_work,
+	"const_countries" 	=> $const_countries
+);
+template_render($assigned_vars, "registration.tpl");

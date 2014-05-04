@@ -1,20 +1,23 @@
 <?php
-/* Logic part of 'restore' page */
-include ("../core/config.php");
-include (LIBRARIES_DIR . "smarty/smarty.php");
-
 /* Including functional dependencies */
+include_once ("../core/config.php");
+include_once (LIBRARIES_DIR . "smarty/smarty.php");
+include_once (CORE_DIR . "core_includes/templates.php");
 include_once (CORE_DIR . "core_includes/others.php");
 include_once (LIBRARIES_DIR . "safe_mysql/safemysql.php");
 include_once (LIBRARIES_DIR . "password_compat/password.php");
 
+/* Logic part of 'restore' page */
+
 /* If step2 */
 $restored = false;
 if (isset($_GET["mail"], $_GET["code"])) {
+	/* Checking restore code */
 	$db = new db;
 	$id = $db->getOne("SELECT id FROM users WHERE mail = ?s AND restore = ?s", $_GET["mail"], $_GET["code"]);
 	if ($id !== false) {
-		$new_password = generate_code(8);
+		/* Generate and update password */
+		$new_password = others_generate_code(8);
 		$password = password_hash($new_password, PASSWORD_DEFAULT);
 		$db->query("UPDATE users SET restore = '', password = ?s WHERE id = ?i", $password, $id);
 	    mail($_GET["mail"], "Odnokonniki", " 
@@ -29,7 +32,8 @@ if (isset($_GET["mail"], $_GET["code"])) {
 	$restored = true;
 }
 
-$tmpl = new templater;
-$tmpl->assign("page_title", "Восстановление пароля > Одноконники");
-$tmpl->assign("restored", $restored);
-$tmpl->display("restore.tpl");
+$assigned_vars = array(
+	"page_title"	=> "Восстановление пароля > Одноконники",
+	"restored"		=> $restored
+);
+template_render($assigned_vars, "restore.tpl");

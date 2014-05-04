@@ -19,6 +19,7 @@ function gallery_initialize(parent) {
 /* open modal & change photo function */
 function gallery_open_modal(element, pid) {
 	var mdl = $("#modal-gallery-post");
+	mdl.find("#gallery_full").attr("src", "/images/preloader.gif");
 	active_parent = $(element).closest("[data-gallery-list]");
 	var photo_list = active_parent.attr("data-gallery-list").split(",");
 	var position = photo_list.indexOf(pid);
@@ -31,7 +32,7 @@ function gallery_open_modal(element, pid) {
 	
 	api_query({
 		qmethod: "POST",
-		amethod: "photo_info",
+		amethod: "gallery_photo_info",
 		params: {id : pid},
 		success: function (resp, data) {
 			/* compute next & prev index */
@@ -57,25 +58,42 @@ function gallery_open_modal(element, pid) {
 			}
 
 			/* change values */
-			mdl.find("#gallery_full").attr("src", resp.full);
 			mdl.find("#gallery_desc").text(resp.desc);
 			mdl.find("#gallery_date").text(resp.time);
 			mdl.find("#gallery_author a").text(resp.user_name);
 			mdl.find("#gallery_author a").attr("href", "/user.php?id=" + resp.user_id);
-			mdl.find("#gallery_album").text(resp.album_name);
+			if (resp.album_name !== null) {
+				mdl.find("#gallery_album").text(resp.album_name);
+			} else {
+				mdl.find("#gallery_album").text("Фотографии пользователя '" + resp.user_name + "'")
+			}
 
 			/* bind delete */
 			active_parent.attr("data-gallery-pos", position);
-			mdl.find("#gallery_delete").attr("onclick",  "gallery_photo_delete(" + pid + "); return false;");
+			if (resp.own == 1) {
+				mdl.find("#gallery_delete").attr("onclick",  "gallery_photo_delete(" + pid + "); return false;");
+				mdl.find("#gallery_delete").css("display", "block");
+			} else {
+				mdl.find("#gallery_delete").css("display", "none");
+			}
+			mdl.find("#gallery_full").attr("src", resp.full);
 		},
 		fail: "standart"
 	})
 }
 
 function gallery_photo_delete(pid) {
-	var photo_list = active_parent.attr("data-gallery-list").split(",");
-	photo_list.splice(photo_list.indexOf(pid), 1);
-	active_parent.attr("data-gallery-list", photo_list.join(","));
-	active_parent.find("[data-gallery-pid="+pid+"]").parent().remove();
-	gallery_open_modal(active_parent, photo_list[active_parent.attr("data-gallery-pos")]);
+	api_query({
+		qmethod: "POST",
+		amethod: "gallery_photo_delete",
+		params: {id : pid},
+		success: function (resp) {
+			var photo_list = active_parent.attr("data-gallery-list").split(",");
+			photo_list.splice(photo_list.indexOf(pid), 1);
+			active_parent.attr("data-gallery-list", photo_list.join(","));
+			active_parent.find("[data-gallery-pid="+pid+"]").parent().remove();
+			gallery_open_modal(active_parent, photo_list[active_parent.attr("data-gallery-pos")]);
+		},
+		fail: "standart"
+	});
 }

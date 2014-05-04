@@ -1,4 +1,5 @@
 ﻿{* Smarty *}
+
 <!DOCTYPE html>
 <html lang="ru">
 	<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -29,7 +30,7 @@
 		function logout() {
 			api_query({
 				qmethod: "POST",
-				amethod: "logout",
+				amethod: "auth_logout",
 				success: function (res, data) {
 					document.location.href = data.redirect;
 				},

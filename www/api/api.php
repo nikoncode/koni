@@ -1,10 +1,12 @@
 <?php
 /* Main api file */
 
-/* Include all api modules */
+/* Including functional dependencies */
 include ("../../core/config.php");
 include (LIBRARIES_DIR . "safe_mysql/safemysql.php");
 include (CORE_DIR . "core_includes/validate.php");
+
+/* Including api modules */
 include (CORE_DIR . "api_includes/auth.php");
 include (CORE_DIR . "api_includes/gallery.php");
 

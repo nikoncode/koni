@@ -4,10 +4,10 @@
 function create_album() {
 		api_query({
 			qmethod: "POST",
-			amethod: "create_album",
+			amethod: "gallery_create_album",
 			params: $("#add-edit-album").serialize(),
 			success: function (resp, data) {
-				alert(resp);
+				alert(resp[0]);
 				document.location = data.redirect;
 			},
 			fail: "standart"

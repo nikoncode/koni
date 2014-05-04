@@ -6,10 +6,10 @@
 function sign_up(form) {
 	api_query({
 		qmethod: "POST",
-		amethod: "register",
+		amethod: "auth_register",
 		params:  $(form).serialize(),
 		success: function (response, data) {
-			alert(response);
+			alert(response[0]);
 			document.location.href = data.redirect;
 		},
 		fail:    "standart"

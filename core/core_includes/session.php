@@ -1,21 +1,21 @@
 <?php
 /* This file contains session control functions */
 
-function auth($id) {
+function session_auth($id) {
 	session_name(SESSION_NAME);
 	session_start();
 	$_SESSION["user_id"] = $id;
 	$_SESSION["start_time"] = $_SESSION["last_activity"] = time();
 }
 
-function check($activity = true) {
+function session_check($activity = true) {
 	session_name(SESSION_NAME);
 	session_start();
 	$current_time = time();	
 	if (isset($_SESSION["user_id"])) {
 		/* check session timeout */
 		if ($current_time - $_SESSION["last_activity"] > SESSION_LIFETIME) {
-			logout();
+			session_logout();
 			return false;	
 		} else if ($activity) {
 			$_SESSION["last_activity"] = $current_time;
@@ -28,12 +28,12 @@ function check($activity = true) {
 		} 
 		return true;
 	} else {
-		logout();
+		session_logout();
 		return false;
 	}
 }
 
-function logout() {
+function session_logout() {
 	if (session_id() == "") {
 		session_name(SESSION_NAME);
 		session_start();

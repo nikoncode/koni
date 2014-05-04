@@ -6,10 +6,10 @@
 function restore(e) {
 	api_query({
 		qmethod: "POST",
-		amethod: "pass_restore",
+		amethod: "auth_pass_restore",
 		params: $(e).serialize(),
-		success: function (data) {
-			alert(data);
+		success: function (response) {
+			alert(response[0]);
 		},
 		fail: "standart"
 	});

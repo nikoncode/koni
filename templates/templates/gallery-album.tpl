@@ -5,7 +5,7 @@
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
 			<div class="span6 lthr-border block" style="background-color: #fff">
-				<h3 class="inner-bg">{$album.name}<span class="pull-right"><a href="gallery.php?uid=">назад в галерею</a></span></h3>
+				<h3 class="inner-bg">{$album.name}<span class="pull-right"><a href="gallery.php?id={$user_id}">назад в галерею</a></span></h3>
 				<div class="row">
 					<div class="photos">
 						{if !$another_user}

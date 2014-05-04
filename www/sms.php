@@ -1,10 +1,12 @@
 <?php
+/* Including functional dependencies */
+include_once ("../core/config.php");
+include_once (LIBRARIES_DIR . "smarty/smarty.php");
+include_once (CORE_DIR . "core_includes/templates.php");
+
 /* Logic part of 'sms' page */
-
-include ("../core/config.php");
-include (LIBRARIES_DIR . "smarty/smarty.php");
-
-$tmpl = new templater;
-$tmpl->assign("page_title", "Подтверждение > Одноконники");
-$tmpl->assign("login", $_GET["login"]);
-$tmpl->display("registration_verify.tpl");
+$assigned_vars = array(
+	"page_title" 	=> "Подтверждение > Одноконники",
+	"login" 		=> $_GET["login"] //WARN: POSSIBLE XSS INJECTION, CONFIGURE SMARTY
+);
+template_render($assigned_vars, "registration_verify.tpl");

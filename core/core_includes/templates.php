@@ -3,8 +3,9 @@
 
 /* Including functional dependencies */
 include_once (LIBRARIES_DIR . "safe_mysql/safemysql.php");
+include_once (LIBRARIES_DIR . "smarty/smarty.php");
 
-function tmpl_get_user_info($id) {
+function template_get_user_info($id) {
 	$db = new db;
 	$user = $db->GetRow("SELECT CONCAT(fname, ' ', lname) as fio, 
 								avatar,
@@ -35,7 +36,7 @@ function tmpl_get_user_info($id) {
 	return $user;
 }
 
-function render_template($vars, $template_name) {
+function template_render($vars, $template_name) {
 	$tmpl = new templater;
 	foreach ($vars as $key => $value) {
 		$tmpl->assign($key, $value);
@@ -43,10 +44,10 @@ function render_template($vars, $template_name) {
 	$tmpl->display($template_name);
 }
 
-function render_error($text) { //TO-DO: make errors constant
+function template_render_error($text) { //TO-DO: make errors constant
 	$variables = array(
 		"page_title" => "Ошибка > Одноконники",
 		"error_text" => $text
 	);
-	render_template($variables, "error.tpl");	
+	template_render($variables, "error.tpl");	
 }

@@ -6,7 +6,7 @@
 function sign_in(form) {
 	api_query({
 		qmethod: "POST",
-		amethod: "login",
+		amethod: "auth_login",
 		params: $(form).serialize(),
 		success: function (resp, data) {
 			document.location.href = data.redirect;

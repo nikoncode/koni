@@ -9,7 +9,7 @@
 
 $(function () {
 	$("#gallery-upl").fileupload({
-		url: "/api/api.php?m=upload_gallery_photo&album_id={$album_id}",
+		url: "/api/api.php?m=gallery_upload_photo&album_id={$album_id}",
 		dataType: "json",
 		done: function (e, data) {
 			resp = data.result;
@@ -37,7 +37,7 @@ $(function () {
 function photo_delete(element, photo_id) {
 	api_query({
 		qmethod: "POST",
-		amethod: "photo_delete",
+		amethod: "gallery_photo_delete",
 		params: {id : photo_id},
 		success: function (resp) {
 			$(element).closest(".new-uploaded-img").remove();
@@ -66,7 +66,7 @@ function update_description(form) {
 			{include "modules/sidebar-my-left.tpl"}
 			
 			<div class="span6 lthr-border gallery-upload block" style="background-color: #fff">
-			<h3 class="inner-bg">Загрузка фото в "{$album_name}" <span class="pull-right"><a href="gallery.php">назад в галерею</a></span></h3>
+			<h3 class="inner-bg">Загрузка фото в "{$album_name}" <span class="pull-right"><a href="gallery-album.php?id={$album_id}">назад к альбому</a></span></h3>
 				<div class="row">
 					<div class="span6">
 					
