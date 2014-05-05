@@ -1,6 +1,22 @@
 {* Smarty *}
 {include "modules/header.tpl"}
 <script src="js/gallery.js"></script>
+<script>
+{literal}
+function delete_album(album_id) {
+	api_query({
+		qmethod: "POST",
+		amethod: "gallery_album_delete",
+		params: {id : album_id},
+		success: function (resp, data) {
+			alert(resp[0]);
+			document.location = data.redirect;
+		},
+		fail: "standart"
+	});
+}
+{/literal}
+</script>
 <div class="container gallery-page album-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
@@ -9,8 +25,9 @@
 				<div class="row">
 					<div class="photos">
 						{if !$another_user}
+							{include "modules/modal-add-edit-album.tpl"}
 							<div class="sys-album-btns">
-								<center><a href="gallery-upload.php?id={$album.id}" class="btn btn-warning" id="upload-photos">Добавить фото в этот альбом</a><!--<a class="btn btn-default" href="#modal-add-edit-album" role="button" data-toggle="modal">Изменить альбом</a>--><br/></center>
+								<center><a href="gallery-upload.php?id={$album.id}" class="btn btn-warning" id="upload-photos">Добавить фото в этот альбом</a><a class="btn btn-default" href="#" onclick="view_update_album_form({$album.id});return false;">Изменить</a><a class="btn btn-default" href="#" onclick="delete_album({$album.id});return false;">Удалить</a><br/></center>
 								<hr/>
 							</div>
 						{/if}

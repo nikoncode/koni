@@ -50,8 +50,8 @@ function api_gallery_photo_delete() {
 		aerr(array("Фотография не может быть удалена."));
 	} else {
 		$db->query("DELETE FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
-		unlink(WEB_ROOT_DIR . $image["preview"]);
-		unlink(WEB_ROOT_DIR . $image["full"]);
+		others_delete_file(WEB_ROOT_DIR . $image["preview"]);
+		others_delete_file(WEB_ROOT_DIR . $image["full"]);
 	}
 	aok(array("Фотография была удалена."));
 }
@@ -129,3 +129,59 @@ function api_gallery_update_description() { //TO-DO: optimize
 	aok(array("Описания обновлены."));
 
 }
+
+function api_gallery_album_info() {//GUEST MAY VIEW ALBUM INFO
+	/* validate data*/
+	validate_fields($fields, $_POST, array(), array("id"), array(), $errors, false);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* Getting and returning info*/
+	$db = new db;
+	$info = $db->getRow("SELECT id, name, `desc` FROM albums WHERE id = ?i;", $fields["id"]);
+	if ($info == NULL) {
+		aerr(array("Запрашиваемый альбом не найден."));
+	} else {
+		aok($info);
+	}
+}
+
+function api_gallery_album_update() {
+	/* validate data*/
+	validate_fields($fields, $_POST, array("desc"), array("id", "name"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* updating info */
+	$db = new db;
+	$id = $fields["id"];
+	unset($fields["id"]);
+	$db->query("UPDATE albums SET ?u WHERE id = ?i AND o_uid = ?i;", $fields, $id, $_SESSION["user_id"]);
+	aok(array("Информация обновлена успешно."), "/gallery-album.php?id=" . $id);	
+}
+
+function api_gallery_album_delete() {
+	/* validate data */
+	validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* delete album with all photos */
+	$db = new db;
+	$photos = $db->getAll("SELECT preview, full FROM gallery_photos WHERE o_uid = ?i AND album_id = ?i;", $_SESSION["user_id"], $fields["id"]);
+	if (!empty($photos)) {
+		foreach ($photos as $photo) {
+			others_delete_file(WEB_ROOT_DIR . $photo["preview"]);
+			others_delete_file(WEB_ROOT_DIR . $photo["full"]);
+		}
+		$db->query("DELETE FROM gallery_photos WHERE o_uid = ?i AND album_id = ?i;", $_SESSION["user_id"], $fields["id"]);
+		$db->query("DELETE FROM albums WHERE id = ?i AND o_uid = ?i;", $fields["id"], $_SESSION["user_id"]);
+	}
+	aok(array("Альбом успешно удален."), "/gallery.php");
+}	

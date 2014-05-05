@@ -2,16 +2,48 @@
 
 <script>
 function create_album() {
-		api_query({
-			qmethod: "POST",
-			amethod: "gallery_create_album",
-			params: $("#add-edit-album").serialize(),
-			success: function (resp, data) {
-				alert(resp[0]);
-				document.location = data.redirect;
-			},
-			fail: "standart"
-		});
+	api_query({
+		qmethod: "POST",
+		amethod: "gallery_create_album",
+		params: $("#add-edit-album").serialize(),
+		success: function (resp, data) {
+			alert(resp[0]);
+			document.location = data.redirect;
+		},
+		fail: "standart"
+	});
+}
+
+{literal}
+function view_update_album_form(album_id) {
+	api_query({
+		qmethod: "POST",
+		amethod: "gallery_album_info",
+		params: {id : album_id},
+		success: function (resp, data) {
+			var mdl = $("#modal-add-edit-album");
+			mdl.find("[name=name]").val(resp.name);
+			mdl.find("[name=desc]").val(resp.desc);
+			mdl.find("[name=id]").val(resp.id);
+			mdl.find("form").attr("onsubmit", "update_album();return false;")
+			mdl.modal("show");
+		},
+		fail: "standart"
+	});
+}
+{/literal}
+
+function update_album() {
+	api_query({
+		qmethod: "POST",
+		amethod: "gallery_album_update",
+		params: $("#add-edit-album").serialize(),
+		success: function (resp, data) {
+			alert(resp[0]);
+			document.location = data.redirect;
+		},
+		fail: "standart"
+	});	
 }
 </script>
 <div id="modal-add-edit-album" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true">
@@ -32,6 +64,8 @@ function create_album() {
 								<label class="span3">Описание альбома</label>
 								<textarea class="span6" name="desc" rows="10"></textarea>
 							</div>
+
+							<input type="hidden" name="id" value="" />
 							
 						</div>
 						<hr/>
