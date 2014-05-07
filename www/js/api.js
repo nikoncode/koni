@@ -1,7 +1,7 @@
 console.info("Api.js file loaded");
 
 function api_query(s) {
-	console.info("Api method '%s' called.", s.amethod)
+    console.info("Api method '%s' called.", s.amethod)
     $.ajax({
         type: s.qmethod,
         url: "/api/api.php?m="+s.amethod,
@@ -17,9 +17,9 @@ function api_query(s) {
             else if (s.fail == "standart")
                 for (i=0;i<data.response.length;++i)
                     alert(data.response[i]);
-    }).fail(function () {
+    }).fail(function (jqXHR) {
         if (s.fail && typeof(s.fail) === "function")
-            s.fail(data.response);
+            s.fail(undefined, jqXHR);
         else if (s.fail == "standart")
             alert("Произошла неожиданная ошибка, мы уже ее исправляем.");
     });
