@@ -24,5 +24,5 @@ define("SPHINX_PORT", 1337);
 
 /* Session options */
 define("SESSION_NAME", "ODK");
-define("SESSION_LIFETIME", 300);
+define("SESSION_LIFETIME", 3000000);
 define("SESSION_ID_LIFETIME", 60);

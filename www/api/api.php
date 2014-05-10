@@ -9,6 +9,7 @@ include (CORE_DIR . "core_includes/validate.php");
 /* Including api modules */
 include (CORE_DIR . "api_includes/auth.php");
 include (CORE_DIR . "api_includes/gallery.php");
+include (CORE_DIR . "api_includes/chat.php");
 
 /* Api response function */
 function aok($response, $redirect = NULL) {

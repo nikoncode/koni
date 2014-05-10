@@ -1,57 +1,27 @@
 <?php
-/* Logic part of 'chat.php' page */
-include ("../core/config.php");
-include (LIBRARIES_DIR . "smarty/smarty.php");
-
 /* Including functional dependencies */
+include_once ("../core/config.php");
+include_once (CORE_DIR . "core_includes/templates.php");
 include_once (CORE_DIR . "core_includes/session.php");
 include_once (LIBRARIES_DIR . "safe_mysql/safemysql.php");
 
 $tmpl = new templater;
-if (!check()) {
-	$tmpl->assign("page_title", "Ошибка > Одноконники");
-	$tmpl->assign("error_text", "К сожалению у вас пока нет персональной страницы, или мы вас не опознали. Пожалуйста <a href='/login.php'>войдите</a> или <a href='/reg.php'>зарегистрируйтесь</a>.");
-	$tmpl->display("error.tpl");
-
+if (!session_check()) {
+	template_render_error("К сожалению у вас пока нет персональной страницы, или мы вас не опознали. Пожалуйста <a href='/login.php'>войдите</a> или <a href='/reg.php'>зарегистрируйтесь</a>.");
 } else {
 	$db = new db;
 	/* left sidebar */
-	$user = $db->GetRow("SELECT CONCAT(fname, ' ', lname) as fio, 
-								avatar,
-								work,
-								cid as club_id,
-								(SELECT name FROM CLUBS WHERE id = club_id) as club_name,
-								DATEDIFF(NOW(), bdate) as age,
-								country,
-								city FROM users WHERE id = ?i", $_SESSION["user_id"]);
-	
-	/* Making profs array */
-	if (!empty($user["work"])) {
-		$user["profs"] = explode(",", $user["work"]);
-			unset($user["work"]);
-	}
-
-	/* Making info */
-	$user["age"] = (int)($user["age"] / 365);
-	$user["info"] = $user["age"] . " лет, " . implode(", ", array($user["country"], "г. " . $user["city"]));
-	unset($user["age"]);
-	unset($user["country"]);
-	unset($user["city"]);
-	/* end of ledt sidebar, make function for this shit */
-
-	$another_user = $db->GetRow("SELECT CONCAT(fname, ' ', lname) as fio, 
-								avatar,
-								id FROM users WHERE id = ?i", $_GET["id"]);
-
-	if ($another_user === NULL) {
-		$tmpl->assign("page_title", "Ошибка > Одноконники");
-		$tmpl->assign("error_text", "К сожалению, пользователь с которым вы хотите пообщаться не найден. Пожалуйста вернитесь к <a href='/find-users.php'>поиску</a> или уточните его идентификатор.");
-		$tmpl->display("error.tpl");		
+	$assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]);
+	if (!empty($_GET["id"])) {
+		$assigned_vars["another_user"] = template_get_user_info($_GET["id"]);
+		if ($assigned_vars["another_user"] == NULL) {
+			template_render_error("Такого пользователя не существует. Пожалуйста вернитесь к <a href='/find-users.php'>поиску</a> или уточните его идентификатор.");
+		} else {
+			$assigned_vars["page_title"] = "Чат с '" . $assigned_vars["another_user"]["fio"] . "' > Одноконники";
+			template_render($assigned_vars, "chat.tpl");
+		}	
 	} else {
-		$tmpl->assign("page_title", "Чат с " . $another_user["fio"] . " > Одноконники");
-		$tmpl->assign("user", $user);
-		$tmpl->assign("another_user", $another_user);
-		$tmpl->display("chat.tpl");
+		template_render_error("Такого пользователя не существует. Пожалуйста вернитесь к <a href='/find-users.php'>поиску</a> или уточните его идентификатор.");
 	}
 }
 

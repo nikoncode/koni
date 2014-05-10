@@ -47,10 +47,10 @@ function sign_in(form) {
 		
 		<div class="row">
 			<div class="span2 offset4">
-				<a class="white-color" href="home.php">Забыли пароль?</a>
+				<a class="white-color" href="/restore.php">Забыли пароль?</a>
 			</div>
 			<div class="span2">
-				<a class="white-color" href="reg.php">Зарегистрироваться</a>
+				<a class="white-color" href="/reg.php">Зарегистрироваться</a>
 			</div>
 		</div>	
 </div>
