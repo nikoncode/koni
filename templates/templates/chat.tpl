@@ -4,6 +4,7 @@
 
 <script src="http://koni:1337/socket.io/socket.io.js"></script>
 <script>
+/* add new message to the dialog function */
 function add_message(data) {
 		lastel = $(".chat-window .chat-dialog:last");
 		lastId = lastel.attr("data-uid");
@@ -30,7 +31,13 @@ function add_message(data) {
 		}	
 }
 
-function send () {
+/* send message function */
+function send_message () {
+		var message_text = $("#mtext").val();
+		$("#mtext").val("");
+		if (message_text.replace(/\s+/g,'').length == 0) {
+			return false;
+		}
 		var date;
 		date = new Date();
 		date = date.getUTCFullYear() + '-' +
@@ -40,12 +47,12 @@ function send () {
 		('00' + date.getUTCMinutes()).slice(-2) + ':' + 
 		('00' + date.getUTCSeconds()).slice(-2);
 		socket.emit("send_message", {
-			text: $("#mtext").val(),
+			text: message_text,
 			time: date
 		});
-		$("#mtext").val("");
 }
 
+/* Socket initialize and subscribe to events */
 var socket = io.connect('http://koni:1337');
 socket.on("connect", function () {
 	socket.on("init_load_history", function (data) {
@@ -62,13 +69,10 @@ socket.on("connect", function () {
 });
 
 $(function () {
-	$("#smessage").click(function () {
-		send();
-	});
-
-	$("#mtext").keyup(function (e) {
+	$("#mtext").keydown(function (e) {
 		if (e.keyCode==13) {
-			send();
+			send_message();
+			return false;
 		}
 	});
 });
@@ -84,117 +88,18 @@ $(function () {
 				<h3 class="inner-bg">{$another_user.fio}<span class="pull-right"><a href="/messages.php">Вернуться к диалогам</a></span></h3>
 					<div class="row">
 							
-						<div class="chat-window row">
+						<div class="chat-window row">						
 							
-							<div class="chat-dialog">
-								<div class="row">
-									<div class="chat-user-info span1">
-										<a href="inner.php"><img src="i/sample-ava-1.jpg" class="avatar"></a>
-									</div>
-									<div class="span5">
-										<div class="message">
-											<p class="user-name"><a href="inner.php">Александр Гетманский</a></p>
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-										
-										<div class="message">
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-										
-										<div class="message">
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="chat-dialog">
-								<div class="row">
-									<div class="chat-user-info span1">
-										<a href="inner.php"><img src="i/my-avatar-big.jpg" class="avatar"></a>
-									</div>
-									<div class="span5">
-										<div class="message">
-											<p class="user-name"><a href="inner.php">Иннокентий Смоктуновский</a></p>
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-										
-										<div class="message">
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-										
-										<div class="message">
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="chat-dialog">
-								<div class="row">
-									<div class="chat-user-info span1">
-										<a href="inner.php"><img src="i/sample-ava-1.jpg" class="avatar"></a>
-									</div>
-									<div class="span5">
-										<div class="message">
-											<p class="user-name"><a href="inner.php">Александр Гетманский</a></p>
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-										
-										<div class="message">
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-										
-										<div class="message">
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="chat-dialog">
-								<div class="row">
-									<div class="chat-user-info span1">
-										<a href="inner.php"><img src="i/my-avatar-big.jpg" class="avatar"></a>
-									</div>
-									<div class="span5">
-										<div class="message">
-											<p class="user-name"><a href="inner.php">Иннокентий Смоктуновский</a></p>
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-										
-										<div class="message">
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-										
-										<div class="message">
-											<p class="date">15.02.2013 в 14:11</p>
-											<p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.</p>
-										</div>
-									</div>
-								</div>
-							</div>
 						
 						</div> <!-- chat-window  -->
 						
-						<form class="add-chat-message lthr-bg">
+						<form class="add-chat-message lthr-bg" onsubmit="send_message();return false;">
 							<div class="controls-row">
 								<img src="{$user.avatar}" class="avatar" class="span1">
 								<textarea placeholder="Напишите сообщение" class="span5" id="mtext"></textarea>
 							</div>
 							<div class="controls-row">
-								<input type="submit " value="Отправить" id="smessage" class="btn btn-warning offset1 span2" />
+								<input type="submit" value="Отправить" id="smessage" class="btn btn-warning offset1 span2" />
 							</div>
 						</form>
 							

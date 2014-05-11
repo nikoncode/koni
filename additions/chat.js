@@ -2,9 +2,11 @@
 var io = require('socket.io').listen(1337);
 var http = require("http");
 var mysql = require("mysql");
+var STR = require("string");
 
 
 io.set('log level', 1);
+/* api query option */
 var query_options = {
 	hostname: 'koni',
 	port: 80,
@@ -14,6 +16,8 @@ var query_options = {
 		cookie : ''
 	} 
 };
+
+/* mysql details */
 var mysql_details = {
 	host: 'localhost',
 	user: 'root',
@@ -21,14 +25,14 @@ var mysql_details = {
 	database: 'test'
 };
 
+/* stay a live connection (maybe connection ddos) */
 var connection;
-
 function handleDisconnect() {
 	connection = mysql.createConnection(mysql_details); 
 	connection.connect(function(err) {              
 		if(err) {                                     
 			console.log('error when connecting to db:', err);
-			setTimeout(handleDisconnect, 2000); 
+			setTimeout(handleDisconnect, 5000); 
 		}                                     
 	});                                     
 
@@ -41,7 +45,6 @@ function handleDisconnect() {
 		}
 	});
 }
-
 handleDisconnect();
 
 function generate_room_name(id1, id2) {
@@ -54,6 +57,7 @@ function generate_room_name(id1, id2) {
 io.configure(function () {
 	io.set('authorization', function (handshakeData, callback) {
 		query_options.headers.cookie = handshakeData.headers.cookie;
+		/* request to api */
 		var req = http.request(query_options, function(res) {
 			var all_response = ""; //to store all data
 
@@ -71,10 +75,10 @@ io.configure(function () {
 					resp.response.friend_id = url_parts.query.id;
 					handshakeData.dialog = resp.response;
 					//console.log(handshakeData.user_details);
-					console.log("INFO: AUTH DONE");
+					//console.log("INFO: AUTH DONE"); //DEBUG
 					callback(null, true);
 				} else {
-					console.log("INFO: AUTH FALSE");
+					//console.log("INFO: AUTH FALSE"); //DEBUG
 					callback(null, false);
 					return false;
 				}
@@ -85,19 +89,23 @@ io.configure(function () {
 });
 
 io.sockets.on("connection", function (socket) {
-	console.log(socket.handshake.dialog);
+	//console.log(socket.handshake.dialog);
+	/* getting last messages on connection */
 	connection.query("SELECT messages.text, messages.time, CONCAT(users.fname,' ',users.lname) as fio, avatar, users.id FROM messages LEFT JOIN users ON uid=users.id WHERE (uid='"+socket.handshake.dialog.id+"' AND fid='"+socket.handshake.dialog.friend_id+"') OR (uid='"+socket.handshake.dialog.friend_id+"' AND fid='"+socket.handshake.dialog.id+"') ORDER BY time DESC LIMIT 10", function (err, rows, fields) {
 		socket.emit("init_load_history", rows); //send last message to chat
 		socket.join(socket.handshake.dialog.room_name); //join to room
-		socket.on("send_message", function (data) {
-			console.log("INFO: MESSAGE");
-			data.id = socket.handshake.dialog.id;
-			data.fid = socket.handshake.dialog.friend_id;
-			data.fio = socket.handshake.dialog.fio;
-			data.avatar = socket.handshake.dialog.avatar;
-			io.sockets. in (socket.handshake.dialog.room_name).emit('receive_msg', data);
-			console.log(data);
-			connection.query("INSERT INTO `messages` (`id`, `uid`, `fid`, `text`, `time`) VALUES (NULL, '" + data.id + "', '"+ data.fid + "', '" + data.text + "', '" + data.time + "');");
+		socket.on("send_message", function (data) { //send message event
+			//console.log("INFO: MESSAGE");
+			if (data.text.replace(/\s+/g,'').length !== 0) { //not send empty messages
+				data.id = socket.handshake.dialog.id;
+				data.fid = socket.handshake.dialog.friend_id;
+				data.fio = socket.handshake.dialog.fio;
+				data.avatar = socket.handshake.dialog.avatar;
+				data.text = STR(data.text).escapeHTML().s; //sanitize text
+				io.sockets. in (socket.handshake.dialog.room_name).emit('receive_msg', data); //send to all clients
+				//console.log(data);
+				connection.query("INSERT INTO `messages` (`id`, `uid`, `fid`, `text`, `time`) VALUES (NULL, '" + data.id + "', '"+ data.fid + "', '" + data.text + "', '" + data.time + "');");
+			}	
 		});	
 	});
 });
