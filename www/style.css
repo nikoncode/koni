@@ -681,10 +681,10 @@ ul.user-friends-menu li a{text-decoration: none}
 }
 
 /* modal */
-.modal {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; position: absolute !important}
+.modal {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; }
 .modal form{margin-bottom: 0px}
-.modal.bg-white {background-image:  url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png); background-color: #fff; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x; background-position: left, right, top, bottom; box-shadow: inset 0px 0px 20px #000; position: absolute !important; border: 0}
-.modal-notitle {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg) !important; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; position: absolute !important}
+.modal.bg-white {background-image:  url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png); background-color: #fff; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x; background-position: left, right, top, bottom; box-shadow: inset 0px 0px 20px #000; border: 0}
+.modal-notitle {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg) !important; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; }
 .modal700 {width: 700px; margin-left: -350px}
 .modal800 {width: 816px; margin-left: -408px}
 .modal900 {width: 900px; margin-left: -450px}
@@ -804,8 +804,9 @@ ul.my-news-wall div.post .modal {position: absolute; top: -100px}
 .modal-gallery-post  table.image-info {margin-top: 20px}
 .modal-gallery-post  table.image-info td{padding: 0 5px; vertical-align: top;}
 .modal-gallery-post  table.image-info td div.answer-block {margin-top: 10px; float: left}
-.modal-gallery-post  table.image-info td.info{width: 250px; border-left: 1px #ccc solid}
+.modal-gallery-post  table.image-info td.info{border-left: 1px #ccc solid}
 .modal-gallery-post  table.image-info td.info ul{list-style: none; margin-left: 0}
+.modal-gallery-post  table.image-info td.info li{display: inline-block; margin-right: 20px}
 .modal-gallery-post  table.image-info td.info li p.dt{font-weight: 600}
 .modal-gallery-post  table.image-info td.info p.dd{margin-bottom: 10px; margin-left: 0px}
 .modal-gallery-post  table.image-info.without-descr td.info{width: auto;}

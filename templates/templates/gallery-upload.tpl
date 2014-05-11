@@ -28,8 +28,10 @@ $(function () {
 				alert(resp.response[0]);
 			}
 		}, progressall: function (e, data) {
+            $('.progress .bar').css('display', 'block');
 			var progress = parseInt(data.loaded / data.total * 100, 10);
 			$('.progress .bar').css('width', progress + '%');
+            if(progress == 100) $('.progress .bar').css('display', 'none');
 		}
 	});
 });

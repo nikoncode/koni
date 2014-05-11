@@ -38,7 +38,7 @@ function validate(form) {
 		
 		<div class="row">
 			<div class="span4 offset4">
-				<!--<center><a class="white-color" href="#">Отправить снова?</a></center>-->
+				<center><!--<a class="white-color" href="#">Отправить снова?</a>--> <a class="white-color" href="/login.php">Войти под другим логином</a></center>
 			</div>
 		</div>	
 </div>

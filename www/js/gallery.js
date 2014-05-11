@@ -22,7 +22,7 @@ function gallery_open_modal(element, pid) {
 	mdl.find("#gallery_full").attr("src", "/images/preloader.gif");
 	active_parent = $(element).closest("[data-gallery-list]");
 	var photo_list = active_parent.attr("data-gallery-list").split(",");
-	var position = photo_list.indexOf(pid);
+	var position = photo_list.indexOf(String(pid));
 
 	if (position == -1) {
 		console.warn("All photos deleted.");
