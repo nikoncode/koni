@@ -91,6 +91,30 @@ function api_auth_register() {
 	aok(array("Пользователь успешно зарегистрирован. На вашу почту отправлено письмо, код с которого нужно будет указать далее."), "/sms.php?login={$fields["login"]}");
 }
 
+function api_auth_sms_resend(){
+    validate_fields($fields, $_POST, array(), array(
+        "login",
+    ), array(), $errors, false);
+    $db = new db;
+    $hash = $db->getRow("SELECT hash FROM users WHERE login=?s", $fields["login"]);
+    if ($hash['hash'] != '') {
+        mail($fields["mail"], "Odnokonniki", "
+    	Здравствуйте.
+		Спасибо за регистрацию.
+		Логин: {$fields["login"]}
+		Код подтверждения: {$hash['hash']}
+		Ссылка для подтверждения: http://odnokonniki.ru/sms.php?login={$fields["login"]}
+	");
+        aok(array("Повторное письмо с SMS-кодом отправлено."));
+    }else{
+        $errors[] = "Пользователь с таким логином не найден.";
+    }
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+
+}
+
 function api_auth_sms_validate() {
 	/* Validate data */
 	validate_fields($fields, $_POST, array(), array(

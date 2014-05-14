@@ -15,6 +15,23 @@ function validate(form) {
 		fail:    "standart"
 	})
 }
+function send_sms_form() {
+    $('#sms_form').submit();
+}
+function send_sms(form) {
+    api_query({
+        qmethod: "POST",
+        amethod: "auth_sms_resend",
+        params:  $(form).serialize(),
+        success: function (response, data) {
+            $("#modal-send-sms").modal('show');
+            setTimeout(function(){
+                $("#modal-send-sms").modal('hide');
+            },4000)
+        },
+        fail:    "standart"
+    })
+}
 </script>
 <div class="container login-page main-blocks-area">
 		
@@ -38,9 +55,22 @@ function validate(form) {
 		
 		<div class="row">
 			<div class="span4 offset4">
-				<center><!--<a class="white-color" href="#">Отправить снова?</a>--> <a class="white-color" href="/login.php">Войти под другим логином</a></center>
+				<center>
+                    <form style="display: none;" id="sms_form" method="post" action="#" onsubmit="send_sms(this);return false;"><input type="hidden" name="login" value="{$login}"></form>
+                    <a class="white-color" href="#" onclick="send_sms_form()">Отправить снова?</a>
+                    <br/>
+                    <a class="white-color" href="/login.php">Войти под другим логином</a></center>
 			</div>
 		</div>	
+</div>
+<div id="modal-send-sms" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 >Повторная отправка SMS</h3>
+    </div>
+    <div class="modal-body">
+        <p>Вам повторно выслан SMS-код</p>
+    </div>
 </div>
 
 {include "modules/footer.tpl"}
