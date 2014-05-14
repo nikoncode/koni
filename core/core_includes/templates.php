@@ -11,7 +11,7 @@ function template_get_user_info($id) {
 								avatar,
 								work,
 								cid as club_id,
-								(SELECT name FROM CLUBS WHERE id = club_id) as club_name,
+								(SELECT name FROM clubs WHERE id = club_id) as club_name,
 								DATEDIFF(NOW(), bdate) as age,
 								country,
 								city,
