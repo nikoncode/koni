@@ -96,9 +96,9 @@ function api_auth_sms_resend(){
         "login",
     ), array(), $errors, false);
     $db = new db;
-    $hash = $db->getRow("SELECT hash FROM users WHERE login=?s", $fields["login"]);
+    $hash = $db->getRow("SELECT hash,mail FROM users WHERE login=?s", $fields["login"]);
     if ($hash['hash'] != '') {
-        mail($fields["mail"], "Odnokonniki", "
+        mail($hash["mail"], "Odnokonniki", "
     	Здравствуйте.
 		Спасибо за регистрацию.
 		Логин: {$fields["login"]}
