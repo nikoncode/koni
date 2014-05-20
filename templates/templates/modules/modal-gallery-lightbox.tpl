@@ -24,6 +24,7 @@
 															<li><p class="dt">Альбом:</p>
 															<p class="dd album" id="gallery_album">Запись на стене</p></li>
 															<li><a href="#" id="gallery_delete">Удалить фотографию</a></li>
+															<li><a href="#" id="gallery_change_album">Изменить альбом</a></li>
 														</ul>
 													</td>
 											</table>

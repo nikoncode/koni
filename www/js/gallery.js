@@ -72,9 +72,12 @@ function gallery_open_modal(element, pid) {
 			active_parent.attr("data-gallery-pos", position);
 			if (resp.own == 1) {
 				mdl.find("#gallery_delete").attr("onclick",  "gallery_photo_delete(" + pid + "); return false;");
+				mdl.find("#gallery_change_album").attr("onclick",  "gallery_change_album(" + pid + "," + resp.album_id + "); return false;");
 				mdl.find("#gallery_delete").css("display", "block");
+				mdl.find("#gallery_change_album").css("display", "block");
 			} else {
 				mdl.find("#gallery_delete").css("display", "none");
+				mdl.find("#gallery_change_group").css("display", "none");
 			}
 			mdl.find("#gallery_full").attr("src", resp.full);
 		},
@@ -96,4 +99,13 @@ function gallery_photo_delete(pid) {
 		},
 		fail: "standart"
 	});
+}
+
+function gallery_change_album(pid,album_id) {
+    var mdl = $("#modal-gallery-change-album");
+    mdl.find('#change-photo-id').val(pid);
+    mdl.find('#change-photo-albums option[value="'+album_id+'"]').prop('selected',true);
+    $("#modal-gallery-post").modal("hide");
+    mdl.modal("show");
+
 }
