@@ -1,6 +1,20 @@
 {* Smarty *}
 
 {include "modules/header.tpl"}
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/chosen.css" rel="stylesheet">
+{literal}
+<script>
+    $(document).ready(function()
+    {
+        $(".chosen-select").chosen({no_results_text: "Друг не найден",placeholder_text_single: "Введите имя друга",inherit_select_classes: true});
+        $('#send-message').click(function(){
+            var fid = $('#search-friend').val();
+            window.location = 'chat.php?id='+fid;
+        })
+    });
+</script>
+{/literal}
 <div class="container messages-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
@@ -12,9 +26,15 @@
 				<h3 class="inner-bg">Сообщения<!--<span class="pull-right">3 диалога</span>--></h3>
 					<div class="row">
 						<form class="form-in-messages">
-						<div class="controls controls-row">
-								<input type="text" class="span3 search-query" placeholder="Введите имя друга">
-								<input type="submit" class="btn btn-warning span3" value="Написать сообщение">
+						<div class="controls controls-row" style="overflow: visible">
+                            {if $friends}
+                                <select name="friend" id="search-friend" data-placeholder="Введите имя друга" class="span3 search-query chosen-select">
+                                {foreach $friends as $friend}
+                                    <option value="{$friend.fid}">{$friend.fname} {$friend.lname}</option>
+                                {/foreach}
+                                </select>
+                            {/if}
+								<input type="button" class="btn btn-warning span3" id="send-message" value="Написать сообщение">
 						</div>
 						</form>
 					</div>

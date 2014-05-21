@@ -20,6 +20,13 @@ if (!session_check()) {
 						GROUP BY `lower`,`upper`", $_SESSION["user_id"], $_SESSION["user_id"]);
 	
 	$ids = array();
+
+    $assigned_vars["friends"] = $db->getAll("SELECT u.fname, u.lname, f.fid
+                                                FROM friends AS f
+                                                INNER JOIN users AS u ON ( u.id = f.fid )
+                                                WHERE f.uid = ?i", $_SESSION["user_id"]);
+
+	$ids = array();
 	foreach ($dialogs as $dialog) {
 		$ids[] = $dialog["message_id"];
 	}
