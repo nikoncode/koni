@@ -58,6 +58,8 @@ function gallery_open_modal(element, pid) {
 			}
 
 			/* change values */
+			mdl.find("#gallery_desc").css('display','');
+			mdl.find("#change_description_form").css('display','none');
 			mdl.find("#gallery_desc").text(resp.desc);
 			mdl.find("#gallery_date").text(resp.time);
 			mdl.find("#gallery_author a").text(resp.user_name);
@@ -75,9 +77,12 @@ function gallery_open_modal(element, pid) {
 				mdl.find("#gallery_change_album").attr("onclick",  "gallery_change_album(" + pid + "," + resp.album_id + "); return false;");
 				mdl.find("#gallery_delete").css("display", "block");
 				mdl.find("#gallery_change_album").css("display", "block");
+				mdl.find("#change_description").css("display", "block");
+				mdl.find("#change_description textarea").attr("name", "desc["+pid+"]").html(resp.desc);
 			} else {
 				mdl.find("#gallery_delete").css("display", "none");
 				mdl.find("#gallery_change_group").css("display", "none");
+                mdl.find("#change_description").css("display", "none");
 			}
 			mdl.find("#gallery_full").attr("src", resp.full);
 		},

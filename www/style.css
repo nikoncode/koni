@@ -801,7 +801,7 @@ ul.gallery-in-post li:first-child a > div{width: 350px !important; height: 350px
 div.modal900.modal-gallery-post div.comments ul.comments-lists li.answer-form form.max {background: none}
 div.modal900.modal-gallery-post div.comments ul.comments-lists li.answer-form form.max textarea.answer-message {width: 812px}
 ul.my-news-wall div.post .modal {position: absolute; top: -100px}
-.modal-gallery-post  table.image-info {margin-top: 20px}
+.modal-gallery-post  table.image-info {margin-top: 20px;width:100%}
 .modal-gallery-post  table.image-info td{padding: 0 5px; vertical-align: top;}
 .modal-gallery-post  table.image-info td div.answer-block {margin-top: 10px; float: left}
 .modal-gallery-post  table.image-info td.info{border-left: 1px #ccc solid}
