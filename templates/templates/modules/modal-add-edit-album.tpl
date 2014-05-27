@@ -7,7 +7,6 @@ function create_album() {
 		amethod: "gallery_create_album",
 		params: $("#add-edit-album").serialize(),
 		success: function (resp, data) {
-			alert(resp[0]);
 			document.location = data.redirect;
 		},
 		fail: "standart"
@@ -39,7 +38,6 @@ function update_album() {
 		amethod: "gallery_album_update",
 		params: $("#add-edit-album").serialize(),
 		success: function (resp, data) {
-			alert(resp[0]);
 			document.location = data.redirect;
 		},
 		fail: "standart"

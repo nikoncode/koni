@@ -1,6 +1,7 @@
 {* Smarty *}
 
 {include "modules/header.tpl"}
+{include "modules/modal-info.tpl"}
 <!-- implement fileupload -->
 <script src="js/upload/jquery.ui.widget.js"></script>
 <script src="js/upload/jquery.iframe-transport.js"></script>
@@ -54,7 +55,10 @@ function update_description(form) {
 		amethod: "gallery_update_description",
 		params: $(form).serialize(),
 		success: function (resp) {
-			alert(resp[0]);
+            var mdl = $("#modal-info");
+            mdl.find('#info-block').html(resp[0]);
+            mdl.modal("show");
+            setTimeout(function(){ mdl.modal('hide')},3000);
 		},
 		fail: "standart"
 	})
@@ -102,7 +106,7 @@ function update_description(form) {
 							
 							<div class="row">
 									<button class="btn btn-warning span3" href="#" type="submit">Сохранить</button>
-									<a class="btn btn-default span3" href="#">Отмена</a>
+									<a class="btn btn-default span3" href="gallery-album.php?id={$album_id}">Отмена</a>
 							</div>
 						</form>	
 							

@@ -91,19 +91,21 @@ function gallery_open_modal(element, pid) {
 }
 
 function gallery_photo_delete(pid) {
-	api_query({
-		qmethod: "POST",
-		amethod: "gallery_photo_delete",
-		params: {id : pid},
-		success: function (resp) {
-			var photo_list = active_parent.attr("data-gallery-list").split(",");
-			photo_list.splice(photo_list.indexOf(pid), 1);
-			active_parent.attr("data-gallery-list", photo_list.join(","));
-			active_parent.find("[data-gallery-pid="+pid+"]").parent().remove();
-			gallery_open_modal(active_parent, photo_list[active_parent.attr("data-gallery-pos")]);
-		},
-		fail: "standart"
-	});
+    if(confirm('Вы уверены, что хотите удалить эту фотографию?')){
+        api_query({
+            qmethod: "POST",
+            amethod: "gallery_photo_delete",
+            params: {id : pid},
+            success: function (resp) {
+                var photo_list = active_parent.attr("data-gallery-list").split(",");
+                photo_list.splice(photo_list.indexOf(String(pid)), 1);
+                active_parent.attr("data-gallery-list", photo_list.join(","));
+                active_parent.find("[data-gallery-pid="+pid+"]").parent().remove();
+                gallery_open_modal(active_parent, photo_list[active_parent.attr("data-gallery-pos")]);
+            },
+            fail: "standart"
+        });
+    }
 }
 
 function gallery_change_album(pid,album_id) {
