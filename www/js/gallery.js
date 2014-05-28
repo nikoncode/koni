@@ -35,6 +35,9 @@ function gallery_open_modal(element, pid) {
 		amethod: "gallery_photo_info",
 		params: {id : pid},
 		success: function (resp, data) {
+			mdl.find(".comments_container .comments").remove();
+			mdl.find(".comments_container").append(resp.comments);
+
 			/* compute next & prev index */
 			var next = position + 1, prev = position - 1;
 			if (next >= photo_list.length) {

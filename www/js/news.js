@@ -1,109 +1,147 @@
-/*
-* Это библиотека, для функций, которые нужны 
-*/
+/* news unit file */
+console.info("news.js loaded");
 
-/* Вызов форм редактирования */
-function news_edit(e,nid) {
-	api_query({
-		qmethod: "GET",
-		amethod: "api_get_news_edit_form",
-		params: {"nid": nid},
-		success: function (resp) {
-			container = $(e).closest(".post-rem");
-			container.find(".post").addClass("spoiled");
-			container.prepend(resp[0])
-			container.find(".man-news-tmpl").news_form();
-		},
-		fail: "standart"
-	});
-}
-
-function comment_edit(e,cid) {
-	api_query({
-		qmethod: "GET",
-		amethod: "api_get_comment_edit_form",
-		params: {"cid": cid},
-		success: function (resp) {
-			container = $(e).closest(".comment");
-			container.find(".comment-body").addClass("spoiled");
-			container.append(resp[0]);
-		},
-		fail: "standart"
-	});
-}
-/* Отправка изменненного коментария (для новости плагин jquery.news.plugin.js) */
-function comment_update(e,cid) {
+function news_add(element) {
 	api_query({
 		qmethod: "POST",
-		amethod: "api_comment_edit",
-		params: {
-			"cid": cid,
-			"text": $(e).closest(".comment").find("textarea").val()
+		amethod: "news_add",
+		params:  $(element).serialize(),
+		success: function (data) {
+			$(element).find("textarea").val("");
+			$(element).find("#attach").attr("data-album-id", "0");
+			$(element).find("input[name=album_id]").val("0");
+			$(element).find(".new-uploaded-img").remove();
+			news_form_init($(".add-news:first"));
+			$(".my-news-wall").prepend(data);	
 		},
-		success: function (resp) {
-			$(e).closest(".comment").html(resp[0]);
-		},
-		fail: "standart"
-	});	
+		fail:    "standart"
+	})	
 }
 
-/* Удаление новости и комментария. */
-function news_del(e, nid) {
-	if(confirm('Вы точно хотите удалить эту новость? Вернуть его будет невозможно.'))
+function remove_comment(cid, element) {
+	if (confirm("Действительно хотите удалить?")) {
 		api_query({
-			qmethod: "GET",
-			amethod: "api_news_del",
-			params: {"nid": nid},
-			success: function (resp) {
-				$(e).closest(".post-rem").remove();
+			qmethod: "POST",
+			amethod: "comments_remove",
+			params: {id : cid},
+			success: function (data) {
+				$(element).closest("li.comment").remove();	
 			},
 			fail: "standart"
-		});
-}
-
-function comment_del(e, cid) {
-	if(confirm('Вы точно хотите удалить этот комментарий? Вернуть его будет невозможно.'))
-		api_query({
-			qmethod: "GET",
-			amethod: "api_del_comment",
-			params: {"cid": cid},
-			success: function (resp) {
-				$(e).closest(".comment").remove();
-			},
-			fail: "standart"
-		}); 
-}
-/* отмена редактирования */
-
-function remove_cedit_form(e) {
-	if (confirm("Вы уверены?")) {
-		container = $(e).closest(".comment");
-		container.find(".comments-edit-template").remove();
-		container.find(".comment-body").removeClass("spoiled");
+		})	
 	}
 }
 
-/* форма комментирования для новостей без комментариев */
-
-function comment_form(e) {
-	container = $(e).closest(".post-rem");
-	container.find(".comments.dn").removeClass("dn");
-	container.find(".comments textarea").focus();
+function news_form_init(form) {
+	var element = form.find("#attach");
+	element.fileupload({
+		url: "XXX",
+		dataType: 'json',
+		done: function (e, data) {
+			var result = data.result
+			var response = result.response;
+			if (result.type == "success") {
+				$("<div class='new-uploaded-img span1'> \
+					<img class='img-polaroid' src='" + response.preview + "' /> \
+					<a href='#remove-image' onclick='news_form_delete_att(" + response.id + ", this); return false;'><img class='remove-image-icon' src='images/icon-remove-image.png' /></a> \
+				   </div>").appendTo(form.find(".previews"));
+			} else {
+				for (i = 0;i < response.length; ++i)
+					alert(response[i]);
+			}
+		}, 
+		progressall: function (e, data) {
+			var progress = parseInt(data.loaded / data.total * 100, 10);
+			form.find('.progress .bar').css('width', progress + '%');
+			console.log(form.find('.progress .bar'));
+		},
+		add: function (e, data) {
+			if (element.attr("data-album-id") == "0") {
+				element.attr("disabled", "disabled");
+				api_query({
+					qmethod: "POST",
+					amethod: "gallery_create_album",
+					params: {
+						name: "ATT",
+						att: 1
+					},
+					success: function (resp) {
+						element.attr("data-album-id", resp[0]);
+						form.find("input[name=album_id]").val(resp[0]);
+						element.removeAttr("disabled");
+						data.url = "/api/api.php?m=gallery_upload_photo&album_id=" + resp[0];
+						data.submit();
+					},
+					fail: "standart"
+				});
+			} else {
+				data.url = "/api/api.php?m=gallery_upload_photo&album_id=" + element.attr("data-album-id");
+				data.submit();	
+			}
+		}
+	});	
 }
 
-/* Отправка комментария */
-
-function commentSubmit(e) {
+function news_form_delete_att(photo_id, element) {
 	api_query({
 		qmethod: "POST",
-		amethod: "api_add_comment",
-		params: $(e).serialize(),
+		amethod: "gallery_photo_delete",
+		params: {id : photo_id},
 		success: function (resp) {
-            $(e).parent().before(resp[0]); 
-            $(e).find("textarea").val("");
-            form.find(".replier a").remove();
+			$(element).closest(".new-uploaded-img").remove();
 		},
 		fail: "standart"
-	}); 	
-    return false;
+	})
+
+}
+
+function remove_news(nid, element) {
+	if (confirm("Действительно хотите удалить?")) {
+		api_query({
+			qmethod: "POST",
+			amethod: "news_delete",
+			params: {id : nid},
+			success: function (data) {
+				$(element).closest("li.news-container").remove();	
+			},
+			fail: "standart"
+		})	
+	}
+}
+
+function edit_news_make(nid, element) {
+	api_query({
+		qmethod: "POST",
+		amethod: "news_edit_form",
+		params:  {id : nid},
+		success: function (data) {
+			var post = $(element).closest("div.post");
+			post.css("display", "none");
+			post.before(data[0]);
+			news_form_init(post.prev("div.add-news"));
+		},
+		fail:    "standart"
+	})
+
+}
+
+function edit_news_cancel(element) {
+	var form = $(element).closest("div.add-news");
+	form.next("div.post").css("display", "block");
+	form.remove();
+}
+
+function news_edit(element) {
+	api_query({
+		qmethod: "POST",
+		amethod: "news_edit",
+		params:  $(element).serialize(),
+		success: function (data) {
+			var form = $(element).closest("div.add-news");
+			form.next("div.post").remove();
+			form.before(data[0]);
+			form.remove();	
+		},
+		fail:    "standart"
+	})
 }

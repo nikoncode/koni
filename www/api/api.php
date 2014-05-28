@@ -10,6 +10,11 @@ include (CORE_DIR . "core_includes/validate.php");
 include (CORE_DIR . "api_includes/auth.php");
 include (CORE_DIR . "api_includes/gallery.php");
 include (CORE_DIR . "api_includes/chat.php");
+include (CORE_DIR . "api_includes/friends.php");
+include (CORE_DIR . "api_includes/horses.php");
+include (CORE_DIR . "api_includes/likes.php");
+include (CORE_DIR . "api_includes/comments.php");
+include (CORE_DIR . "api_includes/news.php");
 
 /* Api response function */
 function aok($response, $redirect = NULL) {

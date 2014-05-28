@@ -28,51 +28,8 @@
 													</td>
 											</table>
 										</div>
-										<div class="comments">
-											<ul class="comments-lists" style="display: none;">
-												<li class="comment">
-													<img src="i/avatar-1.jpg" class="avatar" />
-													<p class="user-name"><a href="#">Leon Ramos</a></p>
-													<p class="date">15.02.2013 в 14:11</p>
-													<p class="message">Для того, чтобы быть вместе. Просто быть вместе.</p>
-													<div class="answer-block">
-														<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-													</div>
-												</li>
-												
-												<li class="comment">
-													<img src="i/avatar-2.jpg" class="avatar" />
-													<p class="user-name"><a href="#">Вася Горбунков</a></p>
-													<p class="date">15.02.2013 в 13:11</p>
-													<p class="message"><a href="#" class="comment-reply">Leon, </a>Так трудно, что порой перспектива видится не самым плохим вариантом.</p>
-													<div class="answer-block">
-														<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-													</div>
-												</li>
-												
-												<li class="comment">
-													<img src="i/sample-ava-5.jpg" class="avatar" />
-													<p class="user-name"><a href="#">Эрик Филя</a></p>
-													<p class="date">15.02.2013 в 14:11</p>
-													<p class="message">Для того, чтобы быть вместе. Просто быть вместе. А это ведь трудно, очень трудно, и не только шизофреникам и юродивым. Всем трудно раскрываться, верить, отдавать, считаться, терпеть, понимать. Так трудно, что порой перспектива сдохнуть от одиночества видится не самым плохим вариантом.</p>
-													<div class="answer-block">
-														<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-													</div>
-												</li>
-												
-												<li class="answer-form">
-													<form class="max">
-															<div class="controls-row">
-																<img src="i/my-avatar-big.jpg" class="my-avatar">
-																<textarea type="text" class="answer-message" placeholder="Комментировать..."/></textarea>
-															</div>
-															<div class="controls-row">
-															<input type="submit " value="Отправить" class="btn btn-warning  comment-submit span2">
-															</div>
-														</form>
-												</li>
-												
-											</ul>
+										<div class="comments_container">
+
 										</div>
 </div>
 <!-- //модалка галереи -->

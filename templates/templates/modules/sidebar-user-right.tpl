@@ -1,28 +1,62 @@
 {* Smarty *}
 
+<script type="text/javascript" src="js/friends.js"></script>
+<script>
+function add_to_friend_callback(uid) {
+	add_to_friend(uid, function () {
+		$("#friends-button").attr("onclick", "delete_from_friend_callback(" + uid + ");return false;");
+		$("#friends-button").text("Удалить из друзей");	
+	});
+}
+
+function delete_from_friend_callback(uid) {
+	delete_from_friend(uid, function () {
+			$("#friends-button").attr("onclick", "add_to_friend_callback(" + uid + ");return false;");
+			$("#friends-button").text("Добавить в друзья");
+	});
+}
+</script>
 <div class="span3 lthr-bgborder block">
 	
 	<div class="user-info">
 		<center><a href="/user.php?id={$another_user.id}"><img src="{$another_user.avatar}" class="current-user-avatar" /></a></center>
 		<h2 class="user-name">{$another_user.fio}</h2>
+		<p class="user-info">{$another_user.info}</p>
+		{if $another_user.profs}
+			<ul class="user-profs inline">
+				{foreach $another_user.profs as $prof}
+					<li>{$prof}{if !$prof@last},{/if}</li>
+				{/foreach}
+			</ul>
+		{/if}
+		<p class="user-club">
+			{if $another_user.club_name}
+				Состоит в клубе "<a href="club-sample.php?id={$another_user.club_id}">{$another_user.club_name}</a>"
+			{else}
+				Не состоит в <a href="clubs.php">клубах</a>
+			{/if}
+		</p>
 		<ul class="unstyled user-controls">
-			<li><button class="btn btn-warning" href="/chat.php?id={$another_user.id}"><i class="icon-envelope icon-white"></i> Отправить сообщение</button></li>
-				<li><button class="btn" href="#"><i class="icon-user"></i> Пригласить дружить</button></li>
+			<li><a class="btn btn-warning" href="/chat.php?id={$another_user.id}"><i class="icon-envelope icon-white"></i> Отправить сообщение</a></li>
+			{if $another_user.is_friends}
+				<li><button class="btn" href="#" id="friends-button" onclick="delete_from_friend_callback({$another_user.id});return false;">Удалить из друзей</button></li>
+			{else}
+				<li><button class="btn" href="#" id="friends-button" onclick="add_to_friend_callback({$another_user.id});return false;">Добавить в друзья</button></li>
+			{/if}
 		</ul>
 	</div>
 	
-	<div>
-		<h3 class="inner-bg">Друзья</h3>
-		<ul class="user-friends-menu">
-			<li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" /><p>Эрик Филлимонов </p></a></li>
-			<li><a href="user-sample.php"><img src="i/sample-ava-6.jpg" /><p>Екатерина Мариненко</p></a></li>
-			<li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" /><p>Александр Гетманский</p></a></li>
-			<li><a href="user-sample.php"><img src="i/sample-ava-4.jpg" /><p>Кирилл Комоносов</p></a></li>
-			<li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" /><p>Елена Урановая</p></a></li>
-			<li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" /><p>Наталья Валюженич</p></a></li>		
-		</ul>
-		<div class="clear"></div>
-	</div>
+	{if $another_user.friends}
+		<div>
+			<h3 class="inner-bg">Друзья</h3>
+			<ul class="my-friends-menu">
+				{foreach $another_user.friends as $friend}
+					<li><a href="user-sample.php?id={$friend.id}"><img src="{$friend.avatar}" /><p>{$friend.fio}</p></a></li>
+				{/foreach}
+			</ul>
+			<div class="clear"></div>
+		</div>
+	{/if}
 	
 	<!--<div class="my-awards">
 		<h3 class="inner-bg">Мои награды<span class="pull-right">5 наград</span></h3>
