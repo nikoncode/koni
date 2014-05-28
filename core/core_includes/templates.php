@@ -15,7 +15,8 @@ function template_get_user_info($id) {
 								DATEDIFF(NOW(), bdate) as age,
 								country,
 								city,
-								id FROM users WHERE id = ?i", $id);
+								(SELECT count(id) FROM `friends` WHERE uid = ?i AND fid = users.id) as is_friends,
+								id FROM users WHERE id = ?i", $_SESSION["user_id"], $id);
 
 	if ($user === NULL) 
 		return $user;
@@ -32,6 +33,13 @@ function template_get_user_info($id) {
 	unset($user["age"]);
 	unset($user["country"]);
 	unset($user["city"]);
+
+	$user["friends"] = $db->getAll("SELECT users.id, 
+											CONCAT(fname,' ',lname) as fio, 
+											avatar 
+									FROM users, friends 
+									WHERE users.id = friends.fid 
+									AND friends.uid = ?i LIMIT 6", $id);
 
 	return $user;
 }
@@ -50,4 +58,12 @@ function template_render_error($text) { //TO-DO: make errors constant
 		"error_text" => $text
 	);
 	template_render($variables, "error.tpl");	
+}
+
+function template_render_to_var($vars, $template_name) {
+	$tmpl = new templater;
+	foreach ($vars as $key => $value) {
+		$tmpl->assign($key, $value);
+	}
+	return $tmpl->fetch($template_name);
 }

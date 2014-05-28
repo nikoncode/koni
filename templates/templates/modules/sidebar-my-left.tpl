@@ -1,7 +1,86 @@
+<!-- implement fileupload -->
+<script src="js/upload/jquery.ui.widget.js"></script>
+<script src="js/upload/jquery.iframe-transport.js"></script>
+<script src="js/upload/jquery.fileupload.js"></script>
+<!-- implement jcrop -->
+<script src="js/upload/jquery.Jcrop.min.js"></script>
+<link rel="stylesheet" href="js/upload/jquery.Jcrop.min.css" type="text/css" />
+<script type="text/javascript">
+	var jcrop_api;
+
+	function activate_page(num) {
+		$(".step1").css("display", "none");
+		$(".step2").css("display", "none");
+		$(".step3").css("display", "none");
+		$(".step" + num).css("display", "block");
+	}
+
+	function update_coords(c) {
+		$('.step3 input[name=x1]').val(c.x);
+		$('.step3 input[name=y1]').val(c.y);
+		$('.step3 input[name=x2]').val(c.x2);
+		$('.step3 input[name=y2]').val(c.y2);
+	}
+
+	function crop(el) {
+		api_query({
+			qmethod: "POST",
+			amethod: "gallery_upload_avatar_crop",
+			params:  $(el).serialize(),
+			success: function (data) {
+				$("#avatar").attr("src", data.avatar);
+				$(".my-small-avatar").attr("src", data.avatar);
+				$("#modal-change-avatar").modal("hide");
+			},
+			fail:    "standart"
+		})
+	}
+
+	$(function () {
+		$('#fileupload').fileupload({
+			maxNumberOfFiles: 1,
+			dataType: 'json',
+			done: function (e, data) {
+				var result = data.result
+				if (result.type == "success") {
+					activate_page(3);
+					$("#future-avatar").attr("src", result.response.avatar);
+					$(".step3 input[name=avatar]").val(result.response.avatar);
+					$("#future-avatar").Jcrop({
+						aspectRatio: 1,
+						onChange: update_coords,
+						onSelect: update_coords
+					}, function () { 
+						jcrop_api = this; 
+						jcrop_api.setSelect([10,10,210,210]);
+					});
+				} else {
+					errors = "";
+					for (i = 0;i < result.response.length; ++i)
+						errors += result.response[i] + "<br>";
+					$("#notification").html(errors);
+				}
+			},
+			progressall: function (e, data) {
+				activate_page(2);
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				$('.step2 .progress .bar').css('width', progress + '%' );
+			}
+		});
+
+		$('#modal-change-avatar').on('hidden', function () {
+			activate_page(1);
+			jcrop_api.destroy();
+			$('.step2 .progress .bar').css('width', '0%' );
+			$("#notification").html("Ожидайте загрузки файла.");
+		});
+	});
+</script>
+
 <div class="span3 lthr-bgborder block my-block">
 	<div class="my-actions">
 		<div class="my-avatar-block">
-			<a href="/inner.php"><img src="{$user.avatar}" class="my-avatar" /></a>
+			<a href="/inner.php"><img id="avatar" src="{$user.avatar}" class="my-avatar" /></a>
 			<div class="change-avatar-block">
 				<a href="#modal-change-avatar" role="button" data-toggle="modal">Изменить аватар</a>
 			</div>
@@ -36,11 +115,11 @@
 		</ul>
 	</div>
 	
-	{if $friends_online}
+	{if $user.friends}
 		<div>
-			<h3 class="inner-bg">Друзья онлайн</h3>
+			<h3 class="inner-bg">Друзья</h3>
 			<ul class="my-friends-menu">
-				{foreach $user.friends_online as $friend}
+				{foreach $user.friends as $friend}
 					<li><a href="user-sample.php?id={$friend.id}"><img src="{$friend.avatar}" /><p>{$friend.fio}</p></a></li>
 				{/foreach}
 			</ul>
@@ -72,23 +151,22 @@
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 			<h3 >Изменить аватар</h3>
 	</div>
-	<div class="modal-body step1">
+<div class="modal-body step1">
 			<form class="form-horizontal" action="#">
 				<p>Друзьям будет проще узнать Вас, если Вы загрузите свою настоящую фотографию.</p>
-				<div class="change-avatar-buttons">
-						<input type="file" name="avatar-file" class="avatar-file">
-						 <button type="submit" class="btn btn-warning">Загрузить</button>
-						 <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
-				 </div>
-				 <p class="avatar-descr">Вы можете загрузить изображение в формате JPG, GIF или PNG. Если у Вас возникают проблемы с загрузкой, попробуйте выбрать фотографию меньшего размера.</p>
+				<div class="change-avatar-buttons" style="text-align: center;">
+					<input id="fileupload" type="file" name="avatar" data-url="/api/api.php?m=gallery_upload_avatar">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
+				</div>
+				<p class="avatar-descr">Вы можете загрузить изображение в формате JPG, GIF или PNG. Если у Вас возникают проблемы с загрузкой, попробуйте выбрать фотографию меньшего размера.</p>
 			</form>
 	</div>
 	
-	<div class="modal-body step2">
+	<div class="modal-body step2" style="display: none;">
 			<form class="form-horizontal" action="#">
-				<p><center>Ожидайте загрузки файла.</center></p>
+				<p><center id="notification">Ожидайте загрузки файла.</center></p>
 				<div class="progress progress-striped active">
-					<div class="bar" style="width: 40%;"></div>
+					<div class="bar" style="width: 0%;"></div>
 				</div>
 				<div class="change-avatar-buttons">
 						 <center><button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button></center>
@@ -97,14 +175,20 @@
 			</form>
 	</div>
 	
-	<div class="modal-body step3">
-			<form class="form-horizontal" action="#">
+	<div class="modal-body step3" style="display: none;">
+			<form class="form-horizontal" action="#" onsubmit="crop(this);return false;">
 				<p>Выбранная область будет показываться на Вашей странице.</p>
-				<center><img src="http://odk/i/sample-img-5.jpg" />
-				<div class="change-avatar-buttons">
+				<center>
+					<img src="http://odk/i/sample-img-5.jpg" id="future-avatar" />
+					<div class="change-avatar-buttons">
+						<input type="hidden" name="x1" value="10" />
+						<input type="hidden" name="y1" value="10" />
+						<input type="hidden" name="x2" value="210" />
+						<input type="hidden" name="y2" value="210" />
+						<input type="hidden" name="avatar" value="" />
 						<button type="submit" class="btn btn-warning">Сохранить</button>
-						 <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
-				 </div>
+						<button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
+					 </div>
 				 </center>
 			</form>
 	</div>

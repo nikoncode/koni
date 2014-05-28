@@ -1,6 +1,20 @@
 {* Smarty *}
-
 {include "modules/header.tpl"}
+<script type="text/javascript" src="js/likes.js"></script>
+<script type="text/javascript" src="js/gallery.js"></script>
+<script type="text/javascript" src="js/comments.js"></script>
+<script type="text/javascript" src="js/news.js"></script>
+<script type="text/javascript" src="js/autoload.js"></script>
+<script>
+	$(function () {
+		news_form_init($(".add-news form"));
+		$(".my-news-wall").autoload({
+			id: {$user.id}
+		})
+	})
+</script>
+
+{include "modules/modal-gallery-lightbox.tpl"}
 <div class="container news-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
@@ -28,80 +42,10 @@
 			<div class="clear"></div>
 			<div>
 			<h3 class="inner-bg">Новости</h3>
-			<div class="add-news">
-				<form>
-					<textarea placeholder="Что у вас нового?" class="span6"></textarea>
-					<input type="button " value="Поделиться" class="pull-right btn btn-warning span2" />
-				</form>
-			</div>
+				{include "modules/news-form.tpl"}
 				<ul class="my-news-wall">
-								<li>
-									<div class="post">
-										<img src="i/avatar-1.jpg" class="avatar" />
-										<p class="user-name"><a href="#">Leon Ramos</a></p>
-										<p class="date">15.02.2013 в 14:11</p>
-										<p class="message">Для того, чтобы быть вместе. Просто быть вместе. А это ведь трудно, очень трудно, и не только шизофреникам и юродивым. Всем трудно раскрываться, верить, отдавать, считаться, терпеть, понимать. Так трудно, что порой перспектива сдохнуть от одиночества видится не самым плохим вариантом.</p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-2.jpg" class="avatar" />
-										<p class="user-name"><a href="#">Вася Горбунков</a></p>
-										<p class="date">15.02.2013 в 13:11</p>
-										<p class="message">Так трудно, что порой перспектива видится не самым плохим вариантом.<img src="i/sample-img-1.jpg" /></p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-1.jpg" class="avatar" />
-										<p class="user-name"><a href="#">Leon Ramos</a></p>
-										<p class="date">15.02.2013 в 14:11</p>
-										<p class="message">Для того, чтобы быть вместе. Просто быть вместе.</p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-2.jpg" class="avatar" />
-										<p class="user-name"><a href="#">Вася Горбунков</a></p>
-										<p class="date">15.02.2013 в 13:11</p>
-										<p class="message">Так трудно, что порой перспектива видится не самым плохим вариантом.<img src="i/sample-img-2.jpg" /></p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-2.jpg" class="avatar" />
-										<p class="user-name"><a href="#">Вася Горбунков</a></p>
-										<p class="date">15.02.2013 в 13:11</p>
-										<p class="message">Так трудно, что порой перспектива видится не самым плохим вариантом.<img src="i/sample-img-5.jpg" /></p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-1.jpg" class="avatar" />
-										<p class="user-name"><a href="#">Leon Ramos</a></p>
-										<p class="date">15.02.2013 в 14:11</p>
-										<p class="message">Для того, чтобы быть вместе. Просто быть вместе. А это ведь трудно, очень трудно, и не только шизофреникам и юродивым. Всем трудно раскрываться, верить, отдавать, считаться, терпеть, понимать. Так трудно, что порой перспектива сдохнуть от одиночества видится не самым плохим вариантом.</p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-							</ul>
+					{include "iterations/news_block.tpl"}
+				</ul>
 				</div>
 			</div>
 			
