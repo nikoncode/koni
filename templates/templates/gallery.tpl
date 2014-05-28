@@ -6,6 +6,7 @@
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
 			{include "modules/modal-gallery-lightbox.tpl"}
+			{include "modules/modal-gallery-change-album.tpl"}
 			<div class="span6 lthr-border block" style="background-color: #fff">
 				<h3 class="inner-bg">Галерея</h3>
 				<div class="albums-head">

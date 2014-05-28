@@ -61,6 +61,8 @@ function gallery_open_modal(element, pid) {
 			}
 
 			/* change values */
+			mdl.find("#gallery_desc").css('display','');
+			mdl.find("#change_description_form").css('display','none');
 			mdl.find("#gallery_desc").text(resp.desc);
 			mdl.find("#gallery_date").text(resp.time);
 			mdl.find("#gallery_author a").text(resp.user_name);
@@ -75,9 +77,15 @@ function gallery_open_modal(element, pid) {
 			active_parent.attr("data-gallery-pos", position);
 			if (resp.own == 1) {
 				mdl.find("#gallery_delete").attr("onclick",  "gallery_photo_delete(" + pid + "); return false;");
+				mdl.find("#gallery_change_album").attr("onclick",  "gallery_change_album(" + pid + "," + resp.album_id + "); return false;");
 				mdl.find("#gallery_delete").css("display", "block");
+				mdl.find("#gallery_change_album").css("display", "block");
+				mdl.find("#change_description").css("display", "block");
+				mdl.find("#change_description textarea").attr("name", "desc["+pid+"]").html(resp.desc);
 			} else {
 				mdl.find("#gallery_delete").css("display", "none");
+				mdl.find("#gallery_change_group").css("display", "none");
+                mdl.find("#change_description").css("display", "none");
 			}
 			mdl.find("#gallery_full").attr("src", resp.full);
 		},
@@ -86,17 +94,28 @@ function gallery_open_modal(element, pid) {
 }
 
 function gallery_photo_delete(pid) {
-	api_query({
-		qmethod: "POST",
-		amethod: "gallery_photo_delete",
-		params: {id : pid},
-		success: function (resp) {
-			var photo_list = active_parent.attr("data-gallery-list").split(",");
-			photo_list.splice(photo_list.indexOf(pid), 1);
-			active_parent.attr("data-gallery-list", photo_list.join(","));
-			active_parent.find("[data-gallery-pid="+pid+"]").parent().remove();
-			gallery_open_modal(active_parent, photo_list[active_parent.attr("data-gallery-pos")]);
-		},
-		fail: "standart"
-	});
+    if(confirm('Вы уверены, что хотите удалить эту фотографию?')){
+        api_query({
+            qmethod: "POST",
+            amethod: "gallery_photo_delete",
+            params: {id : pid},
+            success: function (resp) {
+                var photo_list = active_parent.attr("data-gallery-list").split(",");
+                photo_list.splice(photo_list.indexOf(String(pid)), 1);
+                active_parent.attr("data-gallery-list", photo_list.join(","));
+                active_parent.find("[data-gallery-pid="+pid+"]").parent().remove();
+                gallery_open_modal(active_parent, photo_list[active_parent.attr("data-gallery-pos")]);
+            },
+            fail: "standart"
+        });
+    }
+}
+
+function gallery_change_album(pid,album_id) {
+    var mdl = $("#modal-gallery-change-album");
+    mdl.find('#change-photo-id').val(pid);
+    mdl.find('#change-photo-albums option[value="'+album_id+'"]').prop('selected',true);
+    $("#modal-gallery-post").modal("hide");
+    mdl.modal("show");
+
 }

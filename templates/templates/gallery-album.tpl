@@ -4,16 +4,17 @@
 <script>
 {literal}
 function delete_album(album_id) {
-	api_query({
-		qmethod: "POST",
-		amethod: "gallery_album_delete",
-		params: {id : album_id},
-		success: function (resp, data) {
-			alert(resp[0]);
-			document.location = data.redirect;
-		},
-		fail: "standart"
-	});
+    if(confirm('Находящиеся фотографии в этом альбоме, будут удалены вместе с этим альбомом. Вы уверены, что хотите удалить альбом?')){
+        api_query({
+            qmethod: "POST",
+            amethod: "gallery_album_delete",
+            params: {id : album_id},
+            success: function (resp, data) {
+                document.location = data.redirect;
+            },
+            fail: "standart"
+        });
+    }
 }
 {/literal}
 </script>
