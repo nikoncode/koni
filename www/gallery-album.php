@@ -12,9 +12,17 @@ if (!session_check()) {
 	$assigned_vars = array();
 	$assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]);
 	$user_id = $assigned_vars["user"]["id"];
+
 	/* Checking album id */
 	if (isset($_GET["id"])) {
 			$db = new db;
+        $assigned_vars["albums"] = $db->getAll("SELECT 	id,
+													name,
+													`desc`,
+													linked_event,
+													(SELECT name FROM comp WHERE id = linked_event) as linked_event_name,
+													(SELECT preview FROM gallery_photos where album_id=albums.id LIMIT 1) as cover
+											FROM albums WHERE o_uid = ?i", $user_id);
 			$assigned_vars["album"] = $db->getRow("SELECT id, name, `desc`, o_uid FROM albums WHERE id = ?i", $_GET["id"]);
 			if ($assigned_vars["album"] === NULL) {
 				template_render_error("Такого альбома не существует. Мы сожалеем :C");

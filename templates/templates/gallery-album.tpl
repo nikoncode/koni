@@ -18,6 +18,7 @@ function delete_album(album_id) {
 }
 {/literal}
 </script>
+{include "modules/modal-gallery-change-album.tpl"}
 <div class="container gallery-page album-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}

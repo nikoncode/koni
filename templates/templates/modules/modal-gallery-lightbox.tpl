@@ -7,7 +7,10 @@
             amethod: "gallery_update_description",
             params: $(form).serialize(),
             success: function (resp) {
-                alert(resp[0]);
+                var desc = $('#change_description_form textarea').val();
+                $('#change_description_form').css('display','none');
+                $('#gallery_desc').html(desc);
+                $('#gallery_desc').css('display','');
             },
             fail: "standart"
         })
