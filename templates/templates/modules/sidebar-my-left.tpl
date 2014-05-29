@@ -179,7 +179,7 @@
 			<form class="form-horizontal" action="#" onsubmit="crop(this);return false;">
 				<p>Выбранная область будет показываться на Вашей странице.</p>
 				<center>
-					<img src="http://odk/i/sample-img-5.jpg" id="future-avatar" />
+					<img src="i/sample-img-5.jpg" id="future-avatar" />
 					<div class="change-avatar-buttons">
 						<input type="hidden" name="x1" value="10" />
 						<input type="hidden" name="y1" value="10" />

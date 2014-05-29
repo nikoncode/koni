@@ -206,10 +206,9 @@ function api_gallery_album_delete() {
 			others_delete_file(WEB_ROOT_DIR . $photo["full"]);
 		}
 		$db->query("DELETE FROM gallery_photos WHERE o_uid = ?i AND album_id = ?i;", $_SESSION["user_id"], $fields["id"]);
-		$db->query("DELETE FROM albums WHERE id = ?i AND o_uid = ?i;", $fields["id"], $_SESSION["user_id"]);
 	}
+    $db->query("DELETE FROM albums WHERE id = ?i AND o_uid = ?i;", $fields["id"], $_SESSION["user_id"]);
 	aok(array("Альбом успешно удален."), "/gallery.php");
-<<<<<<< HEAD
 }	
 
 function api_gallery_upload_avatar() {
@@ -248,40 +247,35 @@ function api_gallery_upload_avatar_crop() {
 		"y2", 
 		"avatar"
 	), array(), $errors);
-=======
+    /* Crop & resize image */
+    $img = new \abeautifulsite\SimpleImage(WEB_ROOT_DIR . $fields["avatar"]);
+    $img->crop(
+        abs((int)$fields["x1"]),
+        abs((int)$fields["y1"]),
+        abs((int)$fields["x2"]),
+        abs((int)$fields["y2"])
+    )->resize(200,200)->save(WEB_ROOT_DIR . $fields["avatar"]);
+
+    /* update in db */
+    $db = new db;
+    $db->query("UPDATE users SET avatar = ?s WHERE id = ?i", $fields["avatar"], $_SESSION["user_id"]);
+
+    aok(array(
+        "avatar" => $fields["avatar"]
+    ));
 }
 
 function api_gallery_change_photo_album() {
 	/* validate data */
 	validate_fields($fields, $_POST, array(), array("album","photo_id"), array(), $errors);
->>>>>>> 9ccbde551b62974bb05af6ed54b0c3c703a20ce3
 
 	if (!empty($errors)) {
 		aerr($errors);
 	}
 
-<<<<<<< HEAD
-	/* Crop & resize image */
-	$img = new \abeautifulsite\SimpleImage(WEB_ROOT_DIR . $fields["avatar"]);
-	$img->crop(
-		abs((int)$fields["x1"]),
-		abs((int)$fields["y1"]),
-		abs((int)$fields["x2"]),
-		abs((int)$fields["y2"])
-	)->resize(200,200)->save(WEB_ROOT_DIR . $fields["avatar"]);
-
-	/* update in db */
-	$db = new db;
-	$db->query("UPDATE users SET avatar = ?s WHERE id = ?i", $fields["avatar"], $_SESSION["user_id"]);
-
-	aok(array(
-		"avatar" => $fields["avatar"]
-	));
-=======
 	/* delete album with all photos */
 	$db = new db;
     $photo_id = $db->getOne("SELECT id FROM gallery_photos WHERE o_uid = ?i AND id = ?i;", $_SESSION["user_id"], $fields['photo_id']);
     if($photo_id) $db->query("UPDATE gallery_photos SET album_id = ".intval($fields['album'])." WHERE o_uid = ?i AND id = ?i;", $_SESSION["user_id"], $fields['photo_id']);
 	aok(array("Альбом успешно изменен."), "/gallery.php");
->>>>>>> 9ccbde551b62974bb05af6ed54b0c3c703a20ce3
 }
