@@ -44,7 +44,6 @@
 				var result = data.result
 				if (result.type == "success") {
 					activate_page(3);
-					$("#future-avatar").attr("src", result.response.avatar);
 					$(".step3 input[name=avatar]").val(result.response.avatar);
 					$("#future-avatar").Jcrop({
 						aspectRatio: 1,
@@ -52,7 +51,10 @@
 						onSelect: update_coords
 					}, function () { 
 						jcrop_api = this; 
-						jcrop_api.setSelect([10,10,210,210]);
+						jcrop_api.setImage(result.response.avatar, function () {
+							jcrop_api.setSelect([10,10,210,210]);	
+						}); 
+						
 					});
 				} else {
 					errors = "";
@@ -179,7 +181,7 @@
 			<form class="form-horizontal" action="#" onsubmit="crop(this);return false;">
 				<p>Выбранная область будет показываться на Вашей странице.</p>
 				<center>
-					<img src="i/sample-img-5.jpg" id="future-avatar" />
+					<img src="http://placehold.it/1x1" id="future-avatar" />
 					<div class="change-avatar-buttons">
 						<input type="hidden" name="x1" value="10" />
 						<input type="hidden" name="y1" value="10" />
