@@ -31,6 +31,41 @@ function api_horses_add() {
 	aok(array("Конь добавлен C:"));
 }
 
+function api_horses_edit() {
+	/* validate data */
+	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec"),  array("nick",
+		"sex",
+		"poroda",
+		"mast",
+		"byear", 
+		"avatar",
+		"hid"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	$id = $fields["hid"];
+	unset($fields["hid"]);
+
+	/* make parrent */
+	if (isset($fields["pname"], $fields["parent"])) {
+		$fields["parents"] = array();
+		foreach ($fields["parent"] as $key => $value) {
+			$fields["parents"][$fields["pname"][$key]] = $value;
+		}
+		$fields["parents"] = json_encode($fields["parents"]);
+	}
+	unset($fields["parent"]);
+	unset($fields["pname"]);
+	$fields["o_uid"] = $_SESSION["user_id"];
+
+	/* insert to db */
+	$db = new db;
+	$db->query("UPDATE horses SET ?u WHERE id = ?i", $fields, $id);
+	aok(array("Конь изменен C:"));
+}
+
 function api_horses_info() {
 	/* validate data */
 	validate_fields($fields, $_POST, array(), array("id"), array(), $errors);

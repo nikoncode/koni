@@ -12,7 +12,11 @@ function news_add(element) {
 			$(element).find("input[name=album_id]").val("0");
 			$(element).find(".new-uploaded-img").remove();
 			news_form_init($(".add-news:first"));
-			$(".my-news-wall").prepend(data);	
+			$(".my-news-wall").prepend(data);
+			/* init galleries in added posts */
+			$("[data-gallery-list]").each(function () { //TO-DO: performance (fix reinit existing)
+				gallery_initialize(this);
+			});	
 		},
 		fail:    "standart"
 	})	
@@ -140,6 +144,10 @@ function news_edit(element) {
 			var form = $(element).closest("div.add-news");
 			form.next("div.post").remove();
 			form.before(data[0]);
+			/* init galleries in added posts */
+			$("[data-gallery-list]").each(function () { //TO-DO: performance (fix reinit existing)
+				gallery_initialize(this);
+			});	
 			form.remove();	
 		},
 		fail:    "standart"

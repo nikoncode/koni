@@ -15,7 +15,7 @@ function api_news_add() {
 
 	/* filter empty news */
 	if (!isset($fields["text"]) && !isset($fields["album_id"])) {
-		aerr(array("Новость должна содержать либо текст, либо вложения.1"));
+		aerr(array("Новость должна содержать либо текст, либо вложения."));
 	}
 
 	$db = new db;
@@ -46,6 +46,8 @@ function api_news_add() {
 					WHERE o_uid = ?i 
 					AND news.id = LAST_INSERT_ID()
 					AND users.id = o_uid", $_SESSION["user_id"]);
+	$post["photos"] = others_make_photo_array($post["photos"], $post["photo_ids"]);
+	
 	/* render it */
 	$tmpl = new templater;
 	$params = array(
@@ -156,6 +158,8 @@ function api_news_edit() {
 						WHERE o_uid = ?i 
 						AND news.id = ?i
 						AND users.id = o_uid", $_SESSION["user_id"], $fields["id"]);
+	$news["photos"] = others_make_photo_array($news["photos"], $news["photo_ids"]);
+
 	/* render it */
 	$params = array(
 		"post" => $news,

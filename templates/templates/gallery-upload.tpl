@@ -2,10 +2,6 @@
 
 {include "modules/header.tpl"}
 {include "modules/modal-info.tpl"}
-<!-- implement fileupload -->
-<script src="js/upload/jquery.ui.widget.js"></script>
-<script src="js/upload/jquery.iframe-transport.js"></script>
-<script src="js/upload/jquery.fileupload.js"></script>
 <script>
 
 $(function () {
@@ -35,7 +31,7 @@ $(function () {
 			if(progress == 100) $('.progress .bar').css('display', 'none');
 		}
 	});
-});
+}); 
 
 {literal}
 function photo_delete(element, photo_id) {

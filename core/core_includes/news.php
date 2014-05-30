@@ -1,4 +1,6 @@
 <?php
+/* depencies */
+include_once(CORE_DIR . "/core_includes/others.php");
 
 function news_wall_build($user_ids, $start, $count) {
 	$db = new db;
@@ -23,15 +25,7 @@ function news_wall_build($user_ids, $start, $count) {
 	$ids = array();
 	foreach ($news as $post) {
 		$ids[] = $post["id"];
-		if ($post["photos"] != NULL && $post["photo_ids"] != NULL) {
-			$photos = explode(",", $post["photos"]);
-			$photo_ids = explode(",", $post["photo_ids"]);
-			$new_photos = array();
-			foreach ($photo_ids as $key => $value) {
-				$new_photos[$value] = $photos[$key];
-			}
-			$post["photos"] = $new_photos;
-		}
+		$post["photos"] = others_make_photo_array($post["photos"], $post["photo_ids"]);
 		$result[$post["id"]] = $post;
 		$result[$post["id"]]["comments"] = array();
 	}

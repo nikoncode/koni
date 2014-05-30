@@ -19,7 +19,7 @@
 				<div class="horses-list">
 					{if !$another_user}
 						{include "modules/modal-add-horse.tpl"}
-						<center><a href="#modal-add-horse" role="button" data-toggle="modal" class="btn btn-warning">Добавить лошадь</a></center>
+						<center><a href="#" onclick="new_horse_prepare();return false;" class="btn btn-warning">Добавить лошадь</a></center>
 					{/if}
 					{if $horses}
 						{foreach $horses as $horse}

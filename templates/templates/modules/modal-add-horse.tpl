@@ -24,6 +24,15 @@ function new_horse(form) {
 	})
 }
 
+function new_horse_prepare() {
+	$("#modal-add-horse form").attr("onsubmit", "add_horse(this);return false;");
+	$("#modal-add-horse input[type=text]").val("");
+	$("#modal-add-horse input[type=hidden]").val("");
+	$("#modal-add-horse #parents").html("");
+	add_parents();
+	$("#modal-add-horse").modal("show");	
+}
+
 {literal}
 function delete_horse(hid, element) {
 	if (confirm("Вы действительно хотите удалить лошадь?")) {
@@ -62,7 +71,21 @@ function edit_horse_prepare(hid) { //form clear
 					place.find("input").val(value);
 				});
 			}
+			$("#modal-add-horse form").attr("onsubmit", "edit_horse(this);return false;");
+			$("#modal-add-horse input[name=hid]").val(data.id);			
 			$("#modal-add-horse").modal("show");
+		},
+		fail:    "standart"
+	})
+}
+
+function edit_horse(form) {
+	api_query({
+		qmethod: "POST",
+		amethod: "horses_edit",
+		params:  $(form).serialize(),
+		success: function (data) {
+			document.location.reload();
 		},
 		fail:    "standart"
 	})
@@ -143,6 +166,7 @@ function edit_horse_prepare(hid) { //form clear
 								<div class="span3">
 									<img src="http://placehold.it/200x200" />
 									<input name="avatar" type="hidden" value ="http://placehold.it/200x200" /> {*XSS*}
+									<input name="hid" type="hidden" value ="0" /> 
 								</div>
 								<div class="span3 offset1">
 									<p>Главная фотография</p>
