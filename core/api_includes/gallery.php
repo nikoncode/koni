@@ -261,7 +261,7 @@ function api_gallery_upload_avatar_crop() {
     $db->query("UPDATE users SET avatar = ?s WHERE id = ?i", $fields["avatar"], $_SESSION["user_id"]);
 
     aok(array(
-        "avatar" => $fields["avatar"]
+        "avatar" => $fields["avatar"] . "?nocache=" . time()
     ));
 }
 
