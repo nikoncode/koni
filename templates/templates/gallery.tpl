@@ -2,6 +2,7 @@
 
 {include "modules/header.tpl"}
 <script src="js/gallery.js"></script>
+<script src="js/comments.js"></script>
 <div class="container gallery-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}

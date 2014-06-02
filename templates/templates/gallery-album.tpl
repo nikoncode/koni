@@ -1,6 +1,7 @@
 {* Smarty *}
 {include "modules/header.tpl"}
 <script src="js/gallery.js"></script>
+<script src="js/comments.js"></script>
 <script>
 {literal}
 function delete_album(album_id) {
