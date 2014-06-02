@@ -4,6 +4,7 @@ include_once ("../core/config.php");
 include_once (CORE_DIR . "core_includes/templates.php");
 include_once (CORE_DIR . "core_includes/session.php");
 include_once (LIBRARIES_DIR . "safe_mysql/safemysql.php");
+include_once (CORE_DIR . "core_includes/others.php");
 
 /* Logic part of 'horses' page */
 if (!session_check()) {
@@ -17,11 +18,15 @@ if (!session_check()) {
 		$db  = new db;
 		$assigned_vars["horse"] = $db->getRow("SELECT *,
 													(SELECT COUNT(id) FROM comments WHERE hid = horses.id) as comments_cnt,
-													(SELECT avatar FROM users WHERE id = ?i) as user_avatar
+													(SELECT avatar FROM users WHERE id = ?i) as user_avatar,
+													(SELECT GROUP_CONCAT(full) FROM gallery_photos WHERE album_id = horses.album_id) as photos,
+													(SELECT GROUP_CONCAT(id) FROM gallery_photos WHERE album_id = horses.album_id) as photo_ids
 											  FROM horses WHERE id = ?i", $_SESSION["user_id"], $_GET["id"]);
+		$assigned_vars["horse"]["photos"] = others_make_photo_array($assigned_vars["horse"]["photos"], $assigned_vars["horse"]["photo_ids"]);
 		if ($assigned_vars["horse"]  === NULL) {
 			template_render_error("Такой лошади не существует :C");
 		} else {
+			$assigned_vars["page_title"] = "Лошадь '" . $assigned_vars["horse"]["nick"] . "' > Одноконники";
 			$assigned_vars["horse"]["age"] = date("Y", time()) - $assigned_vars["horse"]["byear"];
 			$assigned_vars["horse"]["parents"] = json_decode($assigned_vars["horse"]["parents"], 1);
 			if ($assigned_vars["horse"]["o_uid"] != $_SESSION["user_id"]) {

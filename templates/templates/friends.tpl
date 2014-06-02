@@ -25,11 +25,10 @@ function delete_from_friend_callback(uid, el) {
 			<div class="brackets" id="bra-3"></div>	
 			
 			<div class="span6 lthr-bgborder block" style="background-color: #fff">
-				<h3 class="inner-bg">Друзья <span class="pull-right">4 друга</span></h3>
+				<h3 class="inner-bg">Друзья <!--<span class="pull-right">4 друга</span>--></h3>
 			
 				
 				<div class="tab-pane in active" id="all-friends">
-				{if !$another_user}
 					<div class="row">
 						<form class="form-in-messages">
 						<div class="controls controls-row">
@@ -38,7 +37,6 @@ function delete_from_friend_callback(uid, el) {
 						</div>
 						</form>
 					</div>
-				{/if}
 				<div class="friends-list">
 					{if $friends}
 						{foreach $friends as $friend}	
@@ -55,7 +53,7 @@ function delete_from_friend_callback(uid, el) {
 									<div class="span2 user-info-actions">
 										<ul>
 											<li><a href="chat.php?id={$friend.id}">Написать сообщение</a></li>
-											<li><a href="#" onclick="delete_from_friend_callback({$friend.id}, this);return false;">Убрать из друзей</a></li>
+											{if !$another_user}<li><a href="#" onclick="delete_from_friend_callback({$friend.id}, this);return false;">Убрать из друзей</a></li>{/if}
 										</ul>
 									</div>
 								</div>

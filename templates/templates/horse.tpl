@@ -1,6 +1,7 @@
 {* Smarty *}
 {include "modules/header.tpl"}
-
+<script type="text/javascript" src="/js/gallery.js"></script>
+{include "modules/modal-gallery-lightbox.tpl"}
 <div class="container current-horse-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
@@ -22,7 +23,7 @@
 			<div class="tab-pane in active" id="horse-info">
 				<div class="my-horses">
 					<div class="common-info row">
-						<img src="i/avatar-my-horse-1.jpg" class="avatar-my-horse-top"/>
+						<img src="{$horse.avatar}" class="avatar-my-horse-top"/>
 						<h2 class="my-horse-name">{$horse.nick}</h2>
 						<p class="my-horse-info">{$horse.age} лет ({$horse.byear} г. р.)</p>
 						<ul class="my-horse-award">
@@ -55,7 +56,7 @@
 									<li class="place-birth"><span>Место рождения: </span><a href="/clubs-sample.php">{$horse.bplace}</a></li>
 								{/if}
 								{foreach $horse.parents as $parent}
-									<li class="pedigree-members"><span>{$parent@key}: </span><a href="/horse-sample.php">{$parent}</a></li>
+									<li class="pedigree-members"><span>{$parent@key}: </span><a href="#">{$parent}</a></li>
 								{/foreach}
 							</ul>
 						</div>
@@ -103,7 +104,7 @@
 			
 				<div class="past-events">
 					<h5>Прошедшие соревнования</h5>
-					<form class="form-horizontal"  method="post" action="<?php echo $_SERVER['QUERY_STRING']; ?>">
+					<form class="form-horizontal"  method="post" action="#">
 						<div class="row">	
 						
 							<div class="controls controls-row">
@@ -212,24 +213,21 @@
 			
 			<div class="tab-pane in" id="horse-gallery">
 				<div class="photos">
-					<h5>Фото:</h5>
-					<ul class="photo-wall">
-						<li><img src="i/sample-img-1.jpg" /></li>
-						<li><img src="i/sample-img-2.jpg" /></li>
-						<li><img src="i/sample-img-3.jpg" /></li>
-						<li><img src="i/sample-img-4.jpg" /></li>
-						<li><img src="i/sample-img-5.jpg" /></li>
-						<li><img src="i/sample-img-1.jpg" /></li>
-						<li><img src="i/sample-img-2.jpg" /></li>
-						<li><img src="i/sample-img-3.jpg" /></li>
-						<li><img src="i/sample-img-4.jpg" /></li>
-						<li><img src="i/sample-img-5.jpg" /></li>
+					<h5>Фото: {if !$another_user && $horse.album_id}[<a href="/gallery-upload.php?id={$horse.album_id}">добавить фото</a>]{/if}</h5>
+					<ul class="photo-wall" data-gallery-list="{$horse.photo_ids}">
+						{if $horse.photos}
+							{foreach $horse.photos as $photo} 
+								<li><a href="#" data-gallery-pid="{$photo@key}"><img src="{$photo}" /></a></li>
+							{/foreach}
+						{else}
+							<li>Нет фотографий. </li>
+						{/if}
 					</ul>
 				</div>
 				
 				<div class="clearfix"></div>
 				
-				<div class="photos video-gallery">
+				<div class="photos video-gallery" style="display: none;">
 					<h5>Видео:</h5>
 					<ul class="photo-wall video-wall">
 						<li style="background: url(i/sample-img-1.jpg) center center"><a href="#"><div class="video-thumb">

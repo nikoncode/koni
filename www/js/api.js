@@ -20,7 +20,7 @@ function api_query(s) {
     }).fail(function (jqXHR) {
         if (s.fail && typeof(s.fail) === "function")
             s.fail(undefined, jqXHR);
-        else if (s.fail == "standart")
+        else if (s.fail == "standart" && jqXHR.status != 0)
             alert("Произошла неожиданная ошибка, мы уже ее исправляем.");
     });
 }
