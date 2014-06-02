@@ -41,6 +41,8 @@ function template_get_user_info($id) {
 									WHERE users.id = friends.fid 
 									AND friends.uid = ?i LIMIT 6", $id);
 
+	$user["horses_bar"] = $db->getAll("SELECT * FROM horses WHERE o_uid = ?i LIMIT 2", $id); //BOOM
+
 	return $user;
 }
 
@@ -58,6 +60,7 @@ function template_render_error($text) { //TO-DO: make errors constant
 		"error_text" => $text
 	);
 	template_render($variables, "error.tpl");	
+	exit(); //hook
 }
 
 function template_render_to_var($vars, $template_name) {

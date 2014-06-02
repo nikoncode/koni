@@ -11,6 +11,7 @@ if (!session_check()) {
 		template_render_error("К сожалению у вас пока нет персональной страницы, или мы вас не опознали. Пожалуйста <a href='/login.php'>войдите</a> или <a href='/reg.php'>зарегистрируйтесь</a>.");
 } else {
 	$assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]);
+	$assigned_vars["page_title"] = "Редактирование данных > Одноконники";
 	$db = new db;
 	$assigned_vars["u"] = $db->getRow("SELECT * FROM users WHERE id = ?i", $_SESSION["user_id"]);
 	$temp = explode("-", $assigned_vars["u"]["bdate"]);

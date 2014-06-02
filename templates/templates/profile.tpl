@@ -1,6 +1,19 @@
 {* Smarty *}
 {include "modules/header.tpl"}
+<script>
+function profile_edit(form) {
+	api_query({
+		qmethod: "POST",
+		amethod: "auth_user_change",
+		params: $(form).serialize(),
+		success: function (data) {
+			alert(data[0]);
+		},
+		fail: "standart"
+	})
+}
 
+</script>
 <div class="container profile-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
@@ -17,7 +30,7 @@
 					<li><a href="#balance" data-toggle="tab">Баланс</a></li>
 				</ul>
 				
-				<form class="form-horizontal" id="my-settings">
+				<form class="form-horizontal" id="my-settings" onsubmit="profile_edit(this); return false;">
 				<div id="settingsTabContent" class="tab-content bg-white">
 
 					<div class="tab-pane in active" id="profile">
@@ -50,7 +63,7 @@
 								<div class="controls"><input type="text" placeholder="День" name="bday" value="{$u.bday}"></div>
 								<label class="control-label">Выберите месяц</label>
 								<div class="controls">
-									<select name="bmonth">
+									<select name="bmounth">
 										{foreach $mounths as $mounth}
 											<option value="{$mounth@key}" {if $mounth@key == $u.bmounth}selected="selected"{/if}>{$mounth}</option>
 										{/foreach}

@@ -171,16 +171,17 @@ function api_news_edit() {
 
 function api_news_extra() {
 	/* validate data */
-	validate_fields($fields, $_POST, array(), array("id", "loaded"), array(), $errors);
+	validate_fields($fields, $_POST, array("feed"), array("id", "loaded"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
 	}	
 
 	/* render it */
+	$feed = !empty($fields["feed"]);
 	$params = array(
-		"news" => news_wall_build(array($fields["id"]), $fields["loaded"], 5),
-		"user" => array("id" => $_SESSION["user_id"])
+		"news" => news_wall_build(array($fields["id"]), $fields["loaded"], 5, $feed),
+		"user" => array("id" => $_SESSION["user_id"]) //user_avatar init
 	);
 	$rendered = template_render_to_var($params, "iterations/news_block.tpl");
 	aok(array($rendered));

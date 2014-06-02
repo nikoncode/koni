@@ -2,9 +2,13 @@
 
     var busy = false;
     var cnt = 5;
+    var feed = 0;
+
 
     $.fn.autoload = function( options ) {
         var cont = this;
+        if (options.feed)
+            feed = options.feed;
         $(window).scroll(function () {
             if ($(window).scrollTop() + $(window).height() > cont.height() && !busy) {
                 busy = true;
@@ -13,7 +17,8 @@
                     amethod: "news_extra",
                     params: {
                         "loaded": cnt,
-                        "id": options.id
+                        "id": options.id,
+                        "feed" : feed
                     },
                     success: function (resp) {
                         if (resp == "") {

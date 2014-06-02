@@ -9,7 +9,8 @@
 	$(function () {
 		news_form_init($(".add-news form"));
 		$(".my-news-wall").autoload({
-			id: {$user.id}
+			id: {$user.id},
+			feed: 1
 		})
 	})
 </script>
@@ -23,11 +24,9 @@
 			<div class="brackets" id="bra-3"></div>	
 			
 			<div class="span6 lthr-border block" style="background-color: #fff">
-			{include "modules/horses_bar.tpl" horses_bar=$user.horses_bar horses_bar_id=$user.id}
 			<div class="clear"></div>
 			<div>
 			<h3 class="inner-bg">Новости</h3>
-				{include "modules/news-form.tpl"}
 				<ul class="my-news-wall">
 					{include "iterations/news_block.tpl"}
 				</ul>

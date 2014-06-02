@@ -25,7 +25,7 @@ function new_horse(form) {
 }
 
 function new_horse_prepare() {
-	$("#modal-add-horse form").attr("onsubmit", "add_horse(this);return false;");
+	$("#modal-add-horse form").attr("onsubmit", "new_horse(this);return false;");
 	$("#modal-add-horse input[type=text]").val("");
 	$("#modal-add-horse input[type=hidden]").val("");
 	$("#modal-add-horse #parents").html("");

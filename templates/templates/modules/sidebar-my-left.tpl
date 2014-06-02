@@ -107,7 +107,7 @@
 			<li class="my-news"><a href="inner.php">Моя страница</a></li>
 			<li class="my-news"><a href="news.php">Новости</a></li>
 			<li class="my-messages"><a href="messages.php">Сообщения</a></li>
-			<li class="my-clubs"><a href="groups.php">Группы</a></li>
+			<!--<li class="my-clubs"><a href="groups.php">Группы</a></li>-->
 			<li class="my-events"><a href="events.php">Мероприятия</a></li>
 			<li class="my-contacts"><a href="friends.php">Друзья</a></li>
 			<li class="my-horses"><a href="horses.php">Лошади</a></li>
@@ -122,7 +122,7 @@
 			<h3 class="inner-bg">Друзья</h3>
 			<ul class="my-friends-menu">
 				{foreach $user.friends as $friend}
-					<li><a href="user-sample.php?id={$friend.id}"><img src="{$friend.avatar}" /><p>{$friend.fio}</p></a></li>
+					<li><a href="/user.php?id={$friend.id}"><img src="{$friend.avatar}" /><p>{$friend.fio}</p></a></li>
 				{/foreach}
 			</ul>
 			<div class="clear"></div>

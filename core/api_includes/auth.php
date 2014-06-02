@@ -196,3 +196,74 @@ function api_auth_pass_restore() {
 	}
 	aok(array("Если такой пользователь существует, то ему выслано письмо с подтверждением."));
 }
+
+
+function api_auth_user_change() {
+	/* Validate data */
+	validate_fields($fields, $_POST, array(
+			"site",
+			"work",
+			"passwd1",
+			"passwd2"
+		), array(
+			"fname",
+			"lname",
+			"mname",
+			"bday",
+			"bmounth",
+			"byear",
+			"country",
+			"city",
+			"mail",
+			"phone",
+			"adress"
+		), array(
+			"login" 	=> "login",
+			"passwd1" 	=> "pass",
+			"phone" 	=> "phone",
+			"mail" 		=> "email",
+			"site" 		=> "url"
+		), 
+	$errors);
+
+	/* Checking equality passwords */
+	if (isset($fields["passwd1"]) && isset($fields["passwd1"]) && $fields["passwd1"] != $fields["passwd2"]) {
+		$errors[] = "Пароли не совпадают.";
+	}
+
+	/* Checking user birthdate */
+	if (!checkdate($fields["bmounth"], $fields["bday"], $fields["byear"])) {
+		$errors[] = "Дата рождения неверна.";
+	}
+
+	if (!empty($errors)) {
+		aerr($errors); 
+	}
+
+	/* Hashing password */
+	if (isset($fields["passwd1"]) && isset($fields["passwd1"])) {
+		$fields["password"] = password_hash($fields["passwd1"], PASSWORD_DEFAULT);
+	}
+	unset($fields["passwd1"]); 
+	unset($fields["passwd2"]);	
+
+	/* Making MYSQL dbate */
+	$fields["bdate"] = (int)$fields["byear"] . "-" . (int)$fields["bmounth"] . "-" . (int)$fields["bday"];
+	unset($fields["byear"]); 
+	unset($fields["bmounth"]);	
+	unset($fields["bday"]); 	
+
+	/* Making MYSQL work set */
+	if (isset($fields["work"])){
+		$fields["work"] = implode(",", $fields["work"]);
+	}
+
+	/* Insert to db */
+	$db = new db;
+	$db->query("UPDATE users SET ?u WHERE id = ?i", $fields, $_SESSION["user_id"]);
+
+	/* Mail client details to user */
+
+
+	aok(array("Данные изменены"));
+}

@@ -2,12 +2,11 @@
 
 function api_horses_add() {
 	/* validate data */
-	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec"),  array("nick",
+	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec", "avatar"),  array("nick",
 		"sex",
 		"poroda",
 		"mast",
-		"byear", 
-		"avatar"), array(), $errors);
+		"byear"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -27,6 +26,8 @@ function api_horses_add() {
 
 	/* insert to db */
 	$db = new db;
+	$db->query("INSERT INTO albums (name, o_uid, att) VALUES (?s, ?i, 1)", $fields["nick"], $_SESSION["user_id"]);
+	$fields["album_id"] = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
 	$db->query("INSERT INTO horses (`" . implode("`, `", array_keys($fields)) . "`) VALUES (?a);", $fields);
 	aok(array("Конь добавлен C:"));
 }
