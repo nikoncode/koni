@@ -8,23 +8,24 @@ function api_auth_register() {
 	/* Validate data */
 	validate_fields($fields, $_POST, array(
 			"site",
+            "mname",
 			"work"
 		), array(
-			"login",
-			"passwd1",
-			"passwd2",
-			"fname",
-			"lname",
-			"mname",
-			"bday",
-			"bmounth",
-			"byear",
-			"country",
-			"city",
-			"mail",
-			"phone",
-			"adress",
-			"accept"
+			"login|Ваш логин",
+			"passwd1|Ваш пароль",
+			"passwd2|Подтверждение пароля",
+			"fname|Имя",
+			"lname|Фамилия",
+
+			"bday|День рождения",
+			"bmounth|Месяц рождения",
+			"byear|Год рождения",
+			"country|Страна",
+			"city|Город",
+			"mail|E-mail",
+			"phone|Телефон",
+			"adress|Улица, дом",
+			"accept|Я согласен с условиями портала"
 		), array(
 			"login" 	=> "login",
 			"passwd1" 	=> "pass",
@@ -39,8 +40,23 @@ function api_auth_register() {
 		$errors[] = "Пароли не совпадают.";
 	}
 
+
+
 	/* Checking uniqueness Login & password pair */
 	$db = new db;
+
+    $country = $db->getRow("SELECT country_name_ru FROM country_ WHERE id=?i", $fields["country"]);
+    $city = $db->getRow("SELECT city_name_ru FROM city_ WHERE id=?i", $fields["city"]);
+    if(!isset($country['country_name_ru'])){
+        $errors[] = "Не выбрана страна.";
+    }else{
+        $fields['country'] = $country['country_name_ru'];
+    }
+    if(!isset($city['city_name_ru'])){
+        $errors[] = "Не выбран город.";
+    }else{
+        $fields['city'] = $city['city_name_ru'];
+    }
 	$check_uniq = $db->getOne("SELECT id FROM users WHERE mail=?s OR login=?s", $fields["mail"], $fields["login"]);
 	if ($check_uniq !== false) {
 		$errors[] = "Пользователь с таким логином или почтой уже зарегистрирован.";
@@ -89,6 +105,22 @@ function api_auth_register() {
 	");
 
 	aok(array("Пользователь успешно зарегистрирован. На вашу почту отправлено письмо, код с которого нужно будет указать далее."), "/sms.php?login={$fields["login"]}");
+}
+
+function api_auth_get_city(){
+    validate_fields($fields, $_POST, array(), array(
+        "country_id",
+    ), array(), $errors, false);
+    $db = new db;
+    $cities = $db->getAll("SELECT id,city_name_ru
+                                                FROM city_
+                                                WHERE id_country = ?i
+                                                ORDER BY oid",$fields['country_id']);
+    $city = '';
+    foreach($cities as $row){
+        $city .= '<option value="'.$row['id'].'">'.$row['city_name_ru'].'</option>';
+    }
+    aok($city, "");
 }
 
 function api_auth_sms_resend(){

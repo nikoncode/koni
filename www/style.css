@@ -681,7 +681,7 @@ ul.user-friends-menu li a{text-decoration: none}
 }
 
 /* modal */
-.modal {position: absolute; background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; }
+.modal {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; }
 .modal form{margin-bottom: 0px}
 .modal.bg-white {background-image:  url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png); background-color: #fff; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x; background-position: left, right, top, bottom; box-shadow: inset 0px 0px 20px #000; border: 0}
 .modal-notitle {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg) !important; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; }

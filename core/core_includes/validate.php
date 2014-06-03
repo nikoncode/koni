@@ -10,7 +10,14 @@ function validate_fields(&$result, $array, $fields, $required, $filters, &$error
 	}
 
 	$result = array();
-	$all_fields = array_merge($fields, $required);
+    $clear_required = array();
+    foreach ($required as $value) {
+        $tmp = explode('|',$value);
+        $clear_required[] = $tmp[0];
+    }
+
+	$all_fields = array_merge($fields, $clear_required);
+
 	foreach ($array as $key => $value) {
 		/* remove all non empty values from array & sub array */
 		if (is_array($value)) {
@@ -24,6 +31,7 @@ function validate_fields(&$result, $array, $fields, $required, $filters, &$error
 		/* step first: fill array to requested fields */ 
 		if (!empty($value)) {
 			if (in_array($key, $all_fields)) {
+
 				$result[$key] = $value;
 			}
 		}
@@ -31,9 +39,17 @@ function validate_fields(&$result, $array, $fields, $required, $filters, &$error
 
 	/* step two: check required field */
 	foreach ($required as $value) {
-		if (!array_key_exists($value, $result)) {
-			$errors[] = "Обязательное поле '{$value}' пустует.";
-		}
+        $tmp = explode('|',$value);
+        if(isset($tmp[1])){
+            if (!array_key_exists($tmp[0], $result)) {
+                $errors[] = "Обязательное поле '{$tmp[1]}' пустует.";
+            }
+        }else{
+            if (!array_key_exists($tmp[0], $result)) {
+                $errors[] = "Обязательное поле '{$tmp[0]}' пустует.";
+            }
+        }
+
 	}
 
 	/* step three: validate fields */

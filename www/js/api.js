@@ -8,15 +8,24 @@ function api_query(s) {
         dataType: "json",
         data: s.params
     }).done(function (data) {
+            var respon = '';
         if (data.type == "success") {
             if (s.success)
                 s.success(data.response, data);
         } else if (data.type == "error") 
             if (s.fail && typeof(s.fail) === "function")
                 s.fail(data.response, data);
-            else if (s.fail == "standart")
-                for (i=0;i<data.response.length;++i)
-                    alert(data.response[i]);
+            else if (s.fail == "standart"){
+                for (i=0;i<data.response.length;++i) respon += data.response[i]+'<br/>';
+                var mdl = $("#modal-info");
+                mdl.find('#info-block').html(respon);
+                mdl.modal("show");
+                setTimeout(function(){
+                    mdl.modal('hide');
+                },4000);
+                //alert(respon);
+            }
+
     }).fail(function (jqXHR) {
         if (s.fail && typeof(s.fail) === "function")
             s.fail(undefined, jqXHR);

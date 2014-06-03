@@ -1,7 +1,12 @@
 {* Smarty *}
 {include "modules/header-mini.tpl"}
 
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/chosen.css" rel="stylesheet">
+{literal}
 <script>
+
+
 /* Send to api function */
 function sign_up(form) {
 	api_query({
@@ -18,6 +23,17 @@ function sign_up(form) {
 
 /* Autocomplete phone numbers */
 function change_country(select) {
+    var country = $('.chosen-country option:selected').val();
+    api_query({
+        qmethod: "POST",
+        amethod: "auth_get_city",
+        params:  {country_id:country},
+        success: function (response, data) {
+            $('select.chosen-city').html(response);
+            $(".chosen-city").trigger("chosen:updated");
+        },
+        fail:    "standart"
+    })
 	phone = $("input[name=phone]");
 	country = $(select).val();
 	if (country == "Беларусь") phone.val("+375");
@@ -25,9 +41,13 @@ function change_country(select) {
 	else if(country == "Украина") phone.val("+380");
 	else phone.val("");
 }
-
+$(document).ready(function()
+{
+    $(".chosen-select").chosen({no_results_text: "Не найдено по запросу",placeholder_text_single: "Выберите страну",inherit_select_classes: true});
+    change_country();
+});
 </script>
-
+{/literal}
 <div class="container reg-page main-blocks-area">
 		
 	<div class="row">
@@ -67,15 +87,17 @@ function change_country(select) {
 								<input type="text" class="span2" placeholder="Год" name="byear">
 							</div>
 							
-							<div class="controls controls-row">
+							<div class="controls controls-row" style="overflow: visible">
 								<label class="span6">Ваши контактные данные</label>
 								<label class="span6"><small class="muted">Прим: все ваши контактные данные конфиденциальны, нужны лишь для удобства пользования сайтом и не передаются третьим лицам.</small></label>
-								<select class="span3" name="country" onchange="change_country(this);">
+								<select class="span3 chosen-country chosen-select" name="country" onchange="change_country(this);">
 									{foreach $const_countries as $country}
-										<option value="{$country}">{$country}</option>
+										<option value="{$country.id}">{$country.country_name_ru}</option>
 									{/foreach}
-							   </select>
-								<input type="text" class="span3" placeholder="Город *" name="city">
+							    </select>
+                                <select class="span3 chosen-city chosen-select" name="city">
+
+                                </select>
 								<input type="text" class="span3" placeholder="E-mail *" name="mail">
 								<input type="text" class="span3" placeholder="Номер телефона *" name="phone" value="+7">
 								<input type="text" class="span3" placeholder="Улица и дом *" name="adress">

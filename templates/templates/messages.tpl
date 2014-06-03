@@ -33,8 +33,9 @@
                                     <option value="{$friend.fid}">{$friend.fname} {$friend.lname}</option>
                                 {/foreach}
                                 </select>
-                            {/if}
+
 								<input type="button" class="btn btn-warning span3" id="send-message" value="Написать сообщение">
+                            {/if}
 						</div>
 						</form>
 					</div>

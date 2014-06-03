@@ -15,12 +15,10 @@ $const_mounth = array(
 	11 => "ноябрь",
 	12 => "декабрь"
 );
-
-$const_countries = array(
-	"Россия",
-	"Беларусь",
-	"Украина"
-);
+$db = new db;
+$const_countries = $db->getAll("SELECT id,country_name_ru
+                                                FROM country_
+                                                ORDER BY country_name_ru");
 
 $const_work = array(
 	"Тренер",

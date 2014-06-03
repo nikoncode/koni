@@ -24,7 +24,7 @@
  </head>
 
 <body>
-
+{include "modules/modal-info.tpl"}
 <header class="header-mini">
 	<div class="pre-main-menu">
 		<div class="container">
