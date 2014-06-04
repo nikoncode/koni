@@ -64,7 +64,7 @@ function validate_fields(&$result, $array, $fields, $required, $filters, &$error
 }
 
 function validate_login($login) {
-	if (preg_match("/^[a-zA-Z][A-Za-z0-9_]{4,20}$/", $login) == 0) 
+	if (preg_match("/^[a-zA-Z][A-Za-z0-9_]{3,20}$/", $login) == 0)
 		return false;
 	else
 		return true;

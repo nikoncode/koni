@@ -123,6 +123,19 @@ function api_auth_get_city(){
     aok($city, "");
 }
 
+function api_auth_check_login(){
+    validate_fields($fields, $_POST, array(), array(
+        "login",
+    ), array(), $errors, false);
+    $db = new db;
+    $check_uniq = $db->getOne("SELECT id FROM users WHERE login=?s", $fields["login"]);
+    if ($check_uniq !== false) {
+        aerr(array("Пользователь с таким логином уже зарегистрирован."));
+    }else{
+        aok(array("Логин свободен."));
+    }
+}
+
 function api_auth_sms_resend(){
     validate_fields($fields, $_POST, array(), array(
         "login",

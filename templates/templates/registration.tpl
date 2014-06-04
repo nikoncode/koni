@@ -45,6 +45,30 @@ $(document).ready(function()
 {
     $(".chosen-select").chosen({no_results_text: "Не найдено по запросу",placeholder_text_single: "Выберите страну",inherit_select_classes: true});
     change_country();
+
+    $('input.password,input.password2').blur(function(){
+        var psw = $('.password').val();
+        var psw2 = $('.password2').val();
+        if(psw != psw2) {
+            $('.password').css('background','#D9534F');
+            $('.password2').css('background','#D9534F');
+        }else{
+            $('.password').css('background','');
+            $('.password2').css('background','');
+        }
+    });
+    $('input.login').blur(function(){
+        var login = $(this).val();
+        api_query({
+            qmethod: "POST",
+            amethod: "auth_check_login",
+            params:  {login:login},
+            success: function (response, data) {
+                //alert(response[0]);
+            },
+            fail:    "standart"
+        })
+    });
 });
 </script>
 {/literal}
@@ -60,19 +84,19 @@ $(document).ready(function()
 							
 							<div class="controls controls-row">
 							<label class="span7">Ваш логин: <span class="req">*</span></label>
-							<input type="text" class="span6" placeholder="Введите ваш логин" name="login">
+							<input type="text" class="span6 login" placeholder="Введите ваш логин" name="login">
 							</div>
 							
 							<div class="controls controls-row">
 								<label class="span7">Ваш пароль: <span class="req">*</span></label>
-								<input type="password" class="span3" placeholder="Введите пароль" name="passwd1">
-								<input type="password" class="span3 offset1" placeholder="Повторите пароль" rel="tooltip" data-placement="bottom" data-original-title="Проверьте правильность ввода паролей" name="passwd2">
+								<input type="password" class="span3 password" placeholder="Введите пароль" name="passwd1"><a href="#" class="question icon-question-sign" title="Пароль должен состоять из букв и цифр (не менее 8 символов)"></a>
+								<input type="password" class="span3 password2" placeholder="Повторите пароль" rel="tooltip" data-placement="bottom" data-original-title="Проверьте правильность ввода паролей" name="passwd2">
 							</div>
 							
 							<div class="controls controls-row">
 								<label class="span7">Как вас зовут? <span class="req">*</span></label>
 								<input type="text" class="span3" placeholder="Имя" name="fname">
-								<input type="text" class="span3 offset1" placeholder="Фамилия" name="lname">
+								<input type="text" class="span3" placeholder="Фамилия" name="lname">
 								<input type="text" class="span3" placeholder="Отчество" name="mname">
 							</div>
 							

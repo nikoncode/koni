@@ -18,7 +18,7 @@ $const_mounth = array(
 $db = new db;
 $const_countries = $db->getAll("SELECT id,country_name_ru
                                                 FROM country_
-                                                ORDER BY country_name_ru");
+                                                ORDER BY oid ASC");
 
 $const_work = array(
 	"Тренер",
