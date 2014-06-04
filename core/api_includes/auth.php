@@ -27,11 +27,11 @@ function api_auth_register() {
 			"adress|Улица, дом",
 			"accept|Я согласен с условиями портала"
 		), array(
-			"login" 	=> "login",
-			"passwd1" 	=> "pass",
-			"phone" 	=> "phone",
-			"mail" 		=> "email",
-			"site" 		=> "url"
+			"login|Ваш логин" 	=> "login",
+			"passwd1|Ваш пароль" 	=> "pass",
+			"phone|Телефон" 	=> "phone",
+			"mail|E-mail" 		=> "email",
+			"site|Ваш сайт" 		=> "url"
 		), 
 	$errors, false);
 
@@ -108,7 +108,7 @@ function api_auth_register() {
 }
 
 function api_auth_get_city(){
-    validate_fields($fields, $_POST, array(), array(
+    validate_fields($fields, $_POST, array("city"), array(
         "country_id",
     ), array(), $errors, false);
     $db = new db;
@@ -118,7 +118,8 @@ function api_auth_get_city(){
                                                 ORDER BY oid",$fields['country_id']);
     $city = '';
     foreach($cities as $row){
-        $city .= '<option value="'.$row['id'].'">'.$row['city_name_ru'].'</option>';
+        $selected = ($row['city_name_ru'] == $fields['city'])?'selected="selected"':'';
+        $city .= '<option value="'.$row['id'].'" '.$selected.'>'.$row['city_name_ru'].'</option>';
     }
     aok($city, "");
 }
@@ -245,32 +246,29 @@ function api_auth_pass_restore() {
 
 function api_auth_user_change() {
 	/* Validate data */
-	validate_fields($fields, $_POST, array(
-			"site",
-			"work",
-			"passwd1",
-			"passwd2"
-		), array(
-			"fname",
-			"lname",
-			"mname",
-			"bday",
-			"bmounth",
-			"byear",
-			"country",
-			"city",
-			"mail",
-			"phone",
-			"adress"
-		), array(
-			"login" 	=> "login",
-			"passwd1" 	=> "pass",
-			"phone" 	=> "phone",
-			"mail" 		=> "email",
-			"site" 		=> "url"
-		), 
-	$errors);
-
+    validate_fields($fields, $_POST, array(
+            "site",
+            "mname",
+            "work"
+        ), array(
+            "fname|Имя",
+            "lname|Фамилия",
+            "bday|День рождения",
+            "bmounth|Месяц рождения",
+            "byear|Год рождения",
+            "country|Страна",
+            "city|Город",
+            "mail|E-mail",
+            "phone|Телефон",
+            "adress|Улица, дом"
+        ), array(
+            "login|Ваш логин" 	=> "login",
+            "passwd1|Ваш пароль" 	=> "pass",
+            "phone|Телефон" 	=> "phone",
+            "mail|E-mail" 		=> "email",
+            "site|Ваш сайт" 		=> "url"
+        ),
+        $errors);
 	/* Checking equality passwords */
 	if (isset($fields["passwd1"]) && isset($fields["passwd1"]) && $fields["passwd1"] != $fields["passwd2"]) {
 		$errors[] = "Пароли не совпадают.";
@@ -281,9 +279,7 @@ function api_auth_user_change() {
 		$errors[] = "Дата рождения неверна.";
 	}
 
-	if (!empty($errors)) {
-		aerr($errors); 
-	}
+
 
 	/* Hashing password */
 	if (isset($fields["passwd1"]) && isset($fields["passwd1"])) {
@@ -305,6 +301,21 @@ function api_auth_user_change() {
 
 	/* Insert to db */
 	$db = new db;
+    $country = $db->getRow("SELECT country_name_ru FROM country_ WHERE id=?i", $fields["country"]);
+    $city = $db->getRow("SELECT city_name_ru FROM city_ WHERE id=?i", $fields["city"]);
+    if(!isset($country['country_name_ru'])){
+        $errors[] = "Не выбрана страна.";
+    }else{
+        $fields['country'] = $country['country_name_ru'];
+    }
+    if(!isset($city['city_name_ru'])){
+        $errors[] = "Не выбран город.";
+    }else{
+        $fields['city'] = $city['city_name_ru'];
+    }
+    if (!empty($errors)) {
+        aerr($errors);
+    }
 	$db->query("UPDATE users SET ?u WHERE id = ?i", $fields, $_SESSION["user_id"]);
 
 	/* Mail client details to user */

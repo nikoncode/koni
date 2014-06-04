@@ -40,24 +40,26 @@ function validate_fields(&$result, $array, $fields, $required, $filters, &$error
 	/* step two: check required field */
 	foreach ($required as $value) {
         $tmp = explode('|',$value);
-        if(isset($tmp[1])){
-            if (!array_key_exists($tmp[0], $result)) {
+        if (!array_key_exists($tmp[0], $result)) {
+            if(isset($tmp[1])){
                 $errors[] = "Обязательное поле '{$tmp[1]}' пустует.";
-            }
-        }else{
-            if (!array_key_exists($tmp[0], $result)) {
+            }else{
                 $errors[] = "Обязательное поле '{$tmp[0]}' пустует.";
             }
         }
-
 	}
 
 	/* step three: validate fields */
 	foreach ($filters as $key => $value) {
-		if (isset($result[$key])) {
+        $tmp = explode('|',$key);
+		if (isset($result[$tmp[0]])) {
 			$validate_function = "validate_" . $value;
-			if (!$validate_function($result[$key])) {
-				$errors[] = "Поле '{$key}' не соответствует формату.";
+			if (!$validate_function($result[$tmp[0]])) {
+                if(isset($tmp[1])){
+                    $errors[] = "Поле '{$tmp[1]}' не соответствует формату.";
+                }else{
+                    $errors[] = "Поле '{$tmp[0]}' не соответствует формату.";
+                }
 			}
 		}
 	}

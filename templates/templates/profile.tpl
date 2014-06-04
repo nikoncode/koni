@@ -1,19 +1,81 @@
 {* Smarty *}
 {include "modules/header.tpl"}
-<script>
-function profile_edit(form) {
-	api_query({
-		qmethod: "POST",
-		amethod: "auth_user_change",
-		params: $(form).serialize(),
-		success: function (data) {
-			alert(data[0]);
-		},
-		fail: "standart"
-	})
-}
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/chosen.css" rel="stylesheet">
+{literal}
+    <script>
+        /* Send to api function */
+        function profile_edit(form) {
+            api_query({
+                qmethod: "POST",
+                amethod: "auth_user_change",
+                params: $(form).serialize(),
+                success: function (data) {
+                    var mdl = $("#modal-info");
+                    mdl.find('#info-block').html(data[0]);
+                    mdl.modal("show");
+                    setTimeout(function(){
+                        mdl.modal('hide');
+                    },4000);
+                },
+                fail: "standart"
+            })
+        }
 
-</script>
+        /* Autocomplete phone numbers */
+        function change_country(select) {
+            var city = $('#u_city').val();
+
+            var country = $('.chosen-country option:selected').val();
+            api_query({
+                qmethod: "POST",
+                amethod: "auth_get_city",
+                params:  {country_id:country,city:city},
+                success: function (response, data) {
+                    $('select.chosen-city').html(response);
+                    $('select.chosen-city option[value="'+city+'"]').prop('selected',true);
+                    $(".chosen-city").trigger("chosen:updated");
+                },
+                fail:    "standart"
+            })
+            /*phone = $("input[name=phone]");
+            country = $(select).val();
+            if (country == "Беларусь") phone.val("+375");
+            else if(country == "Россия") phone.val("+7");
+            else if(country == "Украина") phone.val("+380");
+            else phone.val("");*/
+        }
+        $(document).ready(function()
+        {
+            $(".chosen-select").chosen({no_results_text: "Не найдено по запросу",placeholder_text_single: "Выберите страну",inherit_select_classes: true});
+            change_country();
+
+            $('input.password,input.password2').blur(function(){
+                var psw = $('.password').val();
+                var psw2 = $('.password2').val();
+                if(psw != psw2) {
+                    $('.password').css('background','#D9534F');
+                    $('.password2').css('background','#D9534F');
+                }else{
+                    $('.password').css('background','');
+                    $('.password2').css('background','');
+                }
+            });
+            $('input.login').blur(function(){
+                var login = $(this).val();
+                api_query({
+                    qmethod: "POST",
+                    amethod: "auth_check_login",
+                    params:  {login:login},
+                    success: function (response, data) {
+                        //alert(response[0]);
+                    },
+                    fail:    "standart"
+                })
+            });
+        });
+    </script>
+{/literal}
 <div class="container profile-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
@@ -76,20 +138,25 @@ function profile_edit(form) {
 						
 						<div>
 							<h5 class="title-hr">Изменить контактные данные</h5>
-							<div class="control-group">
+							<div class="control-group" style="overflow: visible">
 								<label class="control-label">E-mail</label>
 								<div class="controls"><input type="text" placeholder="E-mail" name="mail" value="{$u.mail}"></div>
 								<label class="control-label">Ваш сайт</label>
 								<div class="controls"><input type="text" placeholder="Ваш сайт" name="site" value="{$u.site}"></div>
 								<label class="control-label">Страна</label>
-								<div class="controls">									
-									<select name="country">
-										{foreach $countries as $country}
-											<option value="{$country}" {if $country == $u.country}selected="selected"{/if}>{$country}</option>
-										{/foreach}
+								<div class="controls" style="overflow: visible">
+									<select name="country" class="chosen-country chosen-select" onchange="change_country(this);">
+                                        {foreach $countries as $country}
+                                            <option value="{$country.id}" {if $country.country_name_ru == $u.country}selected="selected"{/if}>{$country.country_name_ru}</option>
+                                        {/foreach}
 									</select></div>
 								<label class="control-label">Город</label>
-								<div class="controls"><input type="text" placeholder="Город" name="city" value="{$u.city}"></div>
+								<div class="controls" style="overflow: visible">
+                                    <select class="chosen-city chosen-select" name="city">
+
+                                    </select>
+                                    <input type="hidden" id="u_city" value="{$u.city}">
+                                </div>
 								<label class="control-label">Улица</label>
 								<div class="controls"><input type="text" placeholder="Улица" name="adress" value="{$u.adress}"></div>
 								<label class="control-label">Номер телефона</label>

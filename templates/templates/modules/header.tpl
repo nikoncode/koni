@@ -23,7 +23,7 @@
  </head>
 
 <body>
-
+{include "modules/modal-info.tpl"}
 <header>
 	{if $user}
 		<script>
