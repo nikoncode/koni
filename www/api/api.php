@@ -15,6 +15,7 @@ include (CORE_DIR . "api_includes/horses.php");
 include (CORE_DIR . "api_includes/likes.php");
 include (CORE_DIR . "api_includes/comments.php");
 include (CORE_DIR . "api_includes/news.php");
+include (CORE_DIR . "api_includes/adv.php");
 
 /* Api response function */
 function aok($response, $redirect = NULL) {

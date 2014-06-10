@@ -613,16 +613,20 @@ div.useful-review a.not-useful{background: url(images/icon-useful-review-no.png)
 
 /* search-clubs-find */
 .search-clubs-filter-block {border-bottom: 1px #d7d5d6 solid; padding: 0 4px}
-.search-clubs-filter-block label.radio{padding-left: 0}
-.search-clubs-filter-block label.radio > input{margin-right: 5px}
-.search-clubs-filter-block > label{font-weight: 600}
-.search-clubs-filter-block label.radio, .search-clubs-filter-block label.checkbox{font-weight: 400}
-.search-clubs-filter-block input.span3{width: 210px; height: 24px}
- .search-clubs-filter-block select.span3{width: 210px}
-.search-clubs-filter-block input.span-mini{width: 76px}
-.search-clubs-filter button.add-rem.span1{width: 40px}
-.search-clubs-filter-block input, .search-clubs-filter-block select{margin-left: 0 !important}
-.search-clubs-filter-block span.mini-separator{margin: 0 10px}
+.search-filter-block {padding: 0 2px}
+.search-clubs-filter-block label.radio, .search-filter-block label.radio{padding-left: 0}
+.search-clubs-filter-block label.radio > input, .search-filter-block label.radio > input{margin-right: 5px}
+.search-clubs-filter-block > label, .search-filter-block > label{font-weight: 600}
+.search-clubs-filter-block > label, .search-filter-block > label{font-weight: 600}
+.search-clubs-filter-block label.radio, .search-clubs-filter-block label.checkbox, .search-filter-block label.radio, .search-filter-block label.checkbox{font-weight: 400}
+.search-filter-block label.checkbox{padding-left: 0}
+.search-filter-block label.checkbox input[type="checkbox"]{margin-right: 10px}
+.search-clubs-filter-block input.span3, .search-filter-block input.span3{width: 210px; height: 24px}
+.search-clubs-filter-block select.span3, .search-filter-block select.span3{width: 210px}
+.search-clubs-filter-block input.span-mini, .search-filter-block input.span-mini{width: 76px}
+.search-clubs-filter button.add-rem.span1, .search-filter  button.add-rem.span1{width: 40px}
+.search-clubs-filter-block input, .search-clubs-filter-block select, .search-filter-block input, .search-filter-block select, .search-filter-block textarea{margin-left: 0 !important}
+.search-clubs-filter-block span.mini-separator, .search-filter-block span.mini-separator{margin: 0 10px}
 .clubs-search-results h3 {margin-bottom: 0}
 table.clubs-results {background: #fff; margin-bottom: 0}
 table.clubs-results td.club-name img {max-width: 32px; max-height: 32px; margin-right: 5px}
@@ -866,9 +870,10 @@ table.routes .route {min-width: 200px}
 
 /* 9-03-2014 */
 .adv-list {list-style: none; margin: 0; display: block; height: 420px; overflow: hidden; width: 100%; padding-top: 5px}
-.adv-list li{float: left; width: 172px; padding: 0 8px}
-.adv-list li.adv-card img{max-height: 270px; max-width: 200px; width: 100%; height: auto; margin: 0 auto; border: 3px #fff solid; border-radius: 4px; box-shadow: 0px 1px 5px rgba(0,0,0,0.5); margin-bottom: 5px}
-.adv-list li form input, .adv-list li form button {width: 100% !important}
+.adv-list li{float: left; width: 172px; padding: 0 6px}
+.adv-list li.adv-card img{max-height: 270px; max-width: 200px; width: 96%; height: auto; margin: 0 auto; border: 3px #fff solid; border-radius: 4px; box-shadow: 0px 1px 5px rgba(0,0,0,0.5); margin-bottom: 5px}
+.adv-list li.adv-card img:hover{box-shadow: 0px 0px 3px rgba(0,0,0,0.5)}
+.adv-list li form input, .adv-list li form button, .adv-list li button[type="submit"] {width: 100% !important}
 .adv-list li form input {box-sizing: border-box; height: 30px}
 .adv-list li form button {margin-bottom: 5px}
 .adv-list li.add-new-adv img{margin: 0 auto;}
@@ -877,4 +882,34 @@ table.routes .route {min-width: 200px}
 .member-admin {font-weight: bold}
 #club-members > li.active > a {background-color: #6f3612; color: #fff}
 #club-members > li > a {color: #6f3612; text-decoration: none}
-.question {float: left; margin-right: -20px;margin-top: 7px}
+#horse-sex li {padding: 0 5px 0 0; margin-top: 5px}
+#horse-sex li label{font-size: 12px}
+
+.adv-item.mini {background: #fff; box-sizing: border-box; box-shadow: 0 2px 5px rgba(0,0,0,0.5); padding: 10px; margin-bottom: 8px; margin-top: 8px; border: 2px transparent solid}
+.adv-item.mini:hover {box-shadow: 0 0px 5px rgba(0,0,0,0.5); border: 2px #930 solid}
+.adv-item.mini .adv-img{max-height: 100px; max-width: 100px; height: auto; width: auto; float: left;}
+.adv-item.mini .adv-info {margin-left: 120px; position: relative}
+.adv-item.mini .adv-info .adv-prem-icon {position: absolute; top: 0px; right: 0px}
+.adv-item .adv-price {font-weight: bold; color: #343434}
+.adv-item .adv-chars {list-style: none; margin: 0; font-size: 12px}
+.adv-item .adv-chars li span {font-weight: 600}
+
+.adv-main-page form label.checkbox {margin-top: 10px}
+.adv-main-page form .ui-slider {margin-top: 8px}
+.adv-main-page .inner-bg {margin-bottom: 0}
+.adv-main-page .new-tabs.tabs2 {background: #B79A88}
+.adv-main-page .new-tabs.tabs2 > li {width: 117.5px}
+.adv-main-page .new-tabs.tabs2 > li a{padding: 8px 2px}
+#advTabsContent {margin: 0; box-shadow: none}
+
+.adv-my-horses {margin: 0 0 0 20px; list-style: none}
+.adv-my-horses li {display: inline-block; text-align: center; padding-right: 10px; opacity: 0.5}
+.adv-my-horses li.active {opacity: 1}
+.adv-my-horses li.active img{border-color: #FAA52D}
+.adv-my-horses li img {display: block; max-width: 80px; max-height: 80px; height: auto; width: auto; border: 3px #fff solid; box-shadow: 0 2px 5px rgba(0,0,0,0.5); margin-bottom: 5px}
+
+.adv-new-page .lthr-bgborder {padding-bottom: 25px}
+.adv-new-page .adv-list {height: auto !important}
+.adv-new-page .chosen-container-multi .chosen-choices {border-radius: 4px; border-color: #ccc; padding: 3px 6px 4px 6px; min-height: 34px !important}
+.adv-new-page .chosen-container-multi .chosen-choices li.search-choice {margin: 1px 0 2px 5px}
+.adv-new-page .chosen-container-multi .chosen-choices li.search-choice:first-child {margin-left: 0px !important}
