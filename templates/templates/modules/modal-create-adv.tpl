@@ -1,3 +1,23 @@
+<script>
+    $(document).ready(function() {
+        $('.new_horse').change(function(){
+            var selected = $('.new_horse:checked').val();
+            if(selected == 2){
+                $('.adv-my-horses li:first-child').click();
+            }else{
+                $('.adv-my-horses li.active').removeClass('active');
+                $('#horse_id').val(0);
+            }
+        });
+        $('.adv-my-horses li').click(function(){
+            $('.adv-my-horses li.active').removeClass('active');
+            var horse_id = $(this).find('a').attr('alt');
+            $(this).addClass('active');
+            $('#horse_id').val(horse_id);
+            $('.new_horse[value="2"]').prop('checked',true);
+        });
+    });
+</script>
 <div id="createAdv" class="modal hide modal600" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -30,18 +50,19 @@
             <hr/>
             <div class="controls controls-row">
                 <label class="span6"><strong>Шаг 3:</strong> Выберите лошадь для продажи</label>
-                <label class="radio span6"><input type="radio" name="radio1" class="new_horse" value="1" checked="checked"> Создать объявление о новой лошади</label>
-                <label class="radio span6"><input type="radio" name="radio1" class="new_horse" value="2"> Выбрать из своих лошадей</label>
+                <label class="radio span6"><input type="radio" name="new_horse" class="new_horse" value="1" checked="checked"> Создать объявление о новой лошади</label>
+                <label class="radio span6"><input type="radio" name="new_horse" class="new_horse" value="2"> Выбрать из своих лошадей</label>
 
                 <ul class="adv-my-horses">
-                    <li class="active"><a href="#"><img src="i/avatar-my-horse-1.jpg" class="avatar-my-horse">Альфа</a></li>
-                    <li><a href="#" class="active"><img src="i/avatar-my-horse-2.jpg" class="avatar-my-horse">Бета</a></li>
-                    <li><a href="#" class="active"><img src="i/avatar-my-horse-3.jpg" class="avatar-my-horse">Гамма</a></li>
+                    {foreach $my_horses as $my_horse}
+                        <li><a href="#" alt="{$my_horse.id}"><img src="{$my_horse.avatar}" class="avatar-my-horse">{$my_horse.nick}</a></li>
+                    {/foreach}
                 </ul>
 
             </div>
             <hr/>
             <div class="controls controls-row">
+                <input type="hidden" name="horse_id" id="horse_id" value="0">
                 <button type="submit" class="btn btn-warning span3">Подать объявление</button>
                 <button class="btn span3" data-dismiss="modal" aria-hidden="true">Отмена</button>
             </div>

@@ -258,8 +258,7 @@
                             <?php if ($i <= 6) { ?>
                             <img class="adv-prem-icon" src="images/sample-small-award-3.png" />
                             <? } ?>
-
-                            <a href="#"><h4>{$horse.nick}</h4></a>
+                            <a href="/adv_page.php?adv={$horse.id}"><h4>{$horse.nick}</h4></a>
                             <div class="adv-price">{$horse.price|number_format:0:".":" "} руб.</div>
                             <ul class="adv-chars">
                                 <li><span>Возраст:</span> {$year_now - $horse.age} лет </li>

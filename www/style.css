@@ -382,13 +382,16 @@ div.comments ul.comments-lists > li:last-child{border-bottom: none; margin-botto
 div.comments ul.comments-lists > li p.message{margin-left: 45px}
 div.comments ul.comments-lists > li a.comment-reply {font-weight: 600;}
 div.comments ul.comments-lists > li.answer-form form {position: relative; margin-bottom: 0; background: #f0ded6; padding: 5px}
+div.comments ul.comments-lists > li.answer-form form table.controls-row {width:100%}
+div.comments ul.comments-lists > li.answer-form form table.controls-row tr td {vertical-align: top}
 div.comments ul.comments-lists > li.answer-form form textarea.answer-message:focus {box-shadow: none}
-div.comments ul.comments-lists > li.answer-form form textarea.answer-message {height: 36px; width: 377px; border: #b9a094 solid 1px; border-radius: 0px; margin-bottom: 0; margin-left: 3px}
-div.comments ul.comments-lists > li.answer-form form.min img.my-avatar {display: none}
+div.comments ul.comments-lists > li.answer-form form textarea.answer-message {height: 36px; border: #b9a094 solid 1px; border-radius: 0px; width: 100%;  margin: 0px; box-sizing: border-box !important}
+div.comments ul.comments-lists > li.answer-form form .controls-row {position: relative}
+div.comments ul.comments-lists > li.answer-form form.min .my-avatar {display: none}
 div.comments ul.comments-lists > li.answer-form form.min input.comment-submit {display: none}
-div.comments ul.comments-lists > li.answer-form form.max textarea.answer-message {margin-left: 40px; width: 340px; height: 70px; margin-top: -32px; margin-bottom: 5px}
-div.comments ul.comments-lists > li.answer-form form.max img.my-avatar {width: 32px; height: 32px; margin-left: 2px; float: left}
-div.comments ul.comments-lists > li.answer-form form.max input.comment-submit {margin-left: 40px}
+div.comments ul.comments-lists > li.answer-form form.max textarea.answer-message {height: 70px; margin-top: -32px 0 5px 0; width:100%;  box-sizing: border-box !important}
+div.comments ul.comments-lists > li.answer-form form .my-avatar {width: 32px; height: 32px; padding-right: 10px}
+div.comments ul.comments-lists > li.answer-form form.max input.comment-submit {margin-top: 10px}
 div.comments ul.comments-lists > li.show-all-comments {background: #f9f2ef; padding: 10px; text-align: center; cursor: pointer; color: #930; font-size: 12px; font-weight: 600}
 
 .current-horse-page  div.comments ul.comments-lists > li{margin-left: 0px; }
@@ -913,3 +916,23 @@ table.routes .route {min-width: 200px}
 .adv-new-page .chosen-container-multi .chosen-choices {border-radius: 4px; border-color: #ccc; padding: 3px 6px 4px 6px; min-height: 34px !important}
 .adv-new-page .chosen-container-multi .chosen-choices li.search-choice {margin: 1px 0 2px 5px}
 .adv-new-page .chosen-container-multi .chosen-choices li.search-choice:first-child {margin-left: 0px !important}
+
+.adv-single-page .block > .row > .span12 {margin-left: 0}
+.adv-single-page .comments ul.comments-lists > li{margin-left: 0px; }
+.adv-single-page h1 {color: #6d3512; font-weight: normal; font-size: 30px; margin: 0 0 10px 0}
+.adv-single-page h4 {color: #6d3512; font-weight: bold; font-size: 16px; text-transform: uppercase}
+.adv-bullets {padding: 7px 0 0px 0; margin: 7px 0; list-style: none; border-top: 1px rgba(120,100,90,0.25) solid}
+.adv-bullets li {width: 300px; display: inline-block; margin-bottom: 10px;}
+.adv-bullets li strong{padding-right: 5px;}
+.adv-price {display: inline-block; font-size: 20px; color: #6d3512; margin-right: 15px}
+.adv-price .p-amount {font-weight: 600; font-size: 25px;}
+.adv-price .p-cur {font-size: 0.65em}
+.adv-price-btns {font-size: 12px; display: inline-block; }
+.adv-price-btns .btn {font-size: 12px}
+.adv-single-page .breadcrumb {background: transparent;font-size: 12px; margin: -10px 0 0 0}
+.adv-single-page .breadcrumb li a{text-shadow: none !important}
+
+.adv-gallery {margin: 0; padding: 0; list-style: none}
+.adv-gallery li {display: inline-block}
+.adv-gallery li img{width: 50px; height: 50px; box-sizing: border-box;}
+.adv-gallery li:first-child img{width: 100%; height: auto; margin-bottom: 7px}

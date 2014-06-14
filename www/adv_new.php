@@ -20,5 +20,20 @@ if (!session_check()) {
         "usage" => $_POST['usage'],
         "type" => $_POST['type'],
     );
+    $db = New db;
+    if($_POST['new_horse'] == 2){
+
+        $assigned_vars["horse"] = $db->getRow("SELECT *
+											FROM horses
+											WHERE o_uid = ?i AND id = ?i", $_SESSION['user_id'],$_POST['horse_id']);
+    }
+    $assigned_vars["my_horses"] = $db->getAll("SELECT id,
+													avatar,
+													nick,
+													sex,
+													byear,
+													spec
+											FROM horses
+											WHERE o_uid = ?i", $_SESSION['user_id']);
     template_render($assigned_vars, "adv_new.tpl");
 }

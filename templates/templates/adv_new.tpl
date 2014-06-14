@@ -47,24 +47,24 @@
                     <div class="span3 search-filter-block">
 
                         <label>Кличка</label>
-                        <input type="text" name="nick" class="span3">
+                        <input type="text" name="nick" class="span3" value="{$horse.nick}">
 
                         <label>Порода</label>
                         <select name="poroda" class="span3">
                             {foreach $porodi as $poroda}
-                                <option value="{$poroda}">{$poroda}</option>
+                                <option value="{$poroda}" {if $poroda == $horse.poroda} selected="selected" {/if}>{$poroda}</option>
                             {/foreach}
                         </select>
 
                         <label>Масть</label>
                         <select name="mast" class="span3">
                             {foreach $masti as $mast}
-                                <option value="{$mast}">{$mast}</option>
+                                <option value="{$mast}" {if $mast == $horse.mast} selected="selected" {/if}>{$mast}</option>
                             {/foreach}
                         </select>
 
                         <label>Год рождения</label>
-                        <input type="text" name="age" class="span3">
+                        <input type="text" name="age" class="span3" value="{$horse.byear}">
                     </div>
 
 
@@ -73,12 +73,12 @@
                         <input type="text" name="price" class="span3">
 
                         <label>Рост</label>
-                        <input type="text" name="height" class="span3">
+                        <input type="text" name="height" class="span3" value="{$horse.rost}">
 
                         <label>Пол</label>
                         <ul class="inline unstyled" id="horse-sex">
                             {foreach $sexs as $sex}
-                                <li><label class="radio"><input type="radio" name="sex" value="{$sex}"> {$sex}</label></li>
+                                <li><label class="radio"><input type="radio" name="sex" value="{$sex}" {if $sex == $horse.sex} checked="checked" {/if}> {$sex}</label></li>
                             {/foreach}
                         </ul>
 
@@ -113,7 +113,7 @@
                                 <label>Специализация</label>
                                 <select class="span6 chosen-select" name="spec" multiple data-placeholder=" ">
                                     {foreach $specs as $spec}
-                                        <option value="{$spec}">{$spec}</option>
+                                        <option value="{$spec}" {if $spec == $horse.spec} selected="selected" {/if}>{$spec}</option>
                                     {/foreach}
                                 </select>
 
@@ -121,7 +121,7 @@
 
                             <div class="span6">
                                 <label>Расскажите о лошади</label>
-                                <textarea rows="6" name="descr" class="span6"></textarea>
+                                <textarea rows="6" name="descr" class="span6">{$horse.about}</textarea>
                             </div>
 
                         </div>

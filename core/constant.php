@@ -280,7 +280,8 @@ $const_horses_poroda = array(
 	"Эксмур пони",
 	"Эстонская",
 	"Ютландская",
-	"Якутская"
+	"Якутская",
+	"Другая"
 );
 
 $const_horses_mast = array(
@@ -290,7 +291,8 @@ $const_horses_mast = array(
 	"Рыжая",
 	"Чубарая",
 	"Пегая",
-	"Игреневая"
+	"Игреневая",
+	"Другая"
 );
 
 $const_horses_spec = array(
