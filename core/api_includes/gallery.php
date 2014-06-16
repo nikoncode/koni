@@ -80,6 +80,28 @@ function api_gallery_photo_delete() {
 	aok(array("Фотография была удалена."));
 }
 
+function api_adv_photo_delete() {
+	/* validate data */
+	validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	$db = new db;
+	/* getting all photos */
+	$image = $db->GetRow("SELECT preview, full FROM adv_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+	if ($image === NULL) {
+		aerr(array("Фотография не может быть удалена."));
+	} else {
+		/* delete them */
+		$db->query("DELETE FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+		others_delete_file(WEB_ROOT_DIR . $image["preview"]);
+		others_delete_file(WEB_ROOT_DIR . $image["full"]);
+	}
+	aok(array("Фотография была удалена."));
+}
+
 function api_gallery_create_album() {
 	/* Validate data */
 	validate_fields($fields, $_POST, array("desc", "att"), array("name"), array(), $errors);
@@ -133,6 +155,45 @@ function api_gallery_upload_photo() {
 	} else {
 		aerr($result);
 	} 
+}
+
+function api_adv_upload_photo() {
+    /* Validate data */
+    validate_fields($fields, $_GET, array(), array(), array(), $errors);
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+
+    /* Checking path */
+    $path = $_SESSION["user_id"] . "/adv/";
+    $filename = md5(md5(time()) . rand());
+
+    if (!file_exists(UPLOADS_DIR . $path))
+        mkdir(UPLOADS_DIR . $path, 0777, true);
+
+    /* Generating name and upload photo */
+    $preview_img = $path . $filename . "_preview.jpg";
+    $full_img = $path . $filename . ".jpg";
+    $result = gallery_upload_photo($_FILES, "gallery", $full_img, 1000, 1000, true, $preview_img);
+
+    /* Insert to db */
+    if ($result === true) {
+        $db = new db;
+        $db->query("INSERT INTO adv_photos (full, preview, adv_id, o_uid) VALUES (?s, ?s, ?i, ?i);",
+            "/uploads/" . $full_img,
+            "/uploads/" . $preview_img,
+            0,
+            $_SESSION["user_id"]
+        );
+        $photo_id = $db->getOne("SELECT LAST_INSERT_ID() FROM gallery_photos");
+        aok(array(
+            "id" => $photo_id,
+            "preview" => "/uploads/" . $preview_img
+        ));
+    } else {
+        aerr($result);
+    }
 }
 
 function api_gallery_update_description() { //TO-DO: optimize

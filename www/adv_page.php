@@ -15,6 +15,7 @@ if (!session_check()) {
     (SELECT COUNT(id) FROM comments WHERE aid = adv.id) as comments_cnt,
      (SELECT avatar FROM users WHERE id = ?i) as user_avatar
     FROM adv WHERE id = ?i", $_SESSION["user_id"],$_GET['adv']);
+    $photos = $db->getAll("SELECT * FROM adv_photos WHERE o_uid = ?i AND adv_id = ?i", $_SESSION["user_id"],$_GET['adv']);
     $comments = $db->getAll("SELECT c.*,
 										concat(fname,' ',lname) as fio,
 										avatar,
@@ -44,7 +45,8 @@ if (!session_check()) {
         "countries" => $const_countries,
         "year_now" => date('Y'),
         "comments_bl" => $comments_bl,
-        "horse" => $horse
+        "horse" => $horse,
+        "photos" => $photos,
     );
     $assigned_vars["my_horses"] = $db->getAll("SELECT id,
 													avatar,

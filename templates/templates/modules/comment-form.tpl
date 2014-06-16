@@ -1,6 +1,6 @@
 {* Smarty *}
 <li class="answer-form">
-    <form class="max" onsubmit="{if $loaded_comment}edit{else}add{/if}_comment(this); return false;">
+    <form class="min" onsubmit="{if $loaded_comment}edit{else}add{/if}_comment(this); return false;">
         <table class="controls-row">
             <tr>
                 <td class="my-avatar"><img src="{$user_avatar}" class="my-avatar"></td>

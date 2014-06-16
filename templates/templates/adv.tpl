@@ -156,6 +156,7 @@
                             <div class="span3 search-filter-block">
                                 <label>Порода</label>
                                 <select name="poroda" class="span3">
+                                    <option value="">Все породы</option>
                                     {foreach $porodi as $poroda}
                                         <option value="{$poroda}">{$poroda}</option>
                                     {/foreach}
@@ -163,6 +164,7 @@
 
                                 <label>Масть</label>
                                 <select name="mast" class="span3">
+                                    <option value="">Все масти</option>
                                     {foreach $masti as $mast}
                                         <option value="{$mast}">{$mast}</option>
                                     {/foreach}
@@ -253,7 +255,7 @@
             <div class="row" id="search-results">
                 {foreach $horses as $horse}
                     <div class="span4 adv-item mini">
-                        <a href="#"><img src="i/avatar-my-horse-1.jpg" class="adv-img" /></a>
+                        <a href="/adv_page.php?adv={$horse.id}"><img src="{if $horse.preview == ''}/images/bg-block-horse-without.png{else}{$horse.preview}{/if} " class="adv-img" /></a>
                         <div class="adv-info">
                             <?php if ($i <= 6) { ?>
                             <img class="adv-prem-icon" src="images/sample-small-award-3.png" />

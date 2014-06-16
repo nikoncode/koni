@@ -24,11 +24,9 @@
                     <div class="row">
                         <div class="span3">
                             <ul class="adv-gallery">
-                                <li><a href="#"><img src="i/avatar-my-horse-1.jpg" class="img-polaroid"></a></li>
-                                <li><a href="#"><img src="i/sample-img-2.jpg" class="img-polaroid"></a></li>
-                                <li><a href="#"><img src="i/sample-img-3.jpg" class="img-polaroid"></a></li>
-                                <li><a href="#"><img src="i/sample-img-4.jpg" class="img-polaroid"></a></li>
-                                <li><a href="#"><img src="i/sample-img-5.jpg" class="img-polaroid"></a></li>
+                                {foreach $photos as $photo}
+                                    <li><a href="#"><img src="{$photo.full}" class="img-polaroid"></a></li>
+                                {/foreach}
                             </ul>
                         </div>
                         <div class="span9">

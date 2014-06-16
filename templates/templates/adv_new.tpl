@@ -8,6 +8,30 @@
     $(function(){
         $(".chosen-select").chosen()
     });
+    $(function () {
+        $("#gallery-upl").fileupload({
+            url: "/api/api.php?m=adv_upload_photo",
+            dataType: "json",
+            done: function (e, data) {
+                resp = data.result;
+                console.log(resp);
+                if (resp.type == "success") {
+                    $('<li class="adv-card"><input type="text" style="display: none" name="photo[]" value="' + resp.response.id + '"> \
+                    <div class="img-adv"><img src="'+ resp.response.preview +'"></div> \
+                    <button type="submit" class="btn btn-warning">Заменить фото</button> \
+                    <button type="submit" class="btn" onclick="photo_delete(this, ' + resp.response.id + '); return false;">Удалить</button> \
+                    </li>').appendTo(".adv-list");
+                } else {
+                    alert(resp.response[0]);
+                }
+            }, progressall: function (e, data) {
+                $('.progress .bar').css('display', 'block');
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('.progress .bar').css('width', progress + '%');
+                if(progress == 100) $('.progress .bar').css('display', 'none');
+            }
+        });
+    });
     function add_adv(){
         api_query({
             qmethod: "POST",
@@ -32,9 +56,24 @@
         })
         country = $(select).val();
     }
+    function photo_delete(element, photo_id) {
+        api_query({
+            qmethod: "POST",
+            amethod: "adv_photo_delete",
+            params: {id : photo_id},
+            success: function (resp) {
+                $(element).closest(".adv-card").remove();
+            },
+            fail: "standart"
+        })
+    }
 </script>
 {/literal}
 <div class="container main-blocks-area adv-page adv-new-page">
+    <!-- implement fileupload -->
+    <script src="js/upload/jquery.ui.widget.js"></script>
+    <script src="js/upload/jquery.iframe-transport.js"></script>
+    <script src="js/upload/jquery.fileupload.js"></script>
     <div class="row">
         <div class="span12 lthr-bgborder filter-block block">
             <h3 class="inner-bg">Новое объявление о продаже лошади<span class="pull-right"><a  href="#createAdv" role="button" data-toggle="modal"><i class="icon-plus icon-white"></i> подать объявление</a></span></h3>
@@ -111,7 +150,7 @@
 
                             <div class="span6">
                                 <label>Специализация</label>
-                                <select class="span6 chosen-select" name="spec" multiple data-placeholder=" ">
+                                <select class="span6 chosen-select" name="spec[]" multiple data-placeholder=" ">
                                     {foreach $specs as $spec}
                                         <option value="{$spec}" {if $spec == $horse.spec} selected="selected" {/if}>{$spec}</option>
                                     {/foreach}
@@ -130,35 +169,15 @@
                     <div class="span12 search-filter-block">
                         <label>Фотографии (5 шт. максимум)</label>
                         <ul class="adv-list">
-                            <li class="adv-card">
-                                <div class="img-adv"><img src="i/avatar-my-horse-1.jpg"></div>
-                                <form>
-                                    <button type="submit" class="btn btn-warning">Заменить фото</button>
-                                    <button type="submit" class="btn">Удалить</button>
-                                </form>
-                            </li><li class="adv-card">
-                                <div class="img-adv"><img src="i/avatar-my-horse-2.jpg"></div>
-                                <form>
-                                    <button type="submit" class="btn btn-warning">Заменить фото</button>
-                                    <button type="submit" class="btn">Удалить</button>
-                                </form>
-                            </li>
-                            <li class="adv-card">
-                                <div class="img-adv"><img src="i/avatar-my-horse-3.jpg"></div>
-                                <form>
-                                    <button type="submit" class="btn btn-warning">Заменить фото</button>
-                                    <button type="submit" class="btn">Удалить</button>
-                                </form>
-                            </li>
-                            <li class="adv-card">
-                                <div class="img-adv"><img src="i/avatar-my-horse-1.jpg"></div>
-                                <form>
-                                    <button type="submit" class="btn btn-warning">Заменить фото</button>
-                                    <button type="submit" class="btn">Удалить</button>
-                                </form>
-                            </li>
+
                             <li class="add-new-adv">
-                                <a href="#modal-add-adv-card" role="button" data-toggle="modal"><img src="images/btn-add-new-adv-photo.png"></a>
+                                <div class="fileupload" style="height: auto">
+                                    <input type="file" name="gallery" id="gallery-upl" multiple>
+                                    <a href="#" role="button"><img src="images/btn-add-new-adv-photo.png"></a>
+                                </div>
+                                <div class="progress progress-striped active" style="display: none">
+                                    <div class="bar" style="width: 0%;"></div>
+                                </div>
                             </li>
 
                         </ul>

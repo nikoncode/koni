@@ -1,4 +1,4 @@
-<div class="span12"> <!--комменты-->
+ <!--комменты-->
     <div class="comments bg-white">
         <h4>Комментарии:</h4>
         <ul class="comments-lists">
@@ -13,4 +13,3 @@
             {include "modules/comment-form.tpl"}
         </ul>
     </div>
-</div>

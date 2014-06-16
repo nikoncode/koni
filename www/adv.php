@@ -19,7 +19,7 @@ if (!session_check()) {
         "countries" => $const_countries,
         "year_now" => date('Y'),
     );
-    $assigned_vars["horses"] = $db->getAll("SELECT * FROM adv ORDER BY add_time");
+    $assigned_vars["horses"] = $db->getAll("SELECT *, (SELECT preview FROM adv_photos WHERE adv_id = adv.id LIMIT 1) as preview FROM adv ORDER BY add_time");
     $assigned_vars["my_horses"] = $db->getAll("SELECT id,
 													avatar,
 													nick,
