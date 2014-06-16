@@ -249,7 +249,9 @@ function api_auth_user_change() {
     validate_fields($fields, $_POST, array(
             "site",
             "mname",
-            "work"
+            "work",
+            "passwd1",
+            "passwd2"
         ), array(
             "fname|Имя",
             "lname|Фамилия",
@@ -270,7 +272,7 @@ function api_auth_user_change() {
         ),
         $errors);
 	/* Checking equality passwords */
-	if (isset($fields["passwd1"]) && isset($fields["passwd1"]) && $fields["passwd1"] != $fields["passwd2"]) {
+	if (isset($fields["passwd1"]) && isset($fields["passwd2"]) && $fields["passwd1"] != $fields["passwd2"]) {
 		$errors[] = "Пароли не совпадают.";
 	}
 
@@ -282,7 +284,7 @@ function api_auth_user_change() {
 
 
 	/* Hashing password */
-	if (isset($fields["passwd1"]) && isset($fields["passwd1"])) {
+	if (isset($fields["passwd1"]) && isset($fields["passwd2"])) {
 		$fields["password"] = password_hash($fields["passwd1"], PASSWORD_DEFAULT);
 	}
 	unset($fields["passwd1"]); 

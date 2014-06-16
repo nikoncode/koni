@@ -78,7 +78,7 @@ function api_add_adv(){
 
 function api_find_adv() {
     /* validate data */
-    validate_fields($fields, $_POST, array("in_chemp","sex","nick", "country", "city","age_from", "poroda","mast"),
+    validate_fields($fields, $_POST, array("spec","in_chemp","sex","nick", "country", "city","age_from", "poroda","mast"),
         array(
             "usage",
             "type",
@@ -87,7 +87,7 @@ function api_find_adv() {
             "price_to",
             "height_from",
             "height_to",
-            "spec",
+
         ), array(), $errors);
     $db = new db;
     $country = $db->getRow("SELECT country_name_ru FROM country_ WHERE id=?i", intval($fields["country"]));
@@ -100,7 +100,7 @@ function api_find_adv() {
         $add_sql .= ' AND city = "'.$city['city_name_ru'].'"';
     }
     if($fields['nick'] != ''){
-        $add_sql .= ' AND nick = "'.mysql_escape_string($fields['nick']).'"';
+        $add_sql .= ' AND nick LIKE "%'.mysql_escape_string($fields['nick']).'%"';
     }
     if($fields['poroda'] != ''){
         $add_sql .= ' AND poroda = "'.mysql_escape_string($fields['poroda']).'"';

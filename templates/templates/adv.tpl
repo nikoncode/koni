@@ -125,8 +125,8 @@
                             <div class="span3 search-filter-block">
                                 <label>Тип объявления</label>
                                 <select name="type" class="span3">
-                                    <option value="1">Покупка</option>
-                                    <option value="2">Продажа</option>
+                                    <option value="1">Продажа</option>
+                                    <option value="2">Покупка</option>
                                     <option value="3">Аренда</option>
                                 </select>
 
@@ -171,10 +171,11 @@
                                 </select>
 
                                 <label>Кличка</label>
-                                <input type="text" class="span3">
+                                <input type="text" name="nick" class="span3">
 
                                 <label>Специализация</label>
                                 <select name="spec" class="span3">
+                                    <option value="">Все специализации</option>
                                     {foreach $specs as $spec}
                                         <option value="{$spec}">{$spec}</option>
                                     {/foreach}
