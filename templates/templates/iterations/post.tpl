@@ -1,7 +1,7 @@
 {* Smarty *}
 <div class="post">
-	<img src="{$post.avatar}" class="avatar" />
-	<p class="user-name"><a href="/user.php?id={$post.o_uid}">{$post.fio}</a></p>
+	<img src="{$post.owner_avatar}" class="avatar" />
+	<p class="user-name"><a href="/{$post.owner_type}.php?id={$post.owner_id}">{$post.owner_name}</a></p>
 	<p class="date">{$post.time}</p>
 	{if $post.o_uid == $user.id}
 		<div class="edit-my-topic">

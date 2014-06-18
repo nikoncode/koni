@@ -9,7 +9,8 @@
 	$(function () {
 		news_form_init($(".add-news form"));
 		$(".my-news-wall").autoload({
-			id: {$user.id}
+			id: {$user.id},
+			type: "user"
 		})
 	})
 </script>
@@ -27,7 +28,7 @@
 			<div class="clear"></div>
 			<div>
 			<h3 class="inner-bg">Новости</h3>
-				{include "modules/news-form.tpl"}
+				{include "modules/news-form.tpl" owner_type = "user" owner_id = $user.id}
 				<ul class="my-news-wall">
 					{include "iterations/news_block.tpl"}
 				</ul>

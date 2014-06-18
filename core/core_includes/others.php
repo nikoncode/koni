@@ -25,3 +25,29 @@ function others_make_photo_array($photos, $photo_ids) {
 		return NULL;
 	}
 }
+
+function others_data_format($data, $sep1, $sep2) {
+	$data = explode($sep1, $data);
+	return implode($sep2, array_reverse($data));	
+}
+
+function others_competitions_get($id) {
+	$db = new db;
+	$comp = $db->getAll("SELECT *, DATEDIFF(bdate, NOW()) as diff FROM comp WHERE o_cid = ?i", $id);
+	$competitions = array();
+	$competitions["soon"]["diff"] = 9999999999;
+	foreach($comp as $c) {
+		if ((int)$c["diff"] > 30) {
+			$competitions["future"][] = $c;
+		} else if ((int)$c["diff"] < 0) {
+			$c["diff"] = abs($c["diff"]);
+			$competitions["past"][] = $c;
+		} else {
+			$competitions["coming"][] = $c; 
+		}
+		if ($c["diff"] >= 0 && $c["diff"] < $competitions["soon"]["diff"]) {
+			$competitions["soon"] = $c;
+		}
+	}
+	return $competitions;
+}
