@@ -16,6 +16,8 @@ if (!session_check()) {
 	}
 	$db = new db;
 	$assigned_vars["club"] = $db->getRow("SELECT * FROM clubs WHERE id = ?i", $_GET["id"]); 
+	$assigned_vars["page_title"] = "Редактирование '" . $assigned_vars["club"]["name"] . "' > Одноконники";
+	$assigned_vars["user"] = template_get_short_user_info($_SESSION["user_id"]);
 	
 	if ($assigned_vars["club"]["o_uid"] != $_SESSION["user_id"]) {
 		template_render_error("Вы не можете редактировать этот клуб.");
@@ -23,9 +25,12 @@ if (!session_check()) {
 
 	$assigned_vars["countries"] = $const_countries_old;
 	$assigned_vars["club"]["c_phones"] = unserialize($assigned_vars["club"]["c_phones"]);
+
 	$assigned_vars["club"]["adv"] = json_decode($assigned_vars["club"]["adv"], 1);
 	$assigned_vars["club"]["ability"] = explode(", ", $assigned_vars["club"]["ability"]);
-	$assigned_vars["club"]["coords"] = explode(", ", $assigned_vars["club"]["coords"]);
+	if (!empty($assigned_vars["club"]["coords"])) {
+		$assigned_vars["club"]["coords"] = explode(", ", $assigned_vars["club"]["coords"]);
+	}
 	$comp = $db->getAll("SELECT *, DATEDIFF(bdate, NOW()) as diff FROM comp WHERE o_cid = ?i", $_GET["id"]);
 	$competitions = array();
 	foreach($comp as $c) {
@@ -42,6 +47,7 @@ if (!session_check()) {
 	$assigned_vars["abilities"]  = $const_ability;
 	$assigned_vars["types"] = $const_club_type;
 	$assigned_vars["members"] = $db->getAll("SELECT *, CONCAT(fname,' ',lname) as fio FROM users WHERE cid = ?i", $_GET["id"]);
+	$assigned_vars["types"] = $const_horses_spec;
 	//print_r($assigned_vars);
 	template_render($assigned_vars, "club-admin.tpl");
 }

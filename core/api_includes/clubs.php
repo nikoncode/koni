@@ -39,7 +39,6 @@ function api_club_edit1() {
 	$db = new db;
 	$db->query("UPDATE clubs SET ?u WHERE o_uid = ?i AND id = ?i", $fields, $_SESSION["user_id"], $fields["id"]);
 	aok(array("Данные обновлены."));
-
 }
 
 function api_club_edit2() {
@@ -140,4 +139,84 @@ function api_club_adv() {
 	$db = new db;
 	$db->query("UPDATE clubs SET adv = ?s WHERE id = ?i AND o_uid = ?i", json_encode($adv), $fields["id"], $_SESSION["user_id"]);
 	aok(array("Баннеры обновлены."));
+}
+
+function api_club_search() {
+	validate_fields($fields, $_POST, array(
+		"country",
+		"city",
+		"type",
+		"name",
+		"ability",
+		"amount_start",
+		"amount_end"
+	), array("range_type"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	if (!in_array($fields["range_type"], array("horse", "with_inst", "without_inst"))) {
+		aerr(array("Неверный тип фильтра."));
+	}
+
+	$db = new sphinx;
+	$conditions = "";
+	if (isset($fields["name"])) {
+		$conditions .= "@name \"" . $db->parse("?w", $fields["name"]) . "\" ";
+	}
+
+	if (isset($fields["country"])) {
+		$conditions .= "@country \"" . $db->parse("?w", $fields["country"]) . "\" ";
+	}
+
+	if (isset($fields["city"])) {
+		$conditions .= "@city \"" . $db->parse("?w", $fields["city"]) . "\" ";
+	}
+
+	if (isset($fields["ability"])) {
+		$temp = implode(", ", $fields["ability"]);
+		$conditions .= "@ability \"" . $db->parse("?w", $temp) . "\" ";
+	}
+
+	
+	$between = $db->parse("?n BETWEEN ?i AND ?i", $fields["range_type"], (int)$fields["amount_start"], (int)$fields["amount_end"]);
+	$ids = $db->getCol("SELECT id FROM clubs_index WHERE MATCH('?p') AND ?p;", $conditions, $between);
+	$db = new db;
+	$clubs = $db->getAll("SELECT 	id,
+									avatar,
+									name,
+									coords,
+									country,
+									city,
+									(SELECT COUNT(id) FROM users WHERE cid = clubs.id) as members_cnt,
+									CONCAT(with_inst, ' / ', without_inst, ' / ', horse) as prices
+							FROM clubs 
+							WHERE id IN (?a)", $ids);
+	$result = template_render_to_var(array(
+		"clubs" => $clubs
+	), "iterations/clubs_find_results.tpl");
+	aok(array(
+		"rendered" 	=> $result,
+		"source"	=> $clubs
+	));
+}
+
+function api_club_create() {
+	validate_fields($fields, $_POST, array(), array(
+		"accept",
+		"phone",
+		"name"
+	), array("phone" => "phone"), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	unset($fields["accept"]);
+	unset($fields["phone"]); //send sms
+	$db = new db;
+	$fields["o_uid"] = $_SESSION["user_id"];
+	$db->query("INSERT INTO clubs SET ?u", $fields);
+	aok($db->insertId());
 }

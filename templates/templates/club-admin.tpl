@@ -341,10 +341,12 @@ function user_permission(qid, qtype, qdesc, el) {
 												<input type="text" class="span6" placeholder="http://odnokonniki.ru/id4535423545667" name="email" value="{$club.email}" >
 												<div id="phones">
 													<label class="span6">Телефоны</label>
-													{foreach $club.c_phones as $phone}
-														<input type="text" class="span3" placeholder="описание телефона" name="p_desc[]" value="{$phone@key}" >
-														<input type="text" class="span3" placeholder="номер" name="phones[]" value="{$phone}" >	
-													{/foreach}
+													{if $club.c_phones}
+														{foreach $club.c_phones as $phone}
+															<input type="text" class="span3" placeholder="описание телефона" name="p_desc[]" value="{$phone@key}" >
+															<input type="text" class="span3" placeholder="номер" name="phones[]" value="{$phone}" >	
+														{/foreach}
+													{/if}
 												</div>
 												<a href="#" onclick="add_phone();return false;">Добавить ещё телефоны</a>
 											   </div>
@@ -485,48 +487,51 @@ function user_permission(qid, qtype, qdesc, el) {
 						
 			<ul id="club-members" class="nav nav-pills">
               <li class="active"><a href="#all-members" data-toggle="tab">Все участники</a></li>
-              <li><a href="#admin-members" data-toggle="tab">Руководители</a></li>
+              {*<li><a href="#admin-members" data-toggle="tab">Руководители</a></li>
               <li><a href="#moders-members" data-toggle="tab">Модераторы</a></li>
-              <li><a href="#blacklist-members" data-toggle="tab">Чёрный список</a></li>
+              <li><a href="#blacklist-members" data-toggle="tab">Чёрный список</a></li>*}
             </ul>
 			<div id="club-membersContent" class="tab-content">
               <div class="tab-pane in active" id="all-members">  <!-- все участники -->
 				  <div class="friends-list span12">
 				<div class="row">
-				{foreach $members as $member}
-					<div class="my-friend span12">
-						<div class="row">
-							<div class="user-info-photo span1">
-								<a href="/user.php?id={$member.id}"><img src="{$member.avatar}" class="friend-avatar"></a>
-							</div>
-							<div class="user-info-about span2"><p class="user-name"><a href="/user.php?id={$member.id}">{$member.fio}</a></p></div>
-							<div class="user-info-about span3"><p class="city">{$member.country}</p></div>
-							<div class="user-info-about span3"><p class="status">
-								{if $member.is_moderator}
-									<b>Модератор</b>
-								{elseif $member.is_club_staff}
-									<b>{$member.club_staff_descr}</b>
-								{else}
-									Участник клуба
-								{/if}
-							</p></div>
-							<div class="span3 user-info-actions">
-								<ul>
-									<li><a href="/user.php?id={$member.id}">Написать сообщение</a></li>
+				{if $members}
+					{foreach $members as $member}
+						<div class="my-friend span12">
+							<div class="row">
+								<div class="user-info-photo span1">
+									<a href="/user.php?id={$member.id}"><img src="{$member.avatar}" class="friend-avatar"></a>
+								</div>
+								<div class="user-info-about span2"><p class="user-name"><a href="/user.php?id={$member.id}">{$member.fio}</a></p></div>
+								<div class="user-info-about span3"><p class="city">{$member.country}</p></div>
+								<div class="user-info-about span3"><p class="status">
 									{if $member.is_moderator}
-										<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '', this); return false;">В руководители</a></li>
+										<b>Модератор</b>
 									{elseif $member.is_club_staff}
-										<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '{$member.club_staff_descr}', this); return false;">Изменить данные</a></li>
+										<b>{$member.club_staff_descr}</b>
 									{else}
-										<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '', this); return false;">В руководители</a> <span class="muted">|</span> <a href="#" onclick="user_permission({$member.id}, 'moderator', '', this); return false;">в модераторы</a></li>
+										Участник клуба
 									{/if}
-									<li><a href="#">Удалить из сообщества</a></li>
-								</ul>
+								</p></div>
+								<div class="span3 user-info-actions">
+									<ul>
+										<li><a href="/user.php?id={$member.id}">Написать сообщение</a></li>
+										{if $member.is_moderator}
+											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '', this); return false;">В руководители</a></li>
+										{elseif $member.is_club_staff}
+											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '{$member.club_staff_descr}', this); return false;">Изменить данные</a></li>
+										{else}
+											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '', this); return false;">В руководители</a> <span class="muted">|</span> <a href="#" onclick="user_permission({$member.id}, 'moderator', '', this); return false;">в модераторы</a></li>
+										{/if}
+										<li><a href="#">Удалить из сообщества</a></li>
+									</ul>
+								</div>
 							</div>
 						</div>
-					</div>
-				{/foreach}	
-	
+					{/foreach}	
+				{else}
+					<p style="text-align: center;">В этом клубе нет участников. Подождите их вступления, прежде чем управлять их ролями.</p>
+				{/if}
 				</div>
 				</div>
               </div>  <!-- // все участники -->
@@ -650,17 +655,28 @@ function user_permission(qid, qtype, qdesc, el) {
               <li>
 				<form>
 					<div class="controls controls-row">
-						<select class="span3">
+						<select class="span3" onchange="filter_by_type(this);">
 							<option selected="">Все типы соревнований</option>
-							<option>Конкур</option>
-							<option>Забег</option>
-							<option>Скачки</option>
-							<option>Препятствия</option>
+							{foreach $types as $type}
+								<option>{$type}</option>
+							{/foreach}
 					   </select>
 					</div>
 				</form>
 			</li>
             </ul>
+
+<script>
+function filter_by_type(element) {
+	var type = $(element).val();
+	$("#competitions-admin tr[data-type]").css("display", "none");
+	if (type == "Все типы соревнований") {
+		$("#competitions-admin tr[data-type]").css("display", "table-row");
+	} else {
+		$("#competitions-admin tr[data-type='" + type + "']").css("display", "table-row");
+	}
+}
+</script>
 
             <div id="comptTabContent" class="tab-content">
               <div class="tab-pane in active" id="compt-future">
@@ -671,23 +687,29 @@ function user_permission(qid, qtype, qdesc, el) {
 							<th>Соревнование</th>
 							<th>Участники</th>
 						</tr>
-						{foreach $club.competitions.future as $comp}
-						 <tr>
-							<td class="compt-img"><a href="/club-compt.php?id={$comp.id}"><img src="images/icon-competition-1.jpg"></a></td>
-							<td class="compt-date">{$comp.bdate} <div>через {$comp.diff} дней</div></td>
-							<td class="competition">
-								<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
-							</td>
-							<td class="compt-members">
-								[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
-								<!--<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>-->
-							</td>
-						</tr> 
-						{/foreach}
+						{if $club.competitions.future}
+							{foreach $club.competitions.future as $comp}
+								 <tr data-type="{$comp.type}">
+									<td class="compt-img"><a href="/club-compt.php?id={$comp.id}"><img src="images/icons/{$comp.type}.jpg"></a></td>
+									<td class="compt-date">{$comp.bdate} <div>через {$comp.diff} дней</div></td>
+									<td class="competition">
+										<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
+									</td>
+									<td class="compt-members">
+										[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
+										<!--<ul class="inline compt-members">
+											<li>25 участников</li>
+											<li>4 фотографа</li>
+											<li>120 зрителей</li>
+										</ul>-->
+									</td>
+								</tr> 
+							{/foreach}
+						{else}
+							<tr>
+								<td colspan="4" style="text-align: center;">Соревнований нет.</td>
+							</tr>
+						{/if}
 					</tbody>
 					</table>
               </div>
@@ -699,23 +721,29 @@ function user_permission(qid, qtype, qdesc, el) {
 							<th>Соревнование</th>
 							<th>Участники</th>
 						</tr>
-						{foreach $club.competitions.coming as $comp}
-						 <tr>
-							<td class="compt-img"><a href="/club-compt.php?id={$comp.id}"><img src="images/icon-competition-1.jpg"></a></td>
-							<td class="compt-date">{$comp.bdate} <div>через {$comp.diff} дней</div></td>
-							<td class="competition">
-								<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
-							</td>
-							<td class="compt-members">
-								[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
-								<!--<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>-->
-							</td>
-						</tr> 
-						{/foreach}
+						{if $club.competitions.coming}
+							{foreach $club.competitions.coming as $comp}
+							 <tr data-type="{$comp.type}">
+								<td class="compt-img"><a href="/club-compt.php?id={$comp.id}"><img src="images/icons/{$comp.type}.jpg"></a></td>
+								<td class="compt-date">{$comp.bdate} <div>через {$comp.diff} дней</div></td>
+								<td class="competition">
+									<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
+								</td>
+								<td class="compt-members">
+									[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
+									<!--<ul class="inline compt-members">
+										<li>25 участников</li>
+										<li>4 фотографа</li>
+										<li>120 зрителей</li>
+									</ul>-->
+								</td>
+							</tr> 
+							{/foreach}
+						{else}
+							<tr>
+								<td colspan="4" style="text-align: center;">Соревнований нет.</td>
+							</tr>
+						{/if}
 					</tbody>
 					</table>
               </div>
@@ -727,23 +755,29 @@ function user_permission(qid, qtype, qdesc, el) {
 							<th>Соревнование</th>
 							<th>Участники</th>
 						</tr>
-						{foreach $club.competitions.past as $comp}
-						 <tr>
-							<td class="compt-img"><a href="/club-compt.php?id={$comp.id}"><img src="images/icon-competition-1.jpg"></a></td>
-							<td class="compt-date">{$comp.bdate} <div>{$comp.diff} дней назад</div></td>
-							<td class="competition">
-								<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
-							</td>
-							<td class="compt-members">
-								[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
-								<!--<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>-->
-							</td>
-						</tr> 
-						{/foreach}
+						{if $club.competitions.past}
+							{foreach $club.competitions.past as $comp}
+							 <tr data-type="{$comp.type}">
+								<td class="compt-img"><a href="/club-compt.php?id={$comp.id}"><img src="images/icons/{$comp.type}.jpg"></a></td>
+								<td class="compt-date">{$comp.bdate} <div>{$comp.diff} дней назад</div></td>
+								<td class="competition">
+									<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
+								</td>
+								<td class="compt-members">
+									[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
+									<!--<ul class="inline compt-members">
+										<li>25 участников</li>
+										<li>4 фотографа</li>
+										<li>120 зрителей</li>
+									</ul>-->
+								</td>
+							</tr> 
+							{/foreach}
+						{else}
+							<tr>
+								<td colspan="4" style="text-align: center;">Соревнований нет.</td>
+							</tr>
+						{/if}
 					</tbody>
 					</table>
               </div>

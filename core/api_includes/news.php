@@ -188,7 +188,7 @@ function api_news_extra() {
 	}	
 
 
-	if (!in_array($fields["type"], array("user", "club"))) {
+	if (!in_array($fields["type"], array("user", "club", "feed"))) {
 		aerr(array("Некорректный тип."));
 	}
 
