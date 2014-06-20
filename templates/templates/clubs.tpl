@@ -177,13 +177,11 @@
 
 						function show_address(adress, club) {
 							ymaps.geocode(adress, {results: 1}).then(function(res) {
-								console.log(res);
 								if (res.metaData.geocoder.found !== 0) {
 									geoResult = res.geoObjects.get(0);
-
 									var placemark = new ymaps.Placemark(geoResult.geometry.getCoordinates(), {
 										balloonContent: '<h3>'+club.name+'</h3> \
-										'+geoResult.properties.get('name')+' <br>\
+										'+geoResult.properties.get("text")+' <br>\
 										<a href="club.php?id='+club.id+'">Перейти к клубу</a> \
 										',
 									});
