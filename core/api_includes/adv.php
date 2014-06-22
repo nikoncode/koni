@@ -139,3 +139,54 @@ function api_find_adv() {
     }
     aok($horses);
 }
+
+function api_adv_photo_info() {
+    /* validate data */
+    validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+
+    /* Getting photo info */
+    $db = new db;
+    $info = $db->getRow("SELECT id,
+								full,
+								time,
+								`desc`,
+								o_uid as user_id,
+								(SELECT CONCAT(fname, ' ', lname) FROM users WHERE id = o_uid) as user_name,
+								(SELECT COUNT(id) FROM comments WHERE apid = adv_photos.id) as comments_cnt,
+								(SELECT avatar FROM users WHERE id = ?i) as user_avatar
+						FROM adv_photos WHERE id = ?i", $_SESSION["user_id"], $fields["id"]);
+
+    if ($info === NULL) {
+        aerr(array("Такой фотографии больше не существует."));
+    } else {
+        $info["own"] = ($_SESSION["user_id"] == $info["user_id"]);
+
+        /* Getting comments to photo */
+        $comments = $db->getAll("SELECT c.*,
+										concat(fname,' ',lname) as fio,
+										avatar,
+										(SELECT COUNT(id) FROM likes WHERE cid = c.id) as likes_cnt,
+										(SELECT COUNT(id) FROM likes WHERE cid = c.id AND o_uid = ?i) as is_liked
+								FROM (
+									SELECT * FROM comments WHERE apid = ?i ORDER BY time DESC LIMIT 3
+								) c, users
+								WHERE o_uid = users.id
+								ORDER BY time ASC", $_SESSION["user_id"], $info["id"]);
+
+        /* Render comments to var */
+        $info["comments"] = template_render_to_var(array(
+            "comments" => $comments,
+            "comments_cnt" => $info["comments_cnt"],
+            "user_avatar" => $info["user_avatar"],
+            "c_key" => "apid",
+            "c_value" => $info["id"],
+            "user" => array("id" => $_SESSION["user_id"])
+        ), "iterations/comments_block.tpl");
+
+        aok($info);
+    }
+}

@@ -2,6 +2,8 @@
 {include "modules/header.tpl"}
 {include "modules/modal-create-adv.tpl"}
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/chosen.css" rel="stylesheet">
 <script>
     $(function() {
         $( "#adv-price" ).slider({
@@ -21,6 +23,7 @@
         $('#price_from').val($( "#adv-price" ).slider( "values", 0 ));
         $('#price_to').val($( "#adv-price" ).slider( "values", 1 ));
         document.getElementById('adv-price-amount').innerHTML = startAmount;
+        {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true});{/literal}
     }  );
 
     $(function() {
@@ -89,7 +92,8 @@
                 amethod: "auth_get_city",
                 params:  {country_id:country},
                 success: function (response, data) {
-                    $('select.city').html(response);
+                    var values = '<option value="0">Все города</option>'+response;
+                    $('select.city').html(values).trigger("chosen:updated");
                 },
                 fail:    "standart"
             })
@@ -131,7 +135,7 @@
                                 </select>
 
                                 <label>Страна</label>
-                                <select name="country" class="span3 country" onchange="change_country(this);">
+                                <select name="country" class="span3 country chosen-select" onchange="change_country(this);">
                                     <option value="0">Все страны</option>
                                     {foreach $countries as $country}
                                         <option value="{$country.id}">{$country.country_name_ru}</option>
@@ -139,7 +143,7 @@
                                 </select>
 
                                 <label>Город</label>
-                                <select name="city" class="span3 city">
+                                <select name="city" class="span3 city chosen-select">
                                     <option>Все города</option>
                                 </select>
 
@@ -154,16 +158,18 @@
 
 
                             <div class="span3 search-filter-block">
+
                                 <label>Порода</label>
-                                <select name="poroda" class="span3">
+                                <select name="poroda" class="span3 chosen-select">
                                     <option value="">Все породы</option>
                                     {foreach $porodi as $poroda}
                                         <option value="{$poroda}">{$poroda}</option>
                                     {/foreach}
                                 </select>
 
+
                                 <label>Масть</label>
-                                <select name="mast" class="span3">
+                                <select name="mast" class="span3 chosen-select">
                                     <option value="">Все масти</option>
                                     {foreach $masti as $mast}
                                         <option value="{$mast}">{$mast}</option>
@@ -174,7 +180,7 @@
                                 <input type="text" name="nick" class="span3">
 
                                 <label>Специализация</label>
-                                <select name="spec" class="span3">
+                                <select name="spec" class="span3 chosen-select">
                                     <option value="">Все специализации</option>
                                     {foreach $specs as $spec}
                                         <option value="{$spec}">{$spec}</option>

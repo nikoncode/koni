@@ -48,6 +48,11 @@ if (!session_check()) {
         "horse" => $horse,
         "photos" => $photos,
     );
+    $ids = array();
+    foreach($assigned_vars["photos"] as $photo) {
+        $ids[] = $photo["id"];
+    }
+    $assigned_vars["photos_ids_list"] = implode(",", $ids);
     $assigned_vars["my_horses"] = $db->getAll("SELECT id,
 													avatar,
 													nick,

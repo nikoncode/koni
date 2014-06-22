@@ -11,7 +11,7 @@ function api_comments_add() {
 		aerr($errors);
 	}
 
-	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid"))) { //check comment to news, horse, photo
+	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid"))) { //check comment to news, horse, photo
 		aerr(array("Ошибка."));
 	}
 
@@ -63,7 +63,7 @@ function api_comments_extra() {
 		aerr($errors);
 	}
 
-	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid"))) { //check comment to news, horse, photo
+	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid"))) { //check comment to news, horse, photo
 		aerr(array("Ошибка."));
 	}
 

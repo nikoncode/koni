@@ -12,6 +12,7 @@
 	<link href="css/bootstrap.css" rel="stylesheet">
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
 	<link href="style.css" rel="stylesheet">
+	<link href="style_temp.css" rel="stylesheet">
 	<script src="js/jquery.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/api.js"></script>
