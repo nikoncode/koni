@@ -1,2 +1,7 @@
 .search-filter-block .span3.chosen-select{margin:0}
-#advTabsContent .tab-pane{overflow: hidden}
+/*#advTabsContent .tab-pane {overflow: hidden; position: absolute; width: 940px; height: 260px; z-index: 1}*/
+#adv-tab1 {position: static !important; z-index: 1; overflow: hidden}
+
+.chosen-container {z-index: 10; }
+.chosen-container.chosen-with-drop {z-index: 9999; position: absolute; margin-bottom: 70px;}
+.chosen-container.chosen-with-drop .chosen-drop {z-index: 9999; position: absolute;}
