@@ -8,7 +8,7 @@
 			amethod: "comp_edit",
 			params: $(form).serialize(),
 			success: function (data) {
-				console.log(data);
+				alert(data[0]);
 			},
 			fail: "standart"
 		});
@@ -20,7 +20,7 @@
 		<div class="row">
 		
 			<div class="span12 lthr-bgborder block club-tabs">
-				<h3 class="inner-bg">Настройки клуба<span class="pull-right text-italic"><a href="club-sample.php">Вернуться в клуб</a></span></h3>
+				<h3 class="inner-bg">Настройки клуба<span class="pull-right text-italic"><a href="/club.php?id={$comp.o_cid}">Вернуться в клуб</a></span></h3>
 				<div class="row">
 				<ul id="clubTab" class="nav nav-tabs new-tabs tabs2">
 					<li><a href="club-admin.php#main-admin">Основные</a></li>
@@ -40,9 +40,9 @@
 						<div class="span12">
 							<div class="row option-row">
 								<div class="title-hr">
-									<div class="title span7">Новое соревнование</div>
+									<div class="title span7">Редактирование соревнования</div>
 									<button href="club-admin-add-comp.php" class="btn btn-warning span3">Сохранить изменения</button>
-									<a href="club-admin-add-comp.php" class="btn span1">Отмена</a>
+									<a href="/club-admin.php?id={$comp.o_cid}" class="btn span1">Отмена</a>
 								</div>
 							</div>
 						</div>
@@ -56,8 +56,8 @@
 												<input type="text" class="span6" name="name" value="{$comp.name}">
 												<label class="span3">Дата начала</label>
 												<label class="span3">Дата завершения</label>
-												<input type="text" class="span3" placeholder="дд.мм.гг" name="bdate" value="{$comp.bdate}">
-												<input type="text" class="span3" placeholder="дд.мм.гг" name="edate" value="{$comp.edate}">
+												<input type="text" class="span3" placeholder="дд.мм.гггг" name="bdate" value="{$comp.bdate}">
+												<input type="text" class="span3" placeholder="дд.мм.гггг" name="edate" value="{$comp.edate}">
 												<label class="span3">Страна</label>
 												<label class="span3">Город</label>
 												<select class="span3" name="country">
@@ -105,18 +105,24 @@
 									  <th>Статус</th>
 									  <th><a class="btn btn-warning" href="#" onclick="prepare_to_add(); return false;">Добавить маршруты</a></th>
 									</tr>
-									{foreach $comp.routes as $route}
-										 <tr>
-											<td class="comp-date"><p>{$route.bdate}</p></td>
-											<td class="route">
-												<a href="events.php">{$route.name}</a>
-											</td>
-											<td class="height"><p>{$route.height}</p></td>
-											<td class="credit-for"><p>{$route.exam}</p></td>
-											<td class="status"><p>{$route.status}</p></td>
-											<td class="change"><a href="#" class="btn btn-grey" onclick="prepare_to_edit({$route.id}); return false;">Изменить</a><button type="button" class="close" onclick="delete_route({$route.id}, this); return false;">&times;</button></td>
+									{if $comp.routes}
+										{foreach $comp.routes as $route}
+											 <tr>
+												<td class="comp-date"><p>{$route.bdate}</p></td>
+												<td class="route">
+													<a href="/competition.php?id={$comp.id}">{$route.name}</a>
+												</td>
+												<td class="height"><p>{$route.height}</p></td>
+												<td class="credit-for"><p>{$route.exam}</p></td>
+												<td class="status"><p>{$route.status}</p></td>
+												<td class="change"><a href="#" class="btn btn-grey" onclick="prepare_to_edit({$route.id}); return false;">Изменить</a><button type="button" class="close" onclick="delete_route({$route.id}, this); return false;">&times;</button></td>
+											</tr>
+										{/foreach}
+									{else}
+										<tr>
+											<td colspan="6" style="text-align: center;">Маршрутов пока нет</td>
 										</tr>
-									{/foreach}
+									{/if}
 								</tbody>
 								</table>
 						</div>
@@ -179,266 +185,143 @@
 								</ul>
 					</div> 
               </div> <!-- compt-members -->*}
+<!-- implement fileupload -->
+<script src="js/upload/jquery.ui.widget.js"></script>
+<script src="js/upload/jquery.iframe-transport.js"></script>
+<script src="js/upload/jquery.fileupload.js"></script>
+<style>
+.compt-results input[type=text] {
+	width: 90px;
+}
+.standarts input[type=text] {
+	width: 30px !important;
+}
+.disq td {
+	background-color: red !important;
+}
+</style>
+<script>
+function send_results(form) {
+	api_query({
+		qmethod: "POST",
+		amethod: "comp_results_update",
+		params: $(form).serialize(),
+		success: function (data) {
+			alert(data[0]);
+		},
+		fail: "standart"
+	})
+}
+
+function pre_add(el) {
+	var element = $(el).closest("tr");
+	var new_tr = element.clone();
+	new_tr.find("input[type=text]").val("");
+	new_tr.insertBefore(element);
+}
+
+function aft_add(el) {
+	var element = $(el).closest("tr");
+	var new_tr = element.clone();
+	new_tr.find("input[type=text]").val("");
+	new_tr.insertAfter(element);
+}
+
+function rem(el) {
+	$(el).closest("tr").remove();
+}
+
+function disq(el) {
+	$(el).closest("tr").addClass("disq")
+	.find("[name*=disq]").val("1");
+}
+$(function () {
+	$('#fileupload').fileupload({
+		maxNumberOfFiles: 1,
+		dataType: 'json',
+		url: "/api/api.php?m=comp_results_parse&id={$comp.id}",
+		done: function (e, data) {
+			var result = data.result
+			if (result.type == "success") {
+				window.location.reload();
+			} else {
+				errors = "";
+				for (i = 0;i < result.response.length; ++i)
+					errors += result.response[i] + "<br>";
+				alert(errors);
+			}
+		}
+	});
+})
+</script>
+
               
 			  <div class="tab-pane active" id="compt-results">
+				<form onsubmit="send_results(this);return false;">
+				<input type="hidden" name="id" value="{$comp.id}" >
 				<div class="c-results-btns">
 					<ul>
-						<li><a href="#" class="btn btn-warning">Импортировать результаты с файла</a></li>
-						<li><a href="#" class="btn btn-warning">Заполнить результаты вручную</a></li>
-						<li><a href="#" class="btn btn-warning">Загрузка PDF-файла для скачивания</a></li>
+						<li><div class="fileupload btn btn-warning" id="fileupload">
+							Загрузить файл
+							<input type="file" name="xls">
+						</div></li>
+						<li><button class="btn btn-warning">Заполнить результаты вручную</button></li>
+						<li><a href="/api/generate_xls.php?id={$comp.id}" target="_blank" class="btn btn-warning">Загрузка XLS-файла для заполнения</a></li>
 					</ul>
 				</div>
                 <table class="table table-striped competitions-table compt-results admin-compts">
 						<tbody><tr>
-							<th>№</th>
-							<th>Всадник</th>
-							<th>Разряд</th>
-							<th>Лошадь</th>
-							<th>Команда</th>
-							<th>Ошибки</th>
-							<th>Баллы</th>
-							<th>Всего %</th>
-							<th>Нормы</th>
-							<th> </th>
-						</tr>
-						<tr><td colspan="10" class="table-caption">М1 08.10.2013</td></tr> 
-						<tr class="first-place">
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn">
-									<div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div>
-							</td>
-						</tr> 
-						<tr>
-							<td class="n">2</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-						<tr>
-							<td class="n">3</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-						<tr>
-							<td class="n">4</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-						<tr>
-							<td class="n">5</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-						
-						<tr><td colspan="10" class="table-caption">М2 (зачёт 2) 08.10.2013</td></tr> 
-						<tr class="first-place">
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-						<tr>
-							<td class="n">2</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-						<tr>
-							<td class="n">3</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-						<tr>
-							<td class="n">4</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-						<tr>
-							<td class="n">5</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors"><input type="text" ></td>
-							<td class="points"><input type="text" ></td>
-							<td class="total"><input type="text" ></td>
-							<td class="standarts"><input type="text" ></td>
-							<td class="closebtn"><div class="dropdown button">
-									<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
-										<ul id="menu1" class="dropdown-menu" role="menu">
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove-sign"></i> Исключить</a></li>
-											<li><a tabindex="-1" href="#"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
-											<li class="divider"></li>
-											<li><a tabindex="-1" href="#"><i class="icon-remove"></i> Отмена</a></li>
-										</ul>
-									</div></td>
-						</tr> 
-
+                            <th>№</th>
+                            <th>Всадник</th>
+                            <th>Разряд</th>
+                            <th>Лошадь</th>
+                            <th>Команда</th>
+                            <th>Штраф. очки маршрут</th>
+                            <th>Время маршрут</th>
+                            <th>Штраф. очки</th>
+                            <th>Пере- прыжка</th>
+                            <th>Норма</th>
+                            <th> </th>
+                        </tr>
+						{if $comp.routes}
+							{foreach $comp.routes as $route}
+								<tr><td colspan="11" class="table-caption">{$route.name}</td></tr> 
+								{foreach $comp.results.{$route.id} as $res}
+									<tr {if $res.disq}class="disq"{/if} data-disq={$res.disq}>
+										<td class="n total">
+											<input type="text" name="pos[{$route.id}][]" value="{$res.pos}">
+											<input type="hidden" name="disq[{$route.id}][]" value="{$res.disq}">
+										</td>
+										<td class="name"><input type="text" value="{$res.fio}" name="fio[{$route.id}][]"></td>
+										<td class="discharge standarts"><input type="text" name="degree[{$route.id}][]" value="{$res.degree}"></td>
+										<td class="horse"><input type="text" name="horse[{$route.id}][]" value="{$res.horse}"></td>
+										<td class="team"><input type="text" name="team[{$route.id}][]" value="{$res.team}"></td>
+										<td class="standarts"><input type="text" name="opt1[{$route.id}][]" value="{$res.opt1}"></td>
+										<td class="standarts"><input type="text" name="opt2[{$route.id}][]" value="{$res.opt2}"></td>
+										<td class="standarts"><input type="text" name="opt3[{$route.id}][]" value="{$res.opt3}"></td>
+										<td class="standarts"><input type="text" name="opt4[{$route.id}][]" value="{$res.opt4}"></td>
+										<td class="standarts"><input type="text" name="opt5[{$route.id}][]" value="{$res.opt5}"></td>
+										<td class="closebtn"><div class="dropdown button">
+												<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
+													<ul id="menu1" class="dropdown-menu" role="menu">
+														<li><a tabindex="-1" href="#" onclick="pre_add(this); return false;"><i class="icon-chevron-up"></i> Добавить ряд выше</a></li>
+														<li><a tabindex="-1" href="#" onclick="aft_add(this); return false;"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
+														<li class="divider"></li>
+														<li><a tabindex="-1" href="#" onclick="disq(this); return false;"><i class="icon-remove-sign"></i> Исключить</a></li>
+														<li><a tabindex="-1" href="#" onclick="rem(this); return false;"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
+													</ul>
+												</div></td>
+									</tr> 
+								{/foreach}
+							{/foreach}
+						{else}
+							<tr>
+								<td colspan="11" style="text-align: center;">Для редактирования результатов добавьте маршрут.</td>
+							</tr>
+						{/if}
 					</tbody>
 					</table>
+              	</form>
               </div><!-- compt-results -->
 			  
 			  <div class="tab-pane" id="compt-gallery">
@@ -558,7 +441,7 @@ function add_route(form) {
 		amethod: "comp_route_add",
 		params: $(form).serialize(),
 		success: function (data) {
-			console.log(data);
+			window.location.reload();
 		},
 		fail: function (data) { //your modal not work
 			var err = "";
@@ -576,7 +459,7 @@ function edit_route(form) {
 		amethod: "comp_route_edit",
 		params: $(form).serialize(),
 		success: function (data) {
-			console.log(data);
+			window.location.reload();
 		},
 		fail: function (data) { //your modal not work
 			var err = "";

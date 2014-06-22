@@ -7,8 +7,8 @@
 			qmethod: "POST",
 			amethod: "comp_add",
 			params: $(form).serialize(),
-			success: function (data) {
-				console.log(data);
+			success: function (id) {
+				window.location = "/competition-edit.php?id=" + id;
 			},
 			fail: "standart"
 		});
@@ -19,7 +19,7 @@
 		<div class="row">
 		
 			<div class="span12 lthr-bgborder block club-tabs">
-				<h3 class="inner-bg">Настройки клуба<span class="pull-right text-italic"><a href="club-sample.php">Вернуться в клуб</a></span></h3>
+				<h3 class="inner-bg">Настройки клуба<span class="pull-right text-italic"><a href="/club.php?id={$cid}">Вернуться в клуб</a></span></h3>
 				<div class="row">
 				<ul id="clubTab" class="nav nav-tabs new-tabs tabs2">
 					<li><a href="club-admin.php#main-admin">Основные</a></li>
@@ -41,7 +41,7 @@
 								<div class="title-hr">
 									<div class="title span7">Новое соревнование</div>
 									<button href="club-admin-add-comp.php" class="btn btn-warning span3">Сохранить изменения</button>
-									<a href="club-admin-add-comp.php" class="btn span1">Отмена</a>
+									<a href="/club-admin.php?id={$cid}" class="btn span1">Отмена</a>
 								</div>
 							</div>
 						</div>
@@ -55,8 +55,8 @@
 												<input type="text" class="span6" name="name">
 												<label class="span3">Дата начала</label>
 												<label class="span3">Дата завершения</label>
-												<input type="text" class="span3" placeholder="дд.мм.гг" name="bdate">
-												<input type="text" class="span3" placeholder="дд.мм.гг" name="edate">
+												<input type="text" class="span3" placeholder="дд.мм.гггг" name="bdate">
+												<input type="text" class="span3" placeholder="дд.мм.гггг" name="edate">
 												<label class="span3">Страна</label>
 												<label class="span3">Город</label>
 												<select class="span3" name="country">

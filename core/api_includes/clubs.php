@@ -66,7 +66,7 @@ function api_club_edit2() {
 	aok(array("Данные изменены.")); //check
 }
 
-function api_club_user_permission() {
+function api_club_user_permission() { //NOT-SAFE
 	validate_fields($fields, $_POST, array("desc"), array("id", "type"), array(), $errors);
 
 	if (!empty($errors)) {
@@ -100,7 +100,7 @@ function api_club_membership() {
 	}
 
 	$db = new db;
-	$id = $db->getOne("SELECT id FROM clubs WHERE id = ?i");
+	$id = $db->getOne("SELECT id FROM clubs WHERE id = ?i", $fields["id"]);
 	if ($id === NULL) {
 		aerr(array("Такого клуба не существует"));
 	}
@@ -114,7 +114,7 @@ function api_club_membership() {
 	if ($fields["act"] == "enter") {
 		$query["cid"] = $fields["id"];
 	}
-	$db->query("UPDATE users SET ?u WHERE id = ?i", $_SESSION["user_id"]);
+	$db->query("UPDATE users SET ?u WHERE id = ?i", $query, $_SESSION["user_id"]);
 	aok(array("Успех"));
 }
 
@@ -143,6 +143,7 @@ function api_club_adv() {
 
 function api_club_search() {
 	validate_fields($fields, $_POST, array(
+		"type",
 		"country",
 		"city",
 		"type",
@@ -168,6 +169,10 @@ function api_club_search() {
 
 	if (isset($fields["country"])) {
 		$conditions .= "@country \"" . $db->parse("?w", $fields["country"]) . "\" ";
+	}
+
+	if (isset($fields["type"])) {
+		$conditions .= "@type \"" . $db->parse("?w", $fields["type"]) . "\" ";
 	}
 
 	if (isset($fields["city"])) {

@@ -4,6 +4,7 @@
 /* Including functional dependencies */
 include_once (LIBRARIES_DIR . "safe_mysql/safemysql.php");
 include_once (LIBRARIES_DIR . "smarty/smarty.php");
+include_once (CORE_DIR . "core_includes/others.php");
 
 function template_get_user_info($id) {
 	$db = new db;
@@ -42,6 +43,29 @@ function template_get_user_info($id) {
 									AND friends.uid = ?i LIMIT 6", $id);
 
 	$user["horses_bar"] = $db->getAll("SELECT * FROM horses WHERE o_uid = ?i LIMIT 2", $id); //BOOM
+	$user["competitions"] = $db->getAll("SELECT id, 
+										       name, 
+										       bdate, 
+										       Datediff(bdate, Now()) AS diff 
+										FROM   comp 
+										WHERE  id IN (SELECT cid 
+										              FROM   ((SELECT cid 
+										                       FROM   comp_riders, 
+										                              routes 
+										                       WHERE  comp_riders.uid = ?i 
+										                              AND comp_riders.rid = routes.id) 
+										                      UNION 
+										                      (SELECT cid 
+										                       FROM   comp_members 
+										                       WHERE  uid = ?i)) ids) 
+										HAVING diff >= 0
+										ORDER BY bdate", $id, $id); //BOOM x2
+	if ($user["competitions"]){
+		foreach ($user["competitions"] as &$comp) {
+			$comp["bdate"] = others_data_format($comp["bdate"], "-", ".");
+			$comp["date"] = explode(".", $comp["bdate"]);
+		}
+	}
 
 	return $user;
 }

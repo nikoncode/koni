@@ -3,6 +3,7 @@
 include_once ("../core/config.php");
 include_once (CORE_DIR . "core_includes/templates.php");
 include_once (CORE_DIR . "core_includes/session.php");
+include_once (CORE_DIR . "core_includes/others.php");
 include_once (LIBRARIES_DIR . "safe_mysql/safemysql.php");
 include_once (CORE_DIR . "/constant.php");
 
@@ -19,10 +20,21 @@ if (!session_check()) {
 													AND cid = comp.id) as member_mask
 										FROM comp WHERE id = ?i", $_SESSION["user_id"], $_GET["id"]);
 
+	if ($assigned_vars["comp"] == NULL) {
+		template_render_error("Соревнование не найдено.");
+	}
+	$assigned_vars["club"] = $db->getRow("SELECT * FROM clubs WHERE id = ?i", $assigned_vars["comp"]["o_cid"]);
+	$assigned_vars["club"]["phones"] = unserialize($assigned_vars["club"]["c_phones"]);
+	$assigned_vars["club"]["adv"] = others_club_adv_choose($assigned_vars["club"]["adv"]);
+	$assigned_vars["page_title"] = "Соревнование '" . $assigned_vars["comp"]["name"] . "' > Одноконники";
 	$temp = explode(",", $assigned_vars["comp"]["member_mask"]);
 	$assigned_vars["comp"]["is_viewer"] = (bool)$temp[0];
 	$assigned_vars["comp"]["is_photographer"] = (bool)$temp[1];
 	$assigned_vars["comp"]["is_fan"] = (bool)$temp[2];
+
+	if (!empty($assigned_vars["comp"]["results"])) {
+		$assigned_vars["comp"]["results"] = unserialize($assigned_vars["comp"]["results"]);
+	}
 
 	$assigned_vars["comp"]["routes"] = $db->getAll("SELECT *,
 															(SELECT COUNT(id) 
@@ -37,29 +49,25 @@ if (!session_check()) {
 
 	$members = $db->getAll("SELECT 	users.id,
 									users.avatar,
-									CONCAT(fname,' ',lname) as fio,
-									photographer,
-									viewer,
-									fan,
-									comp_riders.id as rider
-							FROM (
-								(SELECT uid FROM comp_members WHERE cid = ?i)
-								UNION
-								(SELECT uid FROM comp_riders WHERE rid IN (SELECT id FROM  routes WHERE cid = ?i))
-							) as s 
-							LEFT JOIN users 
-								ON users.id = s.uid
-							LEFT JOIN comp_members
-								ON comp_members.uid = s.uid
-							LEFT JOIN comp_riders
-								ON comp_riders.uid = s.uid
-							GROUP BY id", $assigned_vars["comp"]["id"], $assigned_vars["comp"]["id"]);
+									CONCAT(fname, ' ', lname) as fio,
+									comp_members.photographer,
+									comp_members.viewer,
+									comp_members.fan
+							FROM comp_members, users
+							WHERE comp_members.cid = ?i
+							AND comp_members.uid = users.id", $assigned_vars["comp"]["id"]);
+	$assigned_vars["comp"]["riders"] = $db->getAll("SELECT 	users.id,
+															users.avatar,
+															CONCAT(fname, ' ', lname) as fio
+													FROM comp_riders, users
+													WHERE comp_riders.rid IN 
+														(SELECT id FROM routes WHERE cid = ?i)
+													AND comp_riders.uid = users.id
+													GROUP BY id", $assigned_vars["comp"]["id"]);
 
-	//print_r($members);
 	$assigned_vars["comp"]["viewers"] = 
 	$assigned_vars["comp"]["photographers"] =
 	$assigned_vars["comp"]["fans"] = 
-	$assigned_vars["comp"]["riders"] = 
 	array();
 
 	foreach ($members as $member) {
@@ -77,11 +85,8 @@ if (!session_check()) {
 		if ($member["fan"]) {
 			$assigned_vars["comp"]["fans"][] = $temp;
 		} 
-		if ($member["rider"]) {
-			$assigned_vars["comp"]["riders"][] = $temp;
-		} 
 	}
 
-	print_r($assigned_vars["comp"]["members"]);
+	//print_r($assigned_vars["comp"]["members"]);
 	template_render($assigned_vars, "competition.tpl");
 }
