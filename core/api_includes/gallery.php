@@ -340,3 +340,60 @@ function api_gallery_change_photo_album() {
     if($photo_id) $db->query("UPDATE gallery_photos SET album_id = ".intval($fields['album'])." WHERE o_uid = ?i AND id = ?i;", $_SESSION["user_id"], $fields['photo_id']);
 	aok(array("Альбом успешно изменен."), "/gallery.php");
 }
+
+function api_gallery_club_upload_avatar() {
+	validate_fields($fields, $_GET, array(), array("id"), array(), $fields);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* Checking path */
+	$path = $fields["id"] . "_cl/avatars/";
+	$filename = md5(md5(time()) . rand());
+	
+	if (!file_exists(UPLOADS_DIR . $path))
+		mkdir(UPLOADS_DIR . $path, 0777, true);
+
+	/* Generating name and upload photo */
+	$full_img = $path . $filename . ".jpg";
+	$result = gallery_upload_photo($_FILES, "avatar", $full_img, 500, 500);
+	
+	/* Insert to db */
+	if ($result === true) {
+		$db = new db;
+		$db->query("UPDATE clubs SET avatar = ?s WHERE o_uid = ?i AND id = ?i", "/uploads/" . $full_img, $_SESSION["user_id"], $fields["id"]);
+		aok(array(
+				"avatar" => "/uploads/" . $full_img
+		));	
+	} else {
+		aerr($result);
+	} 
+}
+
+function api_gallery_club_upload_adv() {
+	validate_fields($fields, $_GET, array(), array("id"), array(), $fields);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* Checking path */
+	$path = $fields["id"] . "_cl/adv/";
+	$filename = md5(md5(time()) . rand());
+	
+	if (!file_exists(UPLOADS_DIR . $path))
+		mkdir(UPLOADS_DIR . $path, 0777, true);
+
+	/* Generating name and upload photo */
+	$full_img = $path . $filename . ".jpg";
+	$result = gallery_upload_photo($_FILES, "adv", $full_img, 500, 500);
+	
+	if ($result === true) {
+		aok(array(
+				"adv" => "/uploads/" . $full_img
+		));	
+	} else {
+		aerr($result);
+	} 
+}

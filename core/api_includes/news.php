@@ -7,7 +7,7 @@ include_once(LIBRARIES_DIR . "smarty/smarty.php");
 
 function api_news_add() {
 	/* validate data */
-	validate_fields($fields, $_POST, array("text", "album_id"), array(), array(), $errors);
+	validate_fields($fields, $_POST, array("text", "album_id"), array("type", "id"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -24,34 +24,39 @@ function api_news_add() {
 	if (!isset($fields["text"]) && $att_count == 0) {
 		aerr(array("Новость должна содержать либо текст, либо вложения."));	
 	}
+	
 	$fields["o_uid"] = $_SESSION["user_id"];
+	if ($fields["type"] == "user") {
+		if ($fields["id"] != $_SESSION["user_id"]) {
+			aerr(array("Это не вы"));
+		}
+	} else if ($fields["type"] == "club") {
+		$owner_id = $db->getOne("SELECT o_uid FROM clubs WHERE id = ?i", $fields["id"]);
+		if ($owner_id != $_SESSION["user_id"]) {
+			aerr(array("не можете вы так."));
+		} else {
+			$fields["o_cid"] = $fields["id"];
+		}
+	} else {
+		aerr(array("Тип неопознан"));
+	}
+	$type = $fields["type"];
+	unset($fields["type"]);
+	unset($fields["id"]);
 
 	/* insert to db */	
-	$db->query("INSERT INTO news (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
+	$db->query("INSERT INTO news SET ?u;", $fields);
+	$id = $db->getOne("SELECT LAST_INSERT_ID() FROM news");
 
 	/* get news */
-	$post = $db->getRow("SELECT CONCAT(fname,' ',lname) as fio,
-							news.id,
-							avatar,
-							text,
-							attachments,
-							time,
-							o_uid,
-							0 as likes_cnt,
-							0 as is_liked,
-							0 as comments_cnt,
-							(SELECT GROUP_CONCAT(full) FROM gallery_photos WHERE album_id = news.album_id) as photos,
-							(SELECT GROUP_CONCAT(id) FROM gallery_photos WHERE album_id = news.album_id) as photo_ids
-					FROM news, users
-					WHERE o_uid = ?i 
-					AND news.id = LAST_INSERT_ID()
-					AND users.id = o_uid", $_SESSION["user_id"]);
+	$post = news_get_single($type, $id);
+
 	$post["photos"] = others_make_photo_array($post["photos"], $post["photo_ids"]);
 	
 	/* render it */
 	$tmpl = new templater;
 	$params = array(
-		"user" => array("id" => $_SESSION["user_id"], "avatar" => $post["avatar"]),
+		"user" => array("id" => $_SESSION["user_id"], "avatar" => $post["owner_avatar"]),
 		"news" => array($post)
 	);
 	$rendered = template_render_to_var($params, "iterations/news_block.tpl");
@@ -103,13 +108,26 @@ function api_news_edit_form() {
 						FROM news 
 						WHERE id = ?i
 						AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+
+	if ($news["o_uid"] != $_SESSION["user_id"]) {
+		aerr(array("Вы не можете редактировать чужую новость."));
+	}
+
 	if ($news["album_id"] != 0) {
 		$news["photos"] = $db->getAll("SELECT id, preview FROM gallery_photos WHERE album_id = ?i AND o_uid = ?i", $news["album_id"], $_SESSION["user_id"]);
-	}	
+	}
+
+	if ($news["o_cid"] != 0) {
+		$type = "club";
+	} else {
+		$type = "user";
+	}
 	
 	/* render it */
 	$params = array(
-		"n" => $news
+		"n" => $news,
+		"owner_type" => $type,
+		"owner_id" => $news["id"]
 	);
 	$rendered = template_render_to_var($params, "modules/news-form.tpl");
 	aok(array($rendered));
@@ -117,7 +135,7 @@ function api_news_edit_form() {
 
 function api_news_edit() {
 	/* validate data */
-	validate_fields($fields, $_POST, array("text", "album_id"), array("id"), array(), $errors);
+	validate_fields($fields, $_POST, array("text", "album_id"), array("type", "id"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -128,6 +146,12 @@ function api_news_edit() {
 	if (!isset($fields["album_id"]) && !isset($fields["text"])) {
 		aerr(array("Новость должна содержать либо текст, либо вложения."));	
 	}
+
+	if (!in_array($fields["type"], array("user", "club"))) {
+		aerr(array("Некорректный тип."));
+	}
+	$type = $fields["type"];
+	unset($fields["type"]);
 
 	/* filter news without image and text */
 	$att_count = $db->getOne("SELECT COUNT(id) FROM gallery_photos WHERE album_id = ?i", $fields["album_id"]);
@@ -143,21 +167,7 @@ function api_news_edit() {
 	/* update news */
 	$db->query("UPDATE news SET ?u WHERE o_uid = ?i AND id = ?i", $fields, $_SESSION["user_id"], $fields["id"]);
 	/* get updated news */
-	$news = $db->getRow("SELECT CONCAT(fname,' ',lname) as fio,
-								news.id,
-								avatar,
-								text,
-								attachments,
-								time,
-								o_uid,
-								(SELECT COUNT(id) FROM likes WHERE nid = news.id) as likes_cnt,
-								(SELECT COUNT(id) FROM likes WHERE nid = news.id AND o_uid = users.id) as is_liked,
-								(SELECT GROUP_CONCAT(full) FROM gallery_photos WHERE album_id = news.album_id) as photos,
-								(SELECT GROUP_CONCAT(id) FROM gallery_photos WHERE album_id = news.album_id) as photo_ids
-						FROM news, users
-						WHERE o_uid = ?i 
-						AND news.id = ?i
-						AND users.id = o_uid", $_SESSION["user_id"], $fields["id"]);
+	$news = news_get_single($type, $fields["id"]);
 	$news["photos"] = others_make_photo_array($news["photos"], $news["photo_ids"]);
 
 	/* render it */
@@ -171,16 +181,20 @@ function api_news_edit() {
 
 function api_news_extra() {
 	/* validate data */
-	validate_fields($fields, $_POST, array("feed"), array("id", "loaded"), array(), $errors);
+	validate_fields($fields, $_POST, array(), array("id", "loaded", "type"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
 	}	
 
+
+	if (!in_array($fields["type"], array("user", "club", "feed"))) {
+		aerr(array("Некорректный тип."));
+	}
+
 	/* render it */
-	$feed = !empty($fields["feed"]);
 	$params = array(
-		"news" => news_wall_build(array($fields["id"]), $fields["loaded"], 5, $feed),
+		"news" => news_wall_build($fields["type"], $fields["id"], $fields["loaded"], 5),
 		"user" => array("id" => $_SESSION["user_id"]) //user_avatar init
 	);
 	$rendered = template_render_to_var($params, "iterations/news_block.tpl");

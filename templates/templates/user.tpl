@@ -10,7 +10,8 @@
 	$(function () {
 		news_form_init($(".add-news form"));
 		$(".my-news-wall").autoload({
-			id: {$another_user.id}
+			id: {$another_user.id},
+			type: "user"
 		})
 	})
 </script>

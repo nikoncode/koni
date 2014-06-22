@@ -15,7 +15,7 @@ if (!session_check()) {
 	$assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]);
 	$assigned_vars["page_title"] = $assigned_vars["user"]["fio"]." > Одноконники";
 	$db = new db;
-	$assigned_vars["news"] = news_wall_build(array($_GET["id"]), 0, 5, true);
+	$assigned_vars["news"] = news_wall_build("feed", $assigned_vars["user"]["id"], 0, 5);
 	template_render($assigned_vars, "news.tpl");
 }
 

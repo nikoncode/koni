@@ -23,10 +23,14 @@ $(function() {
       slide: function( event, ui ) {
 		var CustomAmount =  "От " + ui.values[ 0 ] + " руб. до " + ui.values[ 1 ] + " руб.";
         document.getElementById('h-with-trainer-amount').innerHTML = CustomAmount;
+        $("[name=amount_start]").val(ui.values[0]);
+        $("[name=amount_end]").val(ui.values[1]);
       }
     });
 	var startAmount =   "От " + $( "#h-with-trainer" ).slider( "values", 0 ) +
       " руб. до " + $( "#h-with-trainer" ).slider( "values", 1 ) + " руб.";
+      $("[name=amount_start]").val($( "#h-with-trainer" ).slider( "values", 0 ));
+      $("[name=amount_end]").val($( "#h-with-trainer" ).slider( "values", 1 ));
     document.getElementById('h-with-trainer-amount').innerHTML = startAmount;
   } );  
   

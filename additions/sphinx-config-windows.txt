@@ -1,0 +1,36 @@
+searchd {
+    listen      = 1337:mysql41
+    pid_file    = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\searchd.pid
+    log         = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\log.txt
+    query_log   = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\query_log.txt
+    binlog_path = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\binlog
+}
+
+source clubs {
+  type = mysql
+  sql_host = localhost
+  sql_user = root
+  sql_pass = 
+  sql_db = test
+  sql_query_pre = SET NAMES utf8
+  sql_query = SELECT id, name, ability, country, city, with_inst, without_inst, horse FROM clubs
+  sql_field_string = name
+  sql_field_string = country
+  sql_field_string = city
+  sql_field_string = ability
+  sql_attr_string = avatar
+  sql_attr_string = coords
+  sql_attr_bool = type
+  sql_attr_uint = with_inst
+  sql_attr_uint = without_inst
+  sql_attr_uint = horse 
+}
+ 
+index clubs_index {
+  min_prefix_len = 1
+  type = plain
+  source = clubs
+  charset_type = utf-8
+  preopen = 1
+  path = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\clubs_index
+}

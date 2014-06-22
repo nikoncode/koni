@@ -1,6 +1,8 @@
 {* Smarty *}
 <div class="add-news">
 	<form onsubmit="news_{if $n}edit{else}add{/if}(this);return false;">
+		<input type="hidden" name="type" value="{$owner_type}">
+		<input type="hidden" name="id" value="{$owner_id}">
 		<textarea placeholder="Что у вас нового?" class="span6" name="text">{$n.text}</textarea>
 		<div class="uploaded-img-area row">
 			
@@ -29,7 +31,6 @@
 		  	
 		 	<button class="btn btn-warning" href="#">Поделиться</button>
 		 	{if $n}
-		 		<input type="hidden" name="id" value="{$n.id}" />
 		 		<button class="btn" href="#" onclick="edit_news_cancel(this);return false;">Отмена</button>
 		 	{/if}
 		</div>

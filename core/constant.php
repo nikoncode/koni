@@ -20,6 +20,11 @@ $const_countries = $db->getAll("SELECT id,country_name_ru
                                                 FROM country_
                                                 ORDER BY oid ASC");
 
+//make yours
+$const_countries_old = $db->getCol("SELECT country_name_ru
+                                                FROM country_
+                                                ORDER BY oid ASC");
+
 $const_work = array(
 	"Тренер",
 	"Владелец лошади",
@@ -311,4 +316,20 @@ $const_horses_spec = array(
 	"Скачки",
 	"Спорт - прочее",
 	"Троеборье"
+);
+
+$const_ability = array(
+	"Занятия конкуром",
+	"Раздевалка",
+	"Прогулки в лес/поле",
+	"Троеборные препятствия",
+	"Туалет",
+	"Аренда денников",
+	"Обучение",
+	"Участие в соревнованиях",
+);
+
+$const_club_type = array(
+	"Открытый клуб",
+	"Закрытый клуб"
 );

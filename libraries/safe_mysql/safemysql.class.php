@@ -25,7 +25,8 @@
  * ?u ("update")  - complex placeholder for SET operator (substituted with string of `field`='value',`field`='value' format)
  * and
  * ?p ("parsed") - special type placeholder, for inserting already parsed statements without any processing, to avoid double parsing.
- * 
+ * ?w ("str without quotes") 
+ *
  * Some examples:
  *
  * $db = new SafeMySQL(); // with default settings
@@ -470,7 +471,7 @@ class SafeMySQL
 	{
 		$query = '';
 		$raw   = array_shift($args);
-		$array = preg_split('~(\?[nsiuap])~u',$raw,null,PREG_SPLIT_DELIM_CAPTURE);
+		$array = preg_split('~(\?[nswiuap])~u',$raw,null,PREG_SPLIT_DELIM_CAPTURE);
 		$anum  = count($args);
 		$pnum  = floor(count($array) / 2);
 		if ( $pnum != $anum )
@@ -503,6 +504,9 @@ class SafeMySQL
 					break;
 				case '?u':
 					$part = $this->createSET($value);
+					break;
+				case '?w':
+					$part = $this->createStringWithoutQuot($value);
 					break;
 				case '?p':
 					$part = $value;
@@ -538,6 +542,15 @@ class SafeMySQL
 			return 'NULL';
 		}
 		return	"'".mysqli_real_escape_string($this->conn,$value)."'";
+	}
+
+	private function createStringWithoutQuot($value)
+	{
+		if ($value === NULL)
+		{
+			return 'NULL';
+		}
+		return	mysqli_real_escape_string($this->conn,$value);
 	}
 
 	private function escapeIdent($value)

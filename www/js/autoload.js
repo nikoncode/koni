@@ -4,7 +4,6 @@
     var cnt = 5;
     var feed = 0;
 
-
     $.fn.autoload = function( options ) {
         var cont = this;
         if (options.feed)
@@ -18,7 +17,8 @@
                     params: {
                         "loaded": cnt,
                         "id": options.id,
-                        "feed" : feed
+                        "feed" : feed,
+                        "type" : options.type
                     },
                     success: function (resp) {
                         if (resp == "") {

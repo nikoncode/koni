@@ -46,6 +46,17 @@ function template_get_user_info($id) {
 	return $user;
 }
 
+function template_get_short_user_info($id) {
+	$db = new db;
+	$user = $db->GetRow("SELECT CONCAT(fname, ' ', lname) as fio, 
+								avatar,
+								cid as club_id,
+								(SELECT name FROM clubs WHERE id = club_id) as club_name,
+								DATEDIFF(NOW(), bdate) as age,
+								id FROM users WHERE id = ?i", $id);
+	return $user;
+}
+
 function template_render($vars, $template_name) {
 	$tmpl = new templater;
 	foreach ($vars as $key => $value) {

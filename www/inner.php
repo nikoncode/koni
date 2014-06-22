@@ -16,7 +16,7 @@ if (!session_check()) {
 } else {
 	$assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]);
 	$assigned_vars["page_title"] = $assigned_vars["user"]["fio"]." > Одноконники";
-	$assigned_vars["news"] = news_wall_build(array($_SESSION["user_id"]), 0, 5);
+	$assigned_vars["news"] = news_wall_build("user", $_SESSION["user_id"], 0, 5);
 	template_render($assigned_vars, "inner.tpl");
 }
 
