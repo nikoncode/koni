@@ -1,6 +1,6 @@
 {* Smarty *}
 <div class="span3  lthr-bgborder block">
-	<div class="my-awards">
+	{*<div class="my-awards">
 		<h3 class="inner-bg">Мои награды<span class="pull-right">5 наград</span></h3>
 		<center>
 			<img src="i/sample-award-1.png" class="my-award-top"/><h2 class="my-award-name">1 место</h2>
@@ -12,19 +12,23 @@
 		<center><a href="#" class="goto-all-awards">Перейти ко всем наградам (23 шт.)</a></center>
 	</div>
 	
-	<div class="clear"></div>
+	<div class="clear"></div>*}
 	
 	<div class="my-events">
 		<h3 class="inner-bg">Мероприятия</h3>
 		<div class="my-events-list">
 			<h4 class="event-next">Ближайшие</h4>
-			<dl class="dl-horizontal">
-				<dt>12.09</dt>
-				<dd><a href="#">Выставка «Konya SEED 2013» в г. Москва</a></dd>
-				<dt>16.10</dt>
-				<dd><a href="#">«Вятская кунсткамера» открывает выставку</a></dd>
-			</dl>
-			<hr/>
+			{if $user.competitions}
+				<dl class="dl-horizontal">
+					{foreach $user.competitions as $comp}
+						<dt>{$comp.date.0}.{$comp.date.1}</dt>
+						<dd><a href="/competition.php?id={$comp.id}">{$comp.name}</a></dd>
+					{/foreach}
+				</dl>
+			{else}
+				<p class="text-align: center;">Нет соревнований.</p>
+			{/if}
+			{*<hr/>
 			<h4 class="event-fav">Избранные</h4>
 			<dl class="dl-horizontal">
 				<dt>12.09</dt>
@@ -34,11 +38,11 @@
 				<dd><a href="#">«Вятская кунсткамера» открывает выставку</a></dd>
 				<dt>21.12</dt>
 				<dd><a href="#">Выставка «Konya SEED 2013» в г. Москва</a></dd>
-			</dl>
+			</dl>*}
 		</div>
 	</div>
 	
-	<div class="my-adv">
+	{*<div class="my-adv">
 		<h3 class="inner-bg">Объявления</h3>
 		<div class="my-adv-list">
 			<h4 class="adv-fav">Интересные мне</h4>
@@ -61,6 +65,6 @@
 			<h4 class="adv-my">Мои объявления</h4>
 			<p class="tac fsi">К сожалению, по вашим объявлениям ещё нет ответов</p>
 		</div>
-	</div>
+	</div>*}
 
 </div>

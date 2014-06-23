@@ -59,42 +59,8 @@ function rider(rid, act, element) {
 <div class="container clubs-page main-blocks-area club-block img.club-avatar">
 		<div class="row">
 		
-			<div class="span12 lthr-bgborder block club-info" style="background-color: #fff">
-				<h3 class="inner-bg">Конноспортивный комплекс "Битца"<span class="pull-right text-italic">Общий рейтинг: <strong>2367</strong> / Рейтинг по соревнованиям: <strong>7632</strong> <a href="club-admin.php">[админ]</a></span></h3>
-				<div class="row">
-					<div class="span3">
-						<a href="#"><img src="i/club-bitza.jpg" class="club-avatar" /></a>
-						<input type="button" class="btn btn-warning goto-club" value="Вступить в клуб" />
-						<p class="club-access-descr">Вы ещё не вступали ни в однин из <a href="#">клубов</a></p>
-					</div>
-					
-					<div class="span6 current-club-descr">
-						<p class="current-club-descr">Конноспортивный комплекс (КСК) «Битца» — это крупнейший конноспортивный комплекс Москвы и единственное учреждение такого рода в мире по масштабам и расположению. КСК очень удобно размещен, недалеко от центра столичного города и огромного лесопарка. Территория комплекса составляет площадь малого государства в Европе, 50 га. Так, не выезжая за город, вы можете окунуться в тишину и покой, и насладиться общением с прекрасным животным — лошадью.</p>
-						<dl class="dl-horizontal">
-							<dt>Веб-сайт:</dt>
-							<dd><a href="http://www.kskbitsa.ru">http://www.kskbitsa.ru</a></dd>
-							<dt>E-mail:</dt>
-							<dd><a href="mailto:ksk_bitsa@mtu-net.ru">ksk_bitsa@mtu-net.ru</a></dd>
-							<dt>Телефоны:</dt>
-							<dd>
-								<ul class="unstyled">
-									<li>+7 (495) 955-93-93 - Многоканальный телефон</li>
-									<li>+7 (495) 788-80-18; 8(968) 819-01-19 - Обучение</li>
-									<li>+7 (495) 788-80-11 - Бассейн, спортзал </li>
-									<li>+7 (495) 645-79-73 - Ветеринария</li>
-								</ul>
-							</dd>
-							<dt>Адрес:</dt>
-							<dd>Россия, г. Москва, Балаклавский проспект, 33</dd>
-						</dl>
-					</div>
-					
-					<div class="span3 club-banners">
-						<a href="#"><img src="i/club-sample-adv.jpg" /></a>
-						
-					</div>
-				</div>
-			</div>
+			
+			{include "modules/club-header.tpl"}
 			
 			<div class="span12 brackets-horizontal"></div>
 			
@@ -112,9 +78,9 @@ function rider(rid, act, element) {
 				<div id="clubTabContent" class="tab-content bg-white">
 				
 				<div class="tab-pane in active current-compt">
-					<div class="row"><div class="span12 back-link"><a href="club-sample.php#competitions-club">&larr; <span>Вернуться во все соревнования</span></a></div></div>
+					<div class="row"><div class="span12 back-link"><a href="/club.php?id={$comp.o_cid}">&larr; <span>Вернуться к клубу</span></a></div></div>
 					<div class="row">
-						<div class="span1"><img src="images/flag-test.jpg" class="img-flag"/></div>
+						<div class="span1"><img src="images/icons/{$comp.country}.jpg" class="img-flag"/></div>
 						<div class="span11 compt-title"><h4>{$comp.name}</h4></div>
 					</div>
 					<div class="row">
@@ -171,31 +137,37 @@ function rider(rid, act, element) {
 							<th class="span2">Статус</th>
 							<th class="span2"></th>
 						</tr>
-						{foreach $comp.routes as $route}
-						 <tr>
-							<td colspan="6" class="td-complex">
-									<div class="row">
-										<div class="curr-compt-date span2">{$route.bdate}</div>
-										<div class="curr-compt-path span2">{$route.name}</div>
-										<div class="curr-compt-height span2">{$route.height}</div>
-										<div class="curr-compt-for span2">{$route.exam}</div>
-										<div class="curr-compt-status span2">{$route.status}</div>
-										<div class="curr-compt-go">
-											<a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}" onclick="rider({$route.id}, '{!$route.is_rider}', this); return false;">
-												Участвовать <i class="icon-play icon-white"></i>
-											</a>
+						{if $comp.routes}
+							{foreach $comp.routes as $route}
+							 <tr>
+								<td colspan="6" class="td-complex">
+										<div class="row">
+											<div class="curr-compt-date span2">{$route.bdate}</div>
+											<div class="curr-compt-path span2">{$route.name}</div>
+											<div class="curr-compt-height span2">{$route.height}</div>
+											<div class="curr-compt-for span2">{$route.exam}</div>
+											<div class="curr-compt-status span2">{$route.status}</div>
+											<div class="curr-compt-go">
+												<a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}" onclick="rider({$route.id}, '{!$route.is_rider}', this); return false;">
+													Участвовать <i class="icon-play icon-white"></i>
+												</a>
+											</div>
+											<div class="row curr-compt-more">
+												<ul class="unstyled span12">
+													{foreach $route.options as $option}
+														<li><span>{$option@key}</span>  {$option}</li>
+													{/foreach}
+												</ul>
+											</div>
 										</div>
-										<div class="row curr-compt-more">
-											<ul class="unstyled span12">
-												{foreach $route.options as $option}
-													<li><span>{$option@key}</span>  {$option}</li>
-												{/foreach}
-											</ul>
-										</div>
-									</div>
-							</td>
-						</tr> 
-						{/foreach}
+								</td>
+							</tr> 
+							{/foreach}
+						{else}
+							<tr>
+								<td colspan="6" style="text-align: center;">Нет маршрутов.</td>
+							</tr>
+						{/if}
 					</table>
 		</div>
 	</div>
@@ -247,143 +219,51 @@ function rider(rid, act, element) {
               </div> <!-- compt-members -->
               
 			  <div class="tab-pane" id="compt-results">
-                <table class="table table-striped competitions-table compt-results">
+				<table class="table table-striped competitions-table compt-results admin-compts">
 						<tbody><tr>
-							<th>№</th>
-							<th>Всадник</th>
-							<th>Разряд</th>
-							<th>Лошадь</th>
-							<th>Команда</th>
-							<th>Штраф. очки<br/>маршрут</th>
-							<th>Время<br/>маршурт</th>
-							<th>Штраф. очки</th>
-							<th>Перепрыжка</th>
-							<th>Норма</th>
-						</tr>
-						 <tr><td colspan="10" class="table-caption">Студенческий зачёт</td></tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						
-						 <tr><td colspan="10" class="table-caption">Общий зачёт</td></tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-						<tr>
-							<td class="n">1</td>
-							<td class="name"><span>Павленко</span> Екатерина, 1995</td>
-							<td class="discharge ">кмс</td>
-							<td class="horse"><span>Кондикор-04</span>, жер., гнед., ит. Сель, Италия</td>
-							<td class="team">РГУ ПП, Калининградская обл.</td>
-							<td class="errors">нет</td>
-							<td class="points">696</td>
-							<td class="total">68,235</td>
-							<td class="standarts">кмс</td>
-							<td class="norm">норма</td>
-						</tr> 
-
+                            <th>№</th>
+                            <th>Всадник</th>
+                            <th>Разряд</th>
+                            <th>Лошадь</th>
+                            <th>Команда</th>
+                            <th>Штраф. очки маршрут</th>
+                            <th>Время маршрут</th>
+                            <th>Штраф. очки</th>
+                            <th>Пере- прыжка</th>
+                            <th>Норма</th>
+                            <th> </th>
+                        </tr>
+						{if $comp.routes}
+							{foreach $comp.routes as $route}
+								<tr><td colspan="10" class="table-caption">{$route.name}</td></tr> 
+								{if $comp.results.{$route.id}}
+									{foreach $comp.results.{$route.id} as $res}
+										<tr {if $res.disq}class="disq"{/if} data-disq={$res.disq}>
+											<td class="">
+												{$res.pos}
+											</td>
+											<td>{$res.fio}</td>
+											<td>{$res.degree}</td>
+											<td>{$res.horse}</td>
+											<td>{$res.team}</td>
+											<td>{$res.opt1}</td>
+											<td>{$res.opt2}</td>
+											<td>{$res.opt3}</td>
+											<td>{$res.opt4}</td>
+											<td>{$res.opt5}</td>
+										</tr> 
+									{/foreach}
+								{else}
+									<tr>
+										<td colspan="10" style="text-align: center;">Администратор мероприятия пока не установил турнирную таблицу. Попробуйте позже.</td>
+									</tr>
+								{/if}
+							{/foreach}
+						{else}
+							<tr>
+								<td colspan="10" style="text-align: center;">Нет маршрутов.</td>
+							</tr>
+						{/if}
 					</tbody>
 					</table>
               </div><!-- compt-results -->

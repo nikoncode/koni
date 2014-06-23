@@ -27,55 +27,7 @@
 <div class="container clubs-page main-blocks-area club-block img.club-avatar">
 		<div class="row">
 		
-			<div class="span12 lthr-bgborder block club-info" style="background-color: #fff">
-				<h3 class="inner-bg">{$club.name}{*<span class="pull-right text-italic">Общий рейтинг: <strong>2367</strong> / Рейтинг по соревнованиям: <strong>7632</strong>*}
-					{if $club.o_uid == $user.id}
-						<a href="club-admin.php?id={$club.id}">[админ]</a></span>
-					{/if}
-				</h3>
-				<div class="row">
-					<div class="span3">
-						<a href="#"><img src="{$club.avatar}" class="club-avatar" /></a>
-						<input type="button" class="btn btn-warning goto-club" value="Вступить в клуб" />
-						<p class="club-access-descr">Вы ещё не вступали ни в однин из <a href="#">клубов</a></p>
-					</div>
-					
-					<div class="span6 current-club-descr">
-						<p class="current-club-descr">
-							{$club.sdesc}
-						</p>
-						<dl class="dl-horizontal">
-							{if $club.site}
-								<dt>Веб-сайт:</dt>
-								<dd><a href="{$club.site}">{$club.site}</a></dd>
-							{/if}
-							{if $club.email}
-								<dt>E-mail:</dt>
-								<dd><a href="mailto:{$club.email}">{$club.email}</a></dd>
-							{/if}
-							{if $club.phones}
-								<dt>Телефоны:</dt>
-								<dd>
-									<ul class="unstyled">
-										{foreach $club.phones as $phone}
-											<li>{$phone@key} - {$phone}</li>
-										{/foreach}
-									</ul>
-								</dd>
-							{/if}
-							{if $club.adress}
-								<dt>Адрес:</dt>
-								<dd>{$club.adress}</dd>
-							{/if}
-						</dl>
-					</div>
-					
-					<div class="span3 club-banners">
-						<a href="#"><img src="i/club-sample-adv.jpg" /></a>
-						
-					</div>
-				</div>
-			</div>
+			{include "modules/club-header.tpl"}
 			
 			<div class="span12 brackets-horizontal"></div>
 			
@@ -100,6 +52,7 @@
 								{include "modules/news-form.tpl" owner_type = "club" owner_id = $club.id}
 							{/if}
 							<ul class="my-news-wall">
+								{include "modules/modal-gallery-lightbox.tpl"}
 								{include "iterations/news_block.tpl"}
 							</ul>
 						</div>
@@ -107,26 +60,87 @@
 						<div class="span6">
 							<div>
 								<h4>Отзывы</h4>
-								<img src="!odk-rate.png"/>
+<div class="row">
+	<div class="span2 rate-block">
+		<div class="main-rate">{$club.notes.avg|string_format:"%.2f"}</div>
+		<div class="horseshoe-rate-block">
+			<ul class="horseshoe-rate">
+			{for $stars = 1 to 5}
+				<li class="horseshoe rate-1 {if $stars <= $club.notes.stars}active{/if}"></li>
+			{/for}
+			</ul>
+			<div class="clearfix"></div>
+		</div>
+		<p class="voters-numb"><i class="icon-user"></i>{$club.notes.all} оценок</p>
+	</div>
+	<div class="span4">
+		<ul class="unstyled prog-rating">
+			{for $rate = 1 to 5}
+				<li class="rate-{$rate}"><div class="progress progress-warning"><div class="bar" style="width: {$club.percent.$rate}%">{$club.percent.$rate|string_format:"%.2f"}% ({$club.notes.$rate})</div></div></li>
+			{/for}
+		</ul>
+	</div>
+</div>
 							</div>
 							
 							<hr/>
 							
+
+<script>
+function rate(el) {
+	var element = $(el);
+	var rate = parseInt(element.attr("data-rate"));
+	element.closest(".horseshoe-rate").find("li[data-rate]").removeClass("active")
+	.slice(0, rate).addClass("active");
+	element.closest("form").find("[name=rating]").val(rate);
+}
+
+function review_add(form) {
+	api_query({
+		qmethod: "POST",
+		amethod: "comp_review_add",
+		params: $(form).serialize(),
+		success: function (data) {
+			$(".club-reviews ul.comments-lists").prepend(data);
+		},
+		fail: "standart"
+	})
+}
+
+function useless(review_id, type, el) {
+	api_query({
+		qmethod: "POST",
+		amethod: "comp_review_useless", 
+		params: {
+			review_id : review_id,
+			type : type
+		},
+		success: function (data) {
+			var element = $(el).closest(".useful-review");
+			element.find("span.plus").text(data.plus);
+			element.find("span.minus").text(data.minus);
+		},
+		fail: "standart"
+	})
+}
+</script>
 							<div class="club-add-your-review">
 								<h4>Добавить свой отзыв</h4>
-								<form class="row">
-									<textarea placeholder="Что Вы думаете об этом клубе?" rows="5" class="span6"></textarea>
+								<form class="row" onsubmit="review_add(this); return false;">
+									<textarea placeholder="Что Вы думаете об этом клубе?" rows="5" class="span6" name="text"></textarea>
+									<input type="hidden" name="cid" value="{$club.id}" />
+									<input type="hidden" name="rating" value="1" />
 									<div class="span4 club-review-rate">
 										<ul class="horseshoe-rate">
 											<li class="title">Оцените клуб: </li>
-											<li class="horseshoe rate-1 active"></li>
-											<li class="horseshoe rate-2 active"></li>
-											<li class="horseshoe rate-3"></li>
-											<li class="horseshoe rate-4"></li>
-											<li class="horseshoe rate-5"></li>
+											<li class="horseshoe rate-1 active" data-rate="1" onclick="rate(this);"></li>
+											<li class="horseshoe rate-2" data-rate="2" onclick="rate(this);"></li>
+											<li class="horseshoe rate-3" data-rate="3" onclick="rate(this);"></li>
+											<li class="horseshoe rate-4" data-rate="4" onclick="rate(this);"></li>
+											<li class="horseshoe rate-5" data-rate="5" onclick="rate(this);"></li>
 										</ul>
 									</div>
-									<input type="button " value="Отправить отзыв" class="btn btn-warning span2" />
+									<button class="btn btn-warning span2">Отправить отзыв</button>
 								</form>
 							</div>
 							
@@ -134,49 +148,12 @@
 							
 							<div class="club-reviews">
 											<ul class="comments-lists">
-												<li class="comment">
-													<img src="i/avatar-1.jpg" class="avatar" />
-													<p class="user-name"><a href="#">Leon Ramos</a></p>
-													<p class="date">15.02.2013 в 14:11</p>
-													<div class="horseshoe-rate-block">
-														<ul class="horseshoe-rate">
-															<li class="horseshoe rate-1 active"></li>
-															<li class="horseshoe rate-2 active"></li>
-															<li class="horseshoe rate-3 active"></li>
-															<li class="horseshoe rate-4 active"></li>
-															<li class="horseshoe rate-5 active"></li>
-														</ul>
-														<div class="clearfix"></div>
-													</div>
-													<p class="message">Инфрастуктура включает все необходимое как для профессиональных занятий спортом, так и для активного и комфортного отдыха. Содержание лошадей отвечает самым строгим требованиям зоогигиены.</p>
-													<div class="useful-review">
-														<p><em>Отзыв полезен? </em><span><a href="#" class="yes-useful">Да:</a> 146 / </span><span><a href="#" class="not-useful">Нет:</a> 13 </span></p>
-													</div>
-												</li>
-												
-												<li class="comment">
-													<img src="i/avatar-2.jpg" class="avatar" />
-													<p class="user-name"><a href="#">Вася Горбунков</a></p>
-													<p class="date">15.02.2013 в 13:11</p>
-													<div class="horseshoe-rate-block">
-														<ul class="horseshoe-rate">
-															<li class="horseshoe rate-1 active"></li>
-															<li class="horseshoe rate-2 active"></li>
-															<li class="horseshoe rate-3 active"></li>
-															<li class="horseshoe rate-4 active"></li>
-															<li class="horseshoe rate-5"></li>
-														</ul>
-														<div class="clearfix"></div>
-													</div>
-													<p class="message"><a href="#" class="comment-reply">Leon, </a>Инфрастуктура включает все необходимое как для профессиональных занятий спортом, так и для активного и комфортного отдыха. Содержание лошадей отвечает самым строгим требованиям зоогигиены..</p>
-													<div class="useful-review">
-														<p><em>Отзыв полезен? </em><span><a href="#" class="yes-useful">Да:</a> 146 / </span><span><a href="#" class="not-useful">Нет:</a> 13 </span></p>
-													</div>
-												</li>
-												
+												{foreach $club.reviews as $review}
+													{include "iterations/review.tpl" review = $review}
+												{/foreach}
 											</ul>
 										
-										<div class="pagination">
+										{*<div class="pagination">
 											<ul class="page-list">
 												<li class="title">Страницы: </li>
 												<li class="active page"><a href="#">1</a></li>
@@ -185,7 +162,7 @@
 												<li class="page"><a href="#">4</a></li>
 												<li class="page"><a href="#">5</a></li>
 											</ul>
-										</div>
+										</div>*}
 						</div>
 						
 					</div>
@@ -279,9 +256,79 @@
 				</div> <!-- //about-club -->
 				
 				<div class="tab-pane" id="competitions-club">
+
+
+				<!-- implement datepicker -->
+				<link rel="stylesheet" type="text/css" media="all" href="css/datepicker.css" />
+				<script src="js/bootstrap-datepicker.js"></script>
+				<script src="js/bootstrap-datepicker.ru.js"></script>
+				<style>
+					.activeDate {
+						background-color: green;
+					}
+				</style>
+				<script>
+					var cal_comp = $.parseJSON('{$datepicker}');
+					 $(function () {
+						$('#compt-box-container').datepicker({
+							language: "ru",
+							dateFormat: 'yy-mm-dd',
+							minDate: new Date(), 
+							beforeShowDay: function(d) {
+								var year = d.getFullYear() + "-";
+								var month = "";
+								var day = "";
+								if ((d.getMonth()+1) < 10)
+									month = "0" + (d.getMonth()+1) + "-";
+								else
+									month = (d.getMonth()+1) + "-";
+								if (d.getDate() < 10)
+									day = "0" + d.getDate();
+								else
+									day = d.getDate();
+
+								var date = year+month+day;
+								//console.log(cal_comp[date]);
+								
+								if (cal_comp[date] === undefined) {
+									console.log(cal_comp[date]);
+									return {
+										enabled : false,
+										tooltip : "Нет соревнования."
+									};        
+								} else {
+									return {
+										enabled : true,
+										classes: "activeDate",
+										tooltip : cal_comp[date].join(",\n")
+									};					
+								}
+							}
+						}).on ("changeDate", function (a) {
+								var d = new Date(a.date);
+								var year = d.getFullYear() + "-";
+								var month = "";
+								var day = "";
+								if ((d.getMonth()+1) < 10)
+									month = "0" + (d.getMonth()+1) + "-";
+								else
+									month = (d.getMonth()+1) + "-";
+								if (d.getDate() < 10)
+									day = "0" + d.getDate();
+								else
+									day = d.getDate();
+
+								var date = year+month+day;
+								console.log(date);
+								$("#comptTabContent tr[data-date]").css("display", "none");
+								$("#comptTabContent tr[data-date="+date+"]").css("display", "table-row");
+						});
+					});
+				</script>
+
 					<div class="row">
 						<div class="span4" style="text-align: justify">
-							<table class="calendar">
+							<!--<table class="calendar">
 									<thead>
 										<tr class="month">
 										  <th colspan="7" class="tac" >
@@ -347,293 +394,52 @@
 											<td class="muted">3</td>
 										</tr>
 									</tbody>
-								</table>
+								</table>-->
+								<div id="compt-box-container"></div>
 						</div>
+						
 						<div class="span8" style="text-align: justify">
 							<h4>Ближайшее соревнование</h4>
-							<div class="row">
-								<div class="span1"><a href="#"><img src="images/icon-competition-1.jpg" /></a></div>
-								<div class="span7 comp-info">
-									<div class="row">
-										<div class="span5">
-											<div class="compt-name"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия) [М3, 115 см, любители (н)]</a></div>
-											<div class="compt-date">15.02.2013 в 14:11 (через 15 дней)</div>
+							{if $club.competitions.soon}
+								<div class="row">
+									<div class="span1"><a href="/competition.php?id={$club.competitions.soon.id}"><img src="images/icons/{$club.competitions.soon.type}.jpg" /></a></div>
+									<div class="span7 comp-info">
+										<div class="row">
+											<div class="span5">
+												<div class="compt-name"><a href="/competition.php?id={$club.competitions.soon.id}">{$club.competitions.soon.name}</a></div>
+												<div class="compt-date">{$club.competitions.soon.bdate} (через {$club.competitions.soon.diff} дней)</div>
+											</div>
+											{*<div class="span2">
+												<a href="#" class="btn btn-warning">Участвовать <i class="icon-play icon-white"></i></a>
+											</div>*}
 										</div>
-										{*<div class="span2">
-											<a href="#" class="btn btn-warning">Участвовать <i class="icon-play icon-white"></i></a>
-										</div>*}
+										<dl>
+											{*<dt>Будут присутствовать:</dt>
+											<dd>
+												<ul class="inline compt-members">
+													<li>25 участников</li>
+													<li>4 фотографа</li>
+													<li>120 зрителей</li>
+												</ul>
+											</dd>
+											<dt>О соревновании:</dt>*}
+											<dd>{$club.competitions.soon.desc} </dd>
+										</dl>
 									</div>
-									<dl>
-										<dt>Будут присутствовать:</dt>
-										<dd>
-											<ul class="inline compt-members">
-												<li>25 участников</li>
-												<li>4 фотографа</li>
-												<li>120 зрителей</li>
-											</ul>
-										</dd>
-										<dt>О соревновании:</dt>
-										<dd>Eдинственной космической субстанцией Гумбольдт считал материю, наделенную внутренней активностью, несмотря на это созерцание контролирует дедуктивный метод, отрицая очевидное. Адаптация, по определению, изоморфна времени. </dd>
-									</dl>
 								</div>
-							</div>
-							<div class="answer-block">
-								<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-							</div>
+
+								{*<div class="answer-block">
+									<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
+								</div>*}
+							{else}
+								<p class="text-align: center;">Соревнований либо нет, либо они прошли.</p>
+							{/if}
 						</div>
 					</div>
 					<div class="row">
-	<div class="span12">
-            <ul id="comptTab" class="nav nav-tabs">
-              <li class="active"><a href="#compt-future" data-toggle="tab">Будущие</a></li>
-              <li><a href="#compt-present" data-toggle="tab">Внастоящий момент</a></li>
-              <li><a href="#compt-past" data-toggle="tab">Прошедшие</a></li>
-              <li>
-				<form>
-					<div class="controls controls-row">
-						<select class="span3">
-							<option selected>Все типы соревнований</option>
-							<option>Конкур</option>
-							<option>Забег</option>
-							<option>Скачки</option>
-							<option>Препятствия</option>
-					   </select>
-					</div>
-				</form>
-			</li>
-            </ul>
-            <div id="comptTabContent" class="tab-content">
-              <div class="tab-pane in active" id="compt-future">
-                <table class="table table-striped competitions-table compt-club">
-						<tbody><tr>
-							<th>Тип</th>
-							<th>Дата</th>
-							<th>Соревнование</th>
-							<th>Участники</th>
-						</tr>
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-2.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-3.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-4.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-					</tbody>
-					</table>
-              </div>
-              <div class="tab-pane" id="compt-present">
-                <table class="table table-striped competitions-table compt-club">
-						<tbody><tr>
-							<th>Тип</th>
-							<th>Дата</th>
-							<th>Соревнование</th>
-							<th>Участники</th>
-						</tr>
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-3.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-4.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-					</tbody>
-					</table>
-              </div>
-			  <div class="tab-pane" id="compt-past">
-                <table class="table table-striped competitions-table compt-club">
-						<tbody><tr>
-							<th>Тип</th>
-							<th>Дата</th>
-							<th>Соревнование</th>
-							<th>Участники</th>
-						</tr>
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-2.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-3.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-						 <tr>
-							<td class="compt-img"><a href="#"><img src="images/icon-competition-4.jpg" /></a></td>
-							<td class="compt-date">26 июля 2014 г. <div>через 1 год</div></td>
-							<td class="competition">
-								<a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-							</td>
-							<td class="compt-members">
-								<ul class="inline compt-members">
-									<li>25 участников</li>
-									<li>4 фотографа</li>
-									<li>120 зрителей</li>
-								</ul>
-							</td>
-						</tr> 
-					</tbody>
-					</table>
-              </div>
-            </div>
-          </div>
+			<div class="span12">
+				{include "modules/competition-page.tpl" competitions = $club.competitions}
+          	</div>
 		 
 					</div>
 				</div> <!-- //competitions-club -->

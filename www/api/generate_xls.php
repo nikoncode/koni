@@ -4,25 +4,36 @@ include ("../../core/config.php");
 include (LIBRARIES_DIR . "safe_mysql/safemysql.php");
 include (LIBRARIES_DIR . "php_excel/PHPExcel.php");
 
-$cid = 4;
+error_reporting(0);
+
+if (!isset($_GET["id"])) {
+	echo "Не передан идентификатор соревнования.";
+} else {
+	$cid = $_GET["id"];
+}
+
 
 /* get all data */
 $db = new db;
-$comp_info = $db->getRow("SELECT name FROM comp WHERE id = ?i", $cid);
+$comp_info = $db->getRow("SELECT name, results FROM comp WHERE id = ?i", $cid);
 $routes = $db->getAll("SELECT id, name FROM routes WHERE cid = ?i", $cid);
-$temp = $db->getAll("SELECT routes.id,
-							routes.name,
-							CONCAT(fname,' ',lname) AS fio
-					FROM routes
-					LEFT JOIN comp_riders 
-						ON routes.id = comp_riders.rid
-					LEFT JOIN users 
-						ON comp_riders.uid = users.id
-					WHERE routes.cid = ?i", $cid);
+if (empty($comp_info["results"])) {
+	$temp = $db->getAll("SELECT routes.id,
+								routes.name,
+								CONCAT(fname,' ',lname) AS fio
+						FROM routes
+						LEFT JOIN comp_riders 
+							ON routes.id = comp_riders.rid
+						LEFT JOIN users 
+							ON comp_riders.uid = users.id
+						WHERE routes.cid = ?i", $cid);
 
-$results = array();
-foreach ($temp as $element) {
-	$results[$element["id"]][] = $element;
+	$results = array();
+	foreach ($temp as $element) {
+		$results[$element["id"]][] = $element;
+	}
+} else {
+	$results = unserialize($comp_info["results"]);
 }
 
 /* building */
@@ -38,9 +49,17 @@ foreach ($routes as $route) {
 	$row_number = 11;
 	foreach ($results[$route["id"]] as $rider) {
 		$new_sheet->insertNewRowBefore($row_number, 1);
-		$new_sheet->setCellValueByColumnAndRow(1, $row_number, "n/a");
+		$new_sheet->setCellValueByColumnAndRow(1, $row_number, $rider["pos"]);
 		$new_sheet->setCellValueByColumnAndRow(2, $row_number, $rider["fio"]);
-		$new_sheet->setCellValueByColumnAndRow(11, $row_number, "нет");
+		$new_sheet->setCellValueByColumnAndRow(3, $row_number, $rider["degree"]);
+		$new_sheet->setCellValueByColumnAndRow(4, $row_number, $rider["horse"]);
+		$new_sheet->setCellValueByColumnAndRow(5, $row_number, $rider["team"]);
+		$new_sheet->setCellValueByColumnAndRow(6, $row_number, $rider["opt1"]);
+		$new_sheet->setCellValueByColumnAndRow(7, $row_number, $rider["opt2"]);
+		$new_sheet->setCellValueByColumnAndRow(8, $row_number, $rider["opt3"]);
+		$new_sheet->setCellValueByColumnAndRow(9, $row_number, $rider["opt4"]);
+		$new_sheet->setCellValueByColumnAndRow(10, $row_number, $rider["opt5"]);
+		$new_sheet->setCellValueByColumnAndRow(11, $row_number, $rider["disq"]);
 		++$row_number;
 	}
 
