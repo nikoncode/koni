@@ -41,9 +41,12 @@ function api_add_adv(){
     }
 
     $spec = '';
-    foreach($fields['spec'] as $row){
-        $spec .= $row.',';
+    if($fields['spec']){
+        foreach($fields['spec'] as $row){
+            $spec .= $row.',';
+        }
     }
+
     $fields['spec'] = trim($spec,',');
     $country = $db->getRow("SELECT country_name_ru FROM country_ WHERE id=?i", $fields["country"]);
     $city = $db->getRow("SELECT city_name_ru FROM city_ WHERE id=?i", $fields["city"]);

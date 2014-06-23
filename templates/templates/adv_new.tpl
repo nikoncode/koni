@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="css/chosen.css">
 {literal}
 <script>
+    $(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true});
     $(function(){
         $(".chosen-select").chosen()
     });
@@ -50,7 +51,8 @@
             amethod: "auth_get_city",
             params:  {country_id:country},
             success: function (response, data) {
-                $('select.city').html(response);
+                var values = '<option value="0">Все города</option>'+response;
+                $('select.city').html(values).trigger("chosen:updated");
             },
             fail:    "standart"
         })
@@ -89,14 +91,14 @@
                         <input type="text" name="nick" class="span3" value="{$horse.nick}">
 
                         <label>Порода</label>
-                        <select name="poroda" class="span3">
+                        <select name="poroda" class="span3 chosen-select">
                             {foreach $porodi as $poroda}
                                 <option value="{$poroda}" {if $poroda == $horse.poroda} selected="selected" {/if}>{$poroda}</option>
                             {/foreach}
                         </select>
 
                         <label>Масть</label>
-                        <select name="mast" class="span3">
+                        <select name="mast" class="span3 chosen-select">
                             {foreach $masti as $mast}
                                 <option value="{$mast}" {if $mast == $horse.mast} selected="selected" {/if}>{$mast}</option>
                             {/foreach}
@@ -131,7 +133,7 @@
 
                             <div class="span3">
                                 <label>Страна</label>
-                                <select name="country" class="country span3" onchange="change_country(this);">
+                                <select name="country" class="country span3 chosen-select" onchange="change_country(this);">
                                     <option value="0">Все страны</option>
                                     {foreach $countries as $country}
                                         <option value="{$country.id}">{$country.country_name_ru}</option>
@@ -143,7 +145,7 @@
 
                             <div class="span3">
                                 <label>Город</label>
-                                <select name="city" class="span3 city">
+                                <select name="city" class="span3 city chosen-select">
                                     <option value="0">Все города</option>
                                 </select>
                             </div>
