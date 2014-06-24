@@ -186,7 +186,7 @@ function api_adv_upload_photo() {
             0,
             $_SESSION["user_id"]
         );
-        $photo_id = $db->getOne("SELECT LAST_INSERT_ID() FROM gallery_photos");
+        $photo_id = $db->getOne("SELECT LAST_INSERT_ID() FROM adv_photos");
         aok(array(
             "id" => $photo_id,
             "preview" => "/uploads/" . $preview_img

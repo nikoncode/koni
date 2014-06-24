@@ -69,7 +69,7 @@ function api_add_adv(){
     $photos = $fields['photo'];
     unset($fields['photo']);
     $db->query("INSERT INTO adv (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
-    $adv_id = $db->getOne("SELECT LAST_INSERT_ID() FROM adv");
+    $adv_id = $db->getOne("SELECT LAST_INSERT_ID()");
     if(!empty($photos)){
         foreach($photos as $row){
             $db->query("UPDATE adv_photos SET adv_id = ?i WHERE id = ?i AND o_uid = ?i;", $adv_id, $row, $_SESSION["user_id"]);
