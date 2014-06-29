@@ -17,14 +17,14 @@
 			{/foreach}
 			</div>
 			<div class="step1">
-				<div class="progress progress-striped active">
+				<div class="progress progress-striped active" style="display: none">
 					<div class="bar" id="bar" style="width: 0%;"></div>
 				</div>
 			</div>
 		</div>
 		<div class=" pull-right content-add-buttons">
 			<div class="fileupload">
-			  <input id="attach" type="file" name="gallery" data-album-id="{if $n}{$n.album_id}{else}0{/if}">
+			  <input id="attach" type="file" name="gallery" data-album-id="{if $n}{$n.album_id}{else}0{/if}" >
 			  <input type="hidden" name="album_id" value="{if $n}{$n.album_id}{else}0{/if}" />
 			  <button class="btn btn-add-photo"><i class="icon-camera"></i> Добавить фото</button>
 			</div>

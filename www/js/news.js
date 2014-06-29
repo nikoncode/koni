@@ -55,8 +55,10 @@ function news_form_init(form) {
 			}
 		}, 
 		progressall: function (e, data) {
-			var progress = parseInt(data.loaded / data.total * 100, 10);
-			form.find('.progress .bar').css('width', progress + '%');
+            form.find('.progress').css('display', 'block');
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            form.find('.progress .bar').css('width', progress + '%');
+            if(progress > 99) form.find('.progress').css('display', 'none');
 			console.log(form.find('.progress .bar'));
 		},
 		add: function (e, data) {
@@ -66,7 +68,7 @@ function news_form_init(form) {
 					qmethod: "POST",
 					amethod: "gallery_create_album",
 					params: {
-						name: "ATT",
+						name: "Без альбома",
 						att: 1
 					},
 					success: function (resp) {

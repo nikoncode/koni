@@ -2,12 +2,13 @@
 
 {include "modules/header.tpl"}
 
-<script src="http://koni:1337/socket.io/socket.io.js"></script>
+<script src="http://odnokonniki.ru:1337/socket.io/socket.io.js"></script>
 <script>
 /* add new message to the dialog function */
 function add_message(data) {
 		lastel = $(".chat-window .chat-dialog:last");
 		lastId = lastel.attr("data-uid");
+    $('#no-messages').remove();
 		if (lastId==data.id) {
 			lastel.find(".span5").append("<div class='message'> \
 											<p class='date'>" + data.time + "</p> \
@@ -53,13 +54,16 @@ function send_message () {
 }
 
 /* Socket initialize and subscribe to events */
-var socket = io.connect('http://koni:1337');
+var socket = io.connect('http://odnokonniki.ru:1337');
 socket.on("connect", function () {
 	socket.on("init_load_history", function (data) {
 		$(".chat-window .chat-dialog").remove();
 		for (var i = data.length-1; i > -1; i--) {
 			add_message(data[i]);
 		}
+        if(data.length == 0){
+            $('.chat-window').append('<center id="no-messages">Пока еще нет сообщений...</center>')
+        }
 		$(".chat-window").scrollTop(9999);
 	});
 	socket.on("receive_msg", function (data) {

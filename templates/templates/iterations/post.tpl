@@ -15,7 +15,7 @@
 	{if $post.photos}
 		<ul class="gallery-in-post" data-gallery-list="{$post.photo_ids}">
 			{foreach $post.photos as $photo}
-				<li><a href="#" data-gallery-pid="{$photo@key}"><div style="background-image: url({$photo})"></div></a></li>
+				<li><a href="#" data-gallery-pid="{$photo@key}"><img src="{$photo}"></a></li>
 			{/foreach}
 		</ul>
 	{/if}
