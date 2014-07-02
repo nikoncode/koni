@@ -397,3 +397,31 @@ function api_gallery_club_upload_adv() {
 		aerr($result);
 	} 
 }
+
+function api_gallery_horse_upload_avatar() {
+	validate_fields($fields, $_GET, array(), array("id"), array(), $fields);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* Checking path */
+	$path = $_SESSION["user_id"] . "/horse_avatars/";
+	$filename = md5(md5(time()) . rand());
+	
+	if (!file_exists(UPLOADS_DIR . $path))
+		mkdir(UPLOADS_DIR . $path, 0777, true);
+
+	/* Generating name and upload photo */
+	$full_img = $path . $filename . ".jpg";
+	$result = gallery_upload_photo($_FILES, "hav", $full_img, 500, 500);
+	
+	/* Insert to db */
+	if ($result === true) {
+		aok(array(
+				"avatar" => "/uploads/" . $full_img
+		));	
+	} else {
+		aerr($result);
+	} 
+}

@@ -29,6 +29,9 @@ function new_horse_prepare() {
 	$("#modal-add-horse input[type=text]").val("");
 	$("#modal-add-horse input[type=hidden]").val("");
 	$("#modal-add-horse #parents").html("");
+	//avatar
+	$("#modal-add-horse img").attr("src", "http://placehold.it/200x200");
+	$("#modal-add-horse [name=avatar]").val("http://placehold.it/200x200");
 	add_parents();
 	$("#modal-add-horse").modal("show");	
 }
@@ -56,10 +59,7 @@ function edit_horse_prepare(hid) { //form clear
 		success: function (data) {
 			console.log(data);
 			$.each(data, function( index, value ) {
-				if (index == "avatar") {
-					return; //avatar not working
-				}
-				$("[name="+index+"]").eq(0).val(value);
+				$("#modal-add-horse [name="+index+"]").eq(0).val(value);
 			});
 			if (data.parents != "") {
 				var parents = $.parseJSON(data.parents);
@@ -72,7 +72,8 @@ function edit_horse_prepare(hid) { //form clear
 				});
 			}
 			$("#modal-add-horse form").attr("onsubmit", "edit_horse(this);return false;");
-			$("#modal-add-horse input[name=hid]").val(data.id);			
+			$("#modal-add-horse input[name=hid]").val(data.id);	
+			$("#modal-add-horse img").attr("src", data.avatar);		
 			$("#modal-add-horse").modal("show");
 		},
 		fail:    "standart"
@@ -90,6 +91,24 @@ function edit_horse(form) {
 		fail:    "standart"
 	})
 }
+
+$(function () {
+	$("#modal-add-horse #fileupload").fileupload({
+		url: '/api/api.php?m=gallery_horse_upload_avatar',
+		dataType: 'json',
+		done: function (e, data) {
+			resp = data.result;
+			if (resp.type=="success") {
+				console.log(resp.response.avatar);
+				var mdl = $("#modal-add-horse");
+				mdl.find("[name=avatar]").val(resp.response.avatar);
+				mdl.find("img").attr("src", resp.response.avatar);
+			} else {
+				alert(resp.response[0]);
+			}
+		}
+	});
+});
 {/literal}
 </script>
 <div id="modal-add-horse" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true">
@@ -171,8 +190,8 @@ function edit_horse(form) {
 								<div class="span3 offset1">
 									<p>Главная фотография</p>
 									<div class="content-add-buttons row">
-										<div class="fileupload">
-										  <input type="file" name = "salo">
+										<div class="fileupload" id="fileupload">
+										  <input type="file" name = "hav">
 										  <button class="btn btn-add-photo"><i class="icon-camera"></i> Добавить фото</button>
 										</div>
 									</div>

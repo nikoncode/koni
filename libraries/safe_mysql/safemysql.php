@@ -17,6 +17,7 @@ class db extends safemysql {
 class sphinx extends safemysql {
 	function __construct() {
 		$options = array(
+			"host"	  => "127.0.0.1",
 			"port"	  => SPHINX_PORT
 		);
 		parent::__construct($options);

@@ -2,11 +2,12 @@
 
 function api_horses_add() {
 	/* validate data */
-	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec", "avatar"),  array("nick",
+	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec"),  array("nick",
 		"sex",
 		"poroda",
 		"mast",
-		"byear"), array(), $errors);
+		"byear",
+		"avatar"), array(), $errors); 
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -63,7 +64,9 @@ function api_horses_edit() {
 
 	/* insert to db */
 	$db = new db;
-	$db->query("UPDATE horses SET ?u WHERE id = ?i", $fields, $id);
+	$db->query("UPDATE horses SET ?u WHERE id = ?i AND o_uid = ?i", $fields, $id, $_SESSION["user_id"]);
+	$album_id = $db->getOne("SELECT album_id FROM horses WHERE id = ?i", $id);
+	$db->query("UPDATE albums SET name = ?s WHERE id = ?i AND o_uid = ?i", $fields["nick"], $album_id, $_SESSION["user_id"]);
 	aok(array("Конь изменен C:"));
 }
 
