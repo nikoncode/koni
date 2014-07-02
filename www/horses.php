@@ -29,7 +29,8 @@ if (!session_check()) {
 													nick,
 													sex,
 													byear,
-													spec
+													spec,
+													(YEAR(NOW()) - byear) as age
 											FROM horses
 											WHERE o_uid = ?i", $user_id); 
 

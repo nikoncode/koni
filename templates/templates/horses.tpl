@@ -31,7 +31,7 @@
 									<div class="horse-info-about span3">
 										<ul>
 											<li class="horse-name"><a href="/horse.php?id={$horse.id}">{$horse.nick}</a></li>
-											<li class="age">5 лет ({$horse.byear} год рождения)</li>
+											<li class="age">{$horse.age} лет ({$horse.byear} год рождения)</li>
 											<li class="sex"><span>Пол: </span>{$horse.sex}</li>
 											<li class="spec"><span>Специализация: </span>{$horse.spec}</li>
 										</ul>
