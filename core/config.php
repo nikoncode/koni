@@ -2,7 +2,7 @@
 /* This is main configuration file. */
 
 /* Main directories options */
-define("PROJECT_DIR", 			"D:/LASTRIVOK/home/koni/");
+define("PROJECT_DIR", 			"D:/WORK/WEBSERVER/home/koni/");
 define("WEB_ROOT_DIR",			PROJECT_DIR . "www/");
 define("LIBRARIES_DIR", 		PROJECT_DIR . "libraries/");
 define("CORE_DIR",				PROJECT_DIR . "core/");
@@ -20,7 +20,7 @@ define("MYSQL_PASS", "");
 define("MYSQL_DB", "test");
 
 /* SPHINX options*/
-define("SPHINX_PORT", 1337);
+define("SPHINX_PORT", 1338);
 
 /* Session options */
 define("SESSION_NAME", "ODK");

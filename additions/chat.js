@@ -8,10 +8,11 @@ var STR = require("string");
 io.set('log level', 1);
 /* api query option */
 var query_options = {
-	hostname: 'koni',
+	auth: 'koni:123',
+	hostname: 'odnokonniki.ru',
 	port: 80,
 	path: '/api/api.php?m=chat_me_info',
-	method: 'POST',
+	method: 'GET',
 	headers: {
 		cookie : ''
 	} 
@@ -68,6 +69,7 @@ io.configure(function () {
 			});
 
 			res.on('end', function () {
+				//console.log(all_response);
 				var resp = JSON.parse(all_response); 
 				if (resp.type === "success") {
 					var url_parts = require("url").parse(handshakeData.headers.referer, true);
