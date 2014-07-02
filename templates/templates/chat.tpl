@@ -5,23 +5,28 @@
 <script src="http://odnokonniki.ru:1337/socket.io/socket.io.js"></script>
 <script>
 /* add new message to the dialog function */
+
 function add_message(data) {
 		lastel = $(".chat-window .chat-dialog:last");
 		lastId = lastel.attr("data-uid");
+    var noread = '';
+    if(data.status == 0) noread = 'noread';
     $('#no-messages').remove();
 		if (lastId==data.id) {
-			lastel.find(".span5").append("<div class='message'> \
+			lastel.find(".span5").append("<div class='message "+noread+"'> \
 											<p class='date'>" + data.time + "</p> \
 											<p>" + data.text + "</p> \
 										 </div>");
-		} else { 
-			$("<div class='chat-dialog' data-uid='" + data.id + "'> \
+		} else {
+
+
+			$("<div class='chat-dialog user-id" + data.id + "' data-uid='" + data.id + "'> \
 				<div class='row'> \
 					<div class='chat-user-info span1'> \
 						<a href='/user.php?id=" + data.id + "'><img src='" + data.avatar + "' class='avatar'></a> \
 					</div> \
 					<div class='span5'> \
-						<div class='message'> \
+						<div class='message "+noread+"'> \
 							<p class='user-name'><a href='/user.php?id=" + data.id + "'>" + data.fio + "</a></p> \
 							<p class='date'>" + data.time + "</p> \
 							<p>" + data.text + "</p> \
@@ -35,6 +40,8 @@ function add_message(data) {
 /* send message function */
 function send_message () {
 		var message_text = $("#mtext").val();
+    var user_id = $('#user-id').val();
+    $('.chat-dialog:not(.user-id'+user_id+') .message.noread').removeClass('noread');
 		$("#mtext").val("");
 		if (message_text.replace(/\s+/g,'').length == 0) {
 			return false;
@@ -103,6 +110,7 @@ $(function () {
 								<textarea placeholder="Напишите сообщение" class="span5" id="mtext"></textarea>
 							</div>
 							<div class="controls-row">
+								<input type="hidden" value="{$user.id}" id="user-id" />
 								<input type="submit" value="Отправить" id="smessage" class="btn btn-warning offset1 span2" />
 							</div>
 						</form>

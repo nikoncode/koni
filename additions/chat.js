@@ -8,10 +8,11 @@ var STR = require("string");
 io.set('log level', 1);
 /* api query option */
 var query_options = {
-	hostname: 'koni',
+	auth: 'koni:123',
+	hostname: 'odnokonniki.ru',
 	port: 80,
 	path: '/api/api.php?m=chat_me_info',
-	method: 'POST',
+	method: 'GET',
 	headers: {
 		cookie : ''
 	} 
@@ -20,9 +21,9 @@ var query_options = {
 /* mysql details */
 var mysql_details = {
 	host: 'localhost',
-	user: 'root',
-	password: '',
-	database: 'test'
+	user: 'dev',
+	password: '3RI8bMFX',
+	database: 'dev'
 };
 
 /* stay a live connection (maybe connection ddos) */
@@ -68,6 +69,7 @@ io.configure(function () {
 			});
 
 			res.on('end', function () {
+//console.log(all_response);
 				var resp = JSON.parse(all_response); 
 				if (resp.type === "success") {
 					var url_parts = require("url").parse(handshakeData.headers.referer, true);
@@ -91,7 +93,7 @@ io.configure(function () {
 io.sockets.on("connection", function (socket) {
 	//console.log(socket.handshake.dialog);
 	/* getting last messages on connection */
-	connection.query("SELECT messages.text, messages.time, CONCAT(users.fname,' ',users.lname) as fio, avatar, users.id FROM messages LEFT JOIN users ON uid=users.id WHERE (uid='"+socket.handshake.dialog.id+"' AND fid='"+socket.handshake.dialog.friend_id+"') OR (uid='"+socket.handshake.dialog.friend_id+"' AND fid='"+socket.handshake.dialog.id+"') ORDER BY time DESC LIMIT 10", function (err, rows, fields) {
+	connection.query("SELECT messages.text, messages.status, messages.time, CONCAT(users.fname,' ',users.lname) as fio, avatar, users.id FROM messages LEFT JOIN users ON uid=users.id WHERE (uid='"+socket.handshake.dialog.id+"' AND fid='"+socket.handshake.dialog.friend_id+"') OR (uid='"+socket.handshake.dialog.friend_id+"' AND fid='"+socket.handshake.dialog.id+"') ORDER BY time DESC LIMIT 10", function (err, rows, fields) {
 		socket.emit("init_load_history", rows); //send last message to chat
 		socket.join(socket.handshake.dialog.room_name); //join to room
 		socket.on("send_message", function (data) { //send message event
@@ -102,10 +104,12 @@ io.sockets.on("connection", function (socket) {
 				data.fio = socket.handshake.dialog.fio;
 				data.avatar = socket.handshake.dialog.avatar;
 				data.text = STR(data.text).escapeHTML().s; //sanitize text
+				data.status = 0; //sanitize text
 				io.sockets. in (socket.handshake.dialog.room_name).emit('receive_msg', data); //send to all clients
 				//console.log(data);
 				connection.query("INSERT INTO `messages` (`id`, `uid`, `fid`, `text`, `time`) VALUES (NULL, '" + data.id + "', '"+ data.fid + "', '" + data.text + "', '" + data.time + "');");
-			}	
+				connection.query("UPDATE `messages` SET `status` = 1 WHERE `fid` = " + data.id + " AND `uid` = "+ data.fid + ";");
+			}
 		});	
 	});
 });

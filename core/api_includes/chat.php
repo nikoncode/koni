@@ -13,3 +13,13 @@ function api_chat_me_info() {
 	}
 	
 }
+
+function api_chat_unread_count() {
+    if (session_check()) {
+        $db = new db;
+        $info = $db->getRow("SELECT COUNT(id) as count FROM messages WHERE status = 0 AND fid = ?i", $_SESSION["user_id"]);
+        aok($info);
+    } else {
+        aerr(array("Пожалуйста войдите."));
+    }
+}

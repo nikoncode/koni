@@ -21,7 +21,16 @@
 		$('.step3 input[name=x2]').val(c.x2);
 		$('.step3 input[name=y2]').val(c.y2);
 	}
-
+    function check_unread(){
+        api_query({
+            qmethod: "POST",
+            amethod: "chat_unread_count",
+            success: function (resp) {
+                $('#unread_count').html('('+resp.count+')');
+            },
+            fail: "standart"
+        })
+    }
 	function crop(el) {
 		api_query({
 			qmethod: "POST",
@@ -37,7 +46,9 @@
 	}
 
 	$(function () {
-		$('#fileupload').fileupload({
+        check_unread();
+        setInterval(check_unread,3000);
+        $('#fileupload').fileupload({
 			maxNumberOfFiles: 1,
 			dataType: 'json',
 			done: function (e, data) {
@@ -106,7 +117,7 @@
 		<ul class="my-actions-menu">
 			<li class="my-news"><a href="inner.php">Моя страница</a></li>
 			<li class="my-news"><a href="news.php">Новости</a></li>
-			<li class="my-messages"><a href="messages.php">Сообщения</a></li>
+			<li class="my-messages"><a href="messages.php">Сообщения</a><span id="unread_count">(0)</span></li>
 			<!--<li class="my-clubs"><a href="groups.php">Группы</a></li>-->
 			<li class="my-events"><a href="events.php">Мероприятия</a></li>
 			<li class="my-contacts"><a href="friends.php">Друзья</a></li>
