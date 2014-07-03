@@ -18,6 +18,7 @@ include (CORE_DIR . "api_includes/news.php");
 include (CORE_DIR . "api_includes/adv.php");
 include (CORE_DIR . "api_includes/clubs.php");
 include (CORE_DIR . "api_includes/comp.php");
+include (CORE_DIR . "api_includes/users.php");
 
 /* Api response function */
 function aok($response, $redirect = NULL) {

@@ -1,34 +1,59 @@
 searchd {
-    listen      = 1337:mysql41
-    pid_file    = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\searchd.pid
-    log         = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\log.txt
-    query_log   = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\query_log.txt
-    binlog_path = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\binlog
+	listen      = 1338:mysql41
+	pid_file    = D:\WORK\sphinx\data\searchd.pid
+	log         = D:\WORK\sphinx\data\log.txt
+	query_log   = D:\WORK\sphinx\data\query_log.txt
+	binlog_path = D:\WORK\sphinx\data\binlog
 }
 
 source clubs {
-  type = mysql
-  sql_host = localhost
-  sql_user = root
-  sql_pass = 
-  sql_db = test
-  sql_query_pre = SET NAMES utf8
-  sql_query = SELECT id, name, type, ability, country, city, with_inst, without_inst, horse FROM clubs
-  sql_field_string = name
-  sql_field_string = country
-  sql_field_string = city
-  sql_field_string = type
-  sql_field_string = ability
-  sql_attr_uint = with_inst
-  sql_attr_uint = without_inst
-  sql_attr_uint = horse 
+	type = mysql
+	sql_host = localhost
+	sql_user = root
+	sql_pass = 
+	sql_db = test
+	sql_query_pre = SET NAMES utf8
+	sql_query = SELECT id, name, type, ability, country, city, with_inst, without_inst, horse FROM clubs
+	sql_field_string = name
+	sql_field_string = country
+	sql_field_string = city
+	sql_field_string = type
+	sql_field_string = ability
+	sql_attr_uint = with_inst
+	sql_attr_uint = without_inst
+	sql_attr_uint = horse 
 }
- 
+
 index clubs_index {
-  min_prefix_len = 1
-  type = plain
-  source = clubs
-  charset_type = utf-8
-  preopen = 1
-  path = D:\LASTRIVOK\home\koni\additions\sphinx-daemon\data\clubs_index
+	min_prefix_len = 1
+	type = plain
+	source = clubs
+	charset_type = utf-8
+	preopen = 1
+	path = D:\WORK\sphinx\data\clubs_index
+}
+
+source users {
+	type = mysql
+	sql_host = localhost
+	sql_user = root
+	sql_pass = 
+	sql_db = test
+	sql_query_pre = SET NAMES utf8
+	sql_query = SELECT id, CONCAT(fname,' ',lname) as fio, TIMESTAMPDIFF(YEAR,users.bdate,curdate()) as age, (SELECT name FROM clubs WHERE id = users.cid) as club, country, city, work FROM users
+	sql_field_string = fio
+	sql_field_string = country
+	sql_field_string = city
+	sql_field_string = club
+	sql_field_string = work
+	sql_attr_uint = age 
+}
+
+index users_index {
+	min_prefix_len = 1
+	type = plain
+	source = users
+	charset_type = utf-8
+	preopen = 1
+	path = D:\WORK\sphinx\data\users_index
 }

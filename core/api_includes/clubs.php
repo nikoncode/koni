@@ -181,7 +181,7 @@ function api_club_search() {
 
 	if (isset($fields["ability"])) {
 		$temp = implode(", ", $fields["ability"]);
-		$conditions .= "@ability \"" . $db->parse("?w", $temp) . "\" ";
+		$conditions .= "@ability " . $db->parse("?w", $temp);
 	}
 
 	
