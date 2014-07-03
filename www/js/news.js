@@ -38,8 +38,9 @@ function remove_comment(cid, element) {
 
 function news_form_init(form) {
 	var element = form.find("#attach");
+    var album_id = element.attr('data-album-id');
 	element.fileupload({
-		url: "XXX",
+        url: "/api/api.php?m=gallery_upload_photo&album_id={$album_id}",
 		dataType: 'json',
 		done: function (e, data) {
 			var result = data.result
@@ -49,6 +50,8 @@ function news_form_init(form) {
 					<img class='img-polaroid' src='" + response.preview + "' /> \
 					<a href='#remove-image' onclick='news_form_delete_att(" + response.id + ", this); return false;'><img class='remove-image-icon' src='images/icon-remove-image.png' /></a> \
 				   </div>").appendTo(form.find(".previews"));
+                $("input[name=album_id]").val(response.album_id);
+                element.attr("data-album-id", response.album_id);
 			} else {
 				for (i = 0;i < response.length; ++i)
 					alert(response[i]);
@@ -60,30 +63,6 @@ function news_form_init(form) {
             form.find('.progress .bar').css('width', progress + '%');
             if(progress > 99) form.find('.progress').css('display', 'none');
 			console.log(form.find('.progress .bar'));
-		},
-		add: function (e, data) {
-			if (element.attr("data-album-id") == "0") {
-				element.attr("disabled", "disabled");
-				api_query({
-					qmethod: "POST",
-					amethod: "gallery_create_album",
-					params: {
-						name: "Без альбома",
-						att: 1
-					},
-					success: function (resp) {
-						element.attr("data-album-id", resp[0]);
-						form.find("input[name=album_id]").val(resp[0]);
-						element.removeAttr("disabled");
-						data.url = "/api/api.php?m=gallery_upload_photo&album_id=" + resp[0];
-						data.submit();
-					},
-					fail: "standart"
-				});
-			} else {
-				data.url = "/api/api.php?m=gallery_upload_photo&album_id=" + element.attr("data-album-id");
-				data.submit();	
-			}
 		}
 	});	
 }

@@ -19,7 +19,15 @@ function api_chat_unread_count() {
         $db = new db;
         $info = $db->getRow("SELECT COUNT(id) as count FROM messages WHERE status = 0 AND fid = ?i", $_SESSION["user_id"]);
         aok($info);
-    } else {
-        aerr(array("Пожалуйста войдите."));
     }
+    aok(array('neok'));
+}
+
+function api_chat_unread_update() {
+    if (session_check() && isset($_POST['fid'])) {
+        $db = new db;
+        $db->getRow("UPDATE messages SET status = 1 WHERE status = 0 AND uid = ?i AND fid = ?i", intval($_POST['fid']) ,$_SESSION["user_id"]);
+        aok(array('ok'));
+    }
+    aok(array('neok'));
 }

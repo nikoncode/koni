@@ -32,8 +32,8 @@ $(function() {
       $("[name=amount_start]").val($( "#h-with-trainer" ).slider( "values", 0 ));
       $("[name=amount_end]").val($( "#h-with-trainer" ).slider( "values", 1 ));
     document.getElementById('h-with-trainer-amount').innerHTML = startAmount;
-  } );  
-  
+  } );
+  /*
   $(function() {
   $( "#h-without-trainer" ).slider({
       range: true,
@@ -64,4 +64,4 @@ $(function() {
 	var startAmount =   "От " + $( "#wait-h" ).slider( "values", 0 ) +
       " руб. до " + $( "#wait-h" ).slider( "values", 1 ) + " руб.";
     document.getElementById('wait-h-amount').innerHTML = startAmount;
-  } );  
+  } );  */

@@ -5,7 +5,21 @@
 <script src="http://odnokonniki.ru:1337/socket.io/socket.io.js"></script>
 <script>
 /* add new message to the dialog function */
-
+{literal}
+function update_unread(){
+    var fid = $('#friend_id').val();
+    api_query({
+        qmethod: "POST",
+        amethod: "chat_unread_update",
+        params:{fid:fid},
+        success: function (resp) {
+            var user_id = $('#user-id').val();
+            $('.chat-dialog:not(.user-id'+user_id+') .message.noread').removeClass('noread');
+        },
+        fail: "standart"
+    })
+}
+{/literal}
 function add_message(data) {
 		lastel = $(".chat-window .chat-dialog:last");
 		lastId = lastel.attr("data-uid");
@@ -14,7 +28,7 @@ function add_message(data) {
     $('#no-messages').remove();
 		if (lastId==data.id) {
 			lastel.find(".span5").append("<div class='message "+noread+"'> \
-											<p class='date'>" + data.time + "</p> \
+											<p class='date'>" + String(data.time) + "</p> \
 											<p>" + data.text + "</p> \
 										 </div>");
 		} else {
@@ -41,7 +55,13 @@ function add_message(data) {
 function send_message () {
 		var message_text = $("#mtext").val();
     var user_id = $('#user-id').val();
+    var lastIdMsf = $(".chat-window .chat-dialog:last").attr("data-uid");
+    if(lastIdMsf != user_id){
+
+        $('.chat-dialog.user-id'+user_id+' .message.noread').removeClass('noread');
+    }
     $('.chat-dialog:not(.user-id'+user_id+') .message.noread').removeClass('noread');
+
 		$("#mtext").val("");
 		if (message_text.replace(/\s+/g,'').length == 0) {
 			return false;
@@ -80,6 +100,10 @@ socket.on("connect", function () {
 });
 
 $(function () {
+    setInterval(function () {
+        update_unread();
+    },3000);
+
 	$("#mtext").keydown(function (e) {
 		if (e.keyCode==13) {
 			send_message();
@@ -111,6 +135,7 @@ $(function () {
 							</div>
 							<div class="controls-row">
 								<input type="hidden" value="{$user.id}" id="user-id" />
+								<input type="hidden" value="{$friend_id}" id="friend_id" />
 								<input type="submit" value="Отправить" id="smessage" class="btn btn-warning offset1 span2" />
 							</div>
 						</form>

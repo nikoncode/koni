@@ -26,6 +26,8 @@
             qmethod: "POST",
             amethod: "chat_unread_count",
             success: function (resp) {
+                var count = resp.count || 0;
+
                 $('#unread_count').html('('+resp.count+')');
             },
             fail: "standart"
@@ -47,7 +49,9 @@
 
 	$(function () {
         check_unread();
-        setInterval(check_unread,3000);
+        setInterval(function () {
+            check_unread();
+        },5000);
         $('#fileupload').fileupload({
 			maxNumberOfFiles: 1,
 			dataType: 'json',
@@ -117,7 +121,7 @@
 		<ul class="my-actions-menu">
 			<li class="my-news"><a href="inner.php">Моя страница</a></li>
 			<li class="my-news"><a href="news.php">Новости</a></li>
-			<li class="my-messages"><a href="messages.php">Сообщения</a><span id="unread_count">(0)</span></li>
+			<li class="my-messages"><a href="messages.php">Сообщения</a> <span id="unread_count">(0)</span></li>
 			<!--<li class="my-clubs"><a href="groups.php">Группы</a></li>-->
 			<li class="my-events"><a href="events.php">Мероприятия</a></li>
 			<li class="my-contacts"><a href="friends.php">Друзья</a></li>

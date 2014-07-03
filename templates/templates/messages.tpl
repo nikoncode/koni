@@ -42,7 +42,7 @@
 					<div class="row">
 						{if $messages}
 							{foreach $messages as $message}
-								<div class="msg-last-dialog span6">
+								<div class="msg-last-dialog span6 {if $message.status == 0 && !$message.me_last}noread{/if}">
 									<div class="row">
 										<div class="msg-user-info span2">
 											<a href="/user.php?id={$message.friend_id}"><img src="{$message.friend_avatar}" class="avatar"></a>

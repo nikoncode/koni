@@ -46,7 +46,10 @@ function filter_by_type(element) {
 										<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
 									</td>
 									<td class="compt-members">
-										[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
+                                        {if $club.o_uid == $user.id}
+                                            [<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
+                                        {/if}
+
 										<!--<ul class="inline compt-members">
 											<li>25 участников</li>
 											<li>4 фотографа</li>

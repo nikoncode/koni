@@ -18,6 +18,7 @@ if (!session_check()) {
 			template_render_error("Такого пользователя не существует. Пожалуйста вернитесь к <a href='/find-users.php'>поиску</a> или уточните его идентификатор.");
 		} else {
 			$assigned_vars["page_title"] = "Чат с '" . $assigned_vars["another_user"]["fio"] . "' > Одноконники";
+			$assigned_vars["friend_id"] = intval($_GET["id"]);
 			template_render($assigned_vars, "chat.tpl");
 		}	
 	} else {

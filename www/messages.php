@@ -37,7 +37,7 @@ if (!session_check()) {
 											   WHERE id = friend_id) AS friend_fio,
 											  (SELECT avatar
 											   FROM users
-											   WHERE id = friend_id) AS friend_avatar, uid, text, time
+											   WHERE id = friend_id) AS friend_avatar, uid, text, status, time
 											FROM `messages`
 											WHERE id IN (?a)
 											ORDER BY time DESC", $_SESSION["user_id"], $_SESSION["user_id"], $ids);

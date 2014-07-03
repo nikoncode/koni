@@ -137,10 +137,19 @@ function api_gallery_upload_photo() {
 	$preview_img = $path . $filename . "_preview.jpg";
 	$full_img = $path . $filename . ".jpg";
 	$result = gallery_upload_photo($_FILES, "gallery", $full_img, 1000, 1000, true, $preview_img);
-	
+    $db = new db;
+	if($fields['album_id'] == 0){
+        $id = $db->getOne("SELECT id FROM albums WHERE o_uid = ?i AND att = 1",$_SESSION['user_id']);
+        if($id === false){
+            $db->query("INSERT INTO albums (`name`,`att`,`o_uid`) VALUES (?s,?i,?i);", 'Без альбома',1,$_SESSION['user_id']);
+            $id = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
+        }
+
+        $fields['album_id'] = $id;
+    }
 	/* Insert to db */
 	if ($result === true) {
-		$db = new db;
+
 		$db->query("INSERT INTO gallery_photos (full, preview, album_id, o_uid) VALUES (?s, ?s, ?i, ?i);", 
 			"/uploads/" . $full_img, 
 			"/uploads/" . $preview_img, 
@@ -150,6 +159,7 @@ function api_gallery_upload_photo() {
 		$photo_id = $db->getOne("SELECT LAST_INSERT_ID() FROM gallery_photos");
 		aok(array(
 				"id" => $photo_id,
+				"album_id" => $fields["album_id"],
 				"preview" => "/uploads/" . $preview_img
 		));	
 	} else {

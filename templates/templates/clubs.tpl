@@ -42,6 +42,9 @@
 	function del_ability(el) {
 		$(el).closest("div.opt").remove();
 	}
+    $(function(){
+        club_search($('.search-clubs-filter'));
+    })
 </script>
 
 <div class="container clubs-find-page clubs-page main-blocks-area club-block">

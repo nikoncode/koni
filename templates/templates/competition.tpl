@@ -40,8 +40,10 @@ function rider(rid, act, element) {
 			var el = $(element);
 			if (data[0] != "0") {
 				el.removeClass("btn-warning").addClass("btn-success");
+                el.html('Учавствую <i class="icon-play icon-white"></i>');
 			} else {
 				el.removeClass("btn-success").addClass("btn-warning");
+                el.html('Учавствовать <i class="icon-play icon-white"></i>');
 			}
 			el.attr("onclick", "rider(" + rid + ", '" + (+!!!data[0]) + "', this); return false;");
 			if ($("#routes .btn-success").length == 0) {
