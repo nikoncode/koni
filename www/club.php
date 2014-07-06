@@ -25,7 +25,7 @@ if (!session_check()) {
 														(SELECT COUNT(id) FROM club_reviews WHERE cid=clubs.id AND rating = 2) as CNT_TWO
 											FROM clubs, club_reviews
 											WHERE clubs.id=?i AND club_reviews.cid=clubs.id", $_GET["id"]);
-		if ($assigned_vars["club"] == NULL) {
+		if ($assigned_vars["club"]["name"] == NULL) {
 			template_render_error("Такого клуба нет. Простите.");
 		} else {
 			$assigned_vars["page_title"] = "Клуб '" . $assigned_vars["club"]["name"] . "' > Одноконники";

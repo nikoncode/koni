@@ -69,12 +69,12 @@ function rider(rid, act, element) {
 			<div class="span12 lthr-bgborder block club-tabs">
 				<div class="row">
 				<ul id="clubTab" class="nav nav-tabs new-tabs tabs2">
-					<li><a href="club-sample.php#news-club">Новости/отзывы</a></li>
-					<li><a href="club-sample.php#about-club">О клубе</a></li>
-					<li class="active"><a href="club-sample.php#competitions-club">Соревнования</a></li>
-					<li><a href="club-sample.php#rating-club">Рейтинги (156,16)</a></li>
-					<li><a href="club-sample.php#gallery-club">Галерея</a></li>
-					<li><a href="club-sample.php#contact-club">Контакты</a></li>
+					<li><a href="/club.php?id={$club.id}#news-club">Новости/отзывы</a></li>
+					<li><a href="/club.php?id={$club.id}#about-club">О клубе</a></li>
+					<li class="active"><a href="/club.php?id={$club.id}#competitions-club">Соревнования</a></li>
+					<li><a href="/club.php?id={$club.id}#rating-club">Рейтинги (156,16)</a></li>
+					<li><a href="/club.php?id={$club.id}#gallery-club">Галерея</a></li>
+					<li><a href="/club.php?id={$club.id}#contact-club">Контакты</a></li>
 				</ul>
 				
 				<div id="clubTabContent" class="tab-content bg-white">
