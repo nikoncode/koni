@@ -33,3 +33,11 @@ function api_query(s) {
             alert("Произошла неожиданная ошибка, мы уже ее исправляем.");
     });
 }
+
+$(function () { //to tab load in startup
+    if (location.hash !== '')
+        $('a[href="' + location.hash + '"]').tab('show');
+    return $('a[data-toggle="tab"]').on('shown', function(e) {
+        return location.hash = $(e.target).attr('href').substr(1);
+    });
+});
