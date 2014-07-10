@@ -52,6 +52,7 @@ if (!session_check()) {
     foreach($assigned_vars["photos"] as $photo) {
         $ids[] = $photo["id"];
     }
+    $assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]); //many info
     $assigned_vars["photos_ids_list"] = implode(",", $ids);
     $assigned_vars["my_horses"] = $db->getAll("SELECT id,
 													avatar,

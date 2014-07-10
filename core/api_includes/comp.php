@@ -361,6 +361,7 @@ function api_comp_review_add() {
 
 	$fields["o_uid"] = $_SESSION["user_id"];
 	$db = new db;
+    $db->query("DELETE FROM club_reviews WHERE `time` >  NOW( ) - INTERVAL 3 MONTH AND o_uid = ?i AND cid = ?i;",$fields["o_uid"], $fields["cid"]);
 	$db->query("INSERT club_reviews SET ?u", $fields);
 	$review = $db->getRow("SELECT *,
 									club_reviews.id as review_id,

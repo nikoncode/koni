@@ -1,4 +1,14 @@
 {* Smarty *}
+<script>
+    $(function () {
+        $(".add-news").keydown(function (e) {
+            if (e.ctrlKey && e.keyCode == 13) {
+                $(this).find('.send_news').click();
+                return false;
+            }
+        });
+    });
+</script>
 <div class="add-news">
 	<form onsubmit="news_{if $n}edit{else}add{/if}(this);return false;">
 		<input type="hidden" name="type" value="{$owner_type}">
@@ -29,7 +39,7 @@
 			  <button class="btn btn-add-photo"><i class="icon-camera"></i> Добавить фото</button>
 			</div>
 		  	
-		 	<button class="btn btn-warning" href="#">Поделиться</button>
+		 	<button class="btn btn-warning send_news" href="#">Поделиться</button>
 		 	{if $n}
 		 		<button class="btn" href="#" onclick="edit_news_cancel(this);return false;">Отмена</button>
 		 	{/if}

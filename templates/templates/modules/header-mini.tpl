@@ -26,6 +26,7 @@
 
 <body>
 {include "modules/modal-info.tpl"}
+{include "modules/modal-confirm.tpl"}
 <header class="header-mini">
 	<div class="pre-main-menu">
 		<div class="container">

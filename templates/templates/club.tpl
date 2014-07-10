@@ -20,7 +20,13 @@
 		$(".my-news-wall").autoload({
 			id: {$club.id},
 			type: "club"
-		})
+		});
+
+        $("#modal-confirm .btn-warning").click(function(){
+            $('.review_isset').val(0);
+            review_add($('#review_add_form'));
+            $("#modal-confirm").modal('hide');
+        });
 	})
 </script>
 
@@ -96,16 +102,25 @@ function rate(el) {
 }
 
 function review_add(form) {
-	api_query({
-		qmethod: "POST",
-		amethod: "comp_review_add",
-		params: $(form).serialize(),
-		success: function (data) {
-			$(".club-reviews ul.comments-lists").prepend(data);
-			$(".club-add-your-review .review_text").val('');
-		},
-		fail: "standart"
-	})
+    var review_isset = $('.review_isset').val();
+    if(review_isset > 0){
+        var mdl = $("#modal-confirm");
+        mdl.find('#confirm-info-block').html('Согласно правилам, разрешается писать новый отзыв раз в 3 месяца. Если вы сейчас нажмете ДА, то мы удалим ваш предыдущий отзыв и заменим на новый');
+        mdl.modal("show");
+    }else{
+        api_query({
+            qmethod: "POST",
+            amethod: "comp_review_add",
+            params: $(form).serialize(),
+            success: function (data) {
+                $(".club-reviews ul.comments-lists").prepend(data);
+                $(".club-add-your-review .review_text").val('');
+                $('.review_isset').val(1)
+            },
+            fail: "standart"
+        });
+    }
+    return false;
 }
 
 function useless(review_id, type, el) {
@@ -127,10 +142,11 @@ function useless(review_id, type, el) {
 </script>
 							<div class="club-add-your-review">
 								<h4>Добавить свой отзыв</h4>
-								<form class="row" onsubmit="review_add(this); return false;">
+								<form class="row" id="review_add_form" onsubmit="review_add(this); return false;">
 									<textarea placeholder="Что Вы думаете об этом клубе?" rows="5" class="span6 review_text" name="text"></textarea>
 									<input type="hidden" name="cid" value="{$club.id}" />
 									<input type="hidden" name="rating" value="1" />
+									<input type="hidden" name="review_isset" class="review_isset" value="{$review_isset}" />
 									<div class="span4 club-review-rate">
 										<ul class="horseshoe-rate">
 											<li class="title">Оцените клуб: </li>

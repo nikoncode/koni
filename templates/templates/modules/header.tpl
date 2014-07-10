@@ -25,6 +25,7 @@
 
 <body>
 {include "modules/modal-info.tpl"}
+{include "modules/modal-confirm.tpl"}
 <header>
 	{if $user}
 		<script>
@@ -103,30 +104,28 @@
 			</div>
 		</div>
 	</div>
-	
-	<div class="main-menu">
-		<div class="container">
-			<div class="row">
-			<div class="uzd-left"></div><div class="uzd-right"></div>
-				<div class="navbar">
-					<div class="navbar-inner">
-						<ul class="nav span5 main-nav-1">
-							<li class="active"><a href="home.php">Главная</a></li>
-							<li><a href="ratings.php">Рейтинги</a></li>
-							<li><a href="clubs.php">Клубы</a></li>
-							<li><a href="find-users.php">Люди</a></li>
-						</ul>
-						<a href="home.php" class="brand span2 logo"><center><img src="images/logo.png" /></center></a>
-						<ul class="nav span5 main-nav-2">
-							<li><a href="shop.php">Магазин</a></li>
-							<li><a href="adv.php">Объявления</a></li>
-							<li><a href="guest-sample.php">Форум</a></li>
-							<li><a href="articles.php">Статьи</a></li>
-						</ul>
-					</div>
-				</div>
-			
-			</div>
-		</div>
-	</div>
+
+    <div class="main-menu">
+        <div class="container">
+            <div class="row">
+                <div class="uzd-left"></div><div class="uzd-right"></div>
+                <div class="navbar">
+                    <div class="navbar-inner">
+                        <ul class="nav span5 main-nav-1">
+                            <li class="active"><a href="/">Главная</a></li>
+                            <li><a href="events.php">Мероприятия</a></li>
+                            <li><a href="clubs.php">Клубы</a></li>
+                        </ul>
+                        <a href="home.php" class="brand span2 logo"><center><img src="images/logo.png" /></center></a>
+                        <ul class="nav span5 main-nav-2">
+                            <li><a href="find-users.php">Люди</a></li>
+                            <li><a href="ratings.php">Рейтинги</a></li>
+                            <li><a href="adv.php">Объявления</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </header>

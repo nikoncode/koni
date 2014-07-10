@@ -42,6 +42,9 @@ if (!session_check()) {
 															AND club_reviews.o_uid = users.id
 															ORDER BY time DESC
 															LIMIT 5", $assigned_vars["club"]["id"]);
+
+            $rewiews_count = $db->getOne("SELECT COUNT(id) FROM club_reviews WHERE `time` >  NOW( ) - INTERVAL 3 MONTH AND o_uid = ?i AND cid = ?i;",$_SESSION['user_id'], $assigned_vars["club"]["id"]);
+            $assigned_vars["review_isset"] = $rewiews_count;
 			$assigned_vars["club"]["additions"] = json_decode($assigned_vars["club"]["additions"], 1);
 			if ($assigned_vars["club"]["ability"] == "") {
 				$assigned_vars["club"]["ability"] = array("Возможности не указаны.");

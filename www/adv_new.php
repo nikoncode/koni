@@ -20,6 +20,7 @@ if (!session_check()) {
         "usage" => $_POST['usage'],
         "type" => $_POST['type'],
     );
+    $assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]); //many info
     $db = New db;
     if($_POST['new_horse'] == 2){
 
