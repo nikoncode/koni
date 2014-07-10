@@ -22,12 +22,12 @@
 				<h3 class="inner-bg">Настройки клуба<span class="pull-right text-italic"><a href="/club.php?id={$cid}">Вернуться в клуб</a></span></h3>
 				<div class="row">
 				<ul id="clubTab" class="nav nav-tabs new-tabs tabs2">
-					<li><a href="club-admin.php#main-admin">Основные</a></li>
-					<li><a href="club-admin.php#about-admin">О клубе</a></li>
-					<li><a href="club-admin.php#members-admin">Участники</a></li>
+					<li><a href="/club-admin.php?id={$cid}#main-admin">Основные</a></li>
+					<li><a href="/club-admin.php?id={$cid}#about-admin">О клубе</a></li>
+					<li><a href="/club-admin.php?id={$cid}#members-admin">Участники</a></li>
 					<li class="active"><a href="#competitions-admin" data-toggle="tab">Соревнования</a></li>
-					<li><a href="club-admin.php#adv-admin">Реклама</a></li>
-					<li><a href="club-admin.php#contact-admin">Контакты</a></li>
+					<li><a href="/club-admin.php?id={$cid}#adv-admin">Реклама</a></li>
+					<li><a href="/club-admin.php?id={$cid}#contact-admin">Контакты</a></li>
 				</ul>
 				
 				<div id="friendsTabContent" class="tab-content bg-white">

@@ -32,7 +32,7 @@
 			</script>
 			<a href="#"><img src="{$club.avatar}" class="club-avatar" /></a>
 			<div class="membership_block">
-				<input type="button" class="btn btn-warning goto-club" value="{if $user.club_name}Покинуть клуб{else}Вступить в клуб{/if}" onclick="to_club({$club.id}, '{if $user.club_name}leave{else}enter{/if}', this); return false;" />
+				<input type="button" class="btn btn-warning goto-club" value="{if $user.club_id == $club.id}Покинуть клуб{else}Вступить в клуб{/if}" onclick="to_club({$club.id}, '{if $user.club_id == $club.id}leave{else}enter{/if}', this); return false;" />
 				<p class="club-access-descr">
 					{if !$user.club_name}
 						Вы не состоите в <a href="/clubs.php">клубах</a>.
