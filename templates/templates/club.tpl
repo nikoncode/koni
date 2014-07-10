@@ -107,6 +107,7 @@ function review_add(form) {
 		params: $(form).serialize(),
 		success: function (data) {
 			$(".club-reviews ul.comments-lists").prepend(data);
+			$(".club-add-your-review .review_text").val('');
 		},
 		fail: "standart"
 	})
@@ -132,7 +133,7 @@ function useless(review_id, type, el) {
 							<div class="club-add-your-review">
 								<h4>Добавить свой отзыв</h4>
 								<form class="row" onsubmit="review_add(this); return false;">
-									<textarea placeholder="Что Вы думаете об этом клубе?" rows="5" class="span6" name="text"></textarea>
+									<textarea placeholder="Что Вы думаете об этом клубе?" rows="5" class="span6 review_text" name="text"></textarea>
 									<input type="hidden" name="cid" value="{$club.id}" />
 									<input type="hidden" name="rating" value="1" />
 									<div class="span4 club-review-rate">
