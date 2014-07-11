@@ -59,9 +59,7 @@
 											<li><a href="news.php">Новости</a></li>
 											<li><a href="friends.php">Друзья</a></li>
 											<li><a href="horses.php">Лошади</a></li>
-											<li><a href="groups.php">Группы</a></li>
-											<li><a href="club-sample.php">Клуб</a></li>
-											<li><a href="events.php">Мероприятия</a></li>
+											<li><a href="my-events.php">Мероприятия</a></li>
 											<li><a href="gallery.php">Галерея</a></li>
 											<li class="divider"></li>
 											<li><a href="profile.php">Настройки</a></li>

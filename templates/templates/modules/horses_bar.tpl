@@ -1,6 +1,6 @@
 {* Smarty *}
 {if $horses_bar}
-	<div class="my-horses">
+	<div class="my-horses friend-horse">
 		<img src="{$horses_bar.0.avatar}" class="avatar-my-horse-top"/>
 		<h2 class="my-horse-name"><a href="/horse.php?id={$horses_bar.0.id}">{$horses_bar.0.nick}</a></h2>
 		<p class="my-horse-info">{$horses_bar.0.poroda}</p>
@@ -16,6 +16,6 @@
 		{if $horses_bar.1}
 			<img src="{$horses_bar.1.avatar}" class="avatar-my-horse-bottom"/>
 		{/if}
-			<a href="/horses.php?id={$horses_bar_id}">все</a>
+			<a href="/horses.php?id={$horses_bar_id}" class="btn btn-warning btn-warning-primary">Показать всех лошадей</a>
 	</div>
 {/if}

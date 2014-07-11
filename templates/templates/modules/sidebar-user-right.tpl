@@ -31,7 +31,7 @@ function delete_from_friend_callback(uid) {
 		{/if}
 		<p class="user-club">
 			{if $another_user.club_name}
-				Состоит в клубе "<a href="club-sample.php?id={$another_user.club_id}">{$another_user.club_name}</a>"
+				Состоит в клубе "<a href="club.php?id={$another_user.club_id}">{$another_user.club_name}</a>"
 			{else}
 				Не состоит в <a href="clubs.php">клубах</a>
 			{/if}

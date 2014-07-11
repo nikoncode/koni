@@ -113,7 +113,7 @@
 		{/if}
 		<p class="my-club">
 			{if $user.club_name}
-				Состоит в клубе "<a href="club-sample.php?id={$user.club_id}">{$user.club_name}</a>"
+				Состоит в клубе "<a href="club.php?id={$user.club_id}">{$user.club_name}</a>"
 			{else}
 				Не состоит в <a href="clubs.php">клубах</a>
 			{/if}
@@ -123,7 +123,7 @@
 			<li class="my-news"><a href="news.php">Новости</a></li>
 			<li class="my-messages"><a href="messages.php">Сообщения</a> <span id="unread_count">(0)</span></li>
 			<!--<li class="my-clubs"><a href="groups.php">Группы</a></li>-->
-			<li class="my-events"><a href="events.php">Мероприятия</a></li>
+			<li class="my-events"><a href="my-events.php">Мероприятия</a></li>
 			<li class="my-contacts"><a href="friends.php">Друзья</a></li>
 			<li class="my-horses"><a href="horses.php">Лошади</a></li>
 			<li class="my-gallery"><a href="gallery.php" >Галерея</a></li>

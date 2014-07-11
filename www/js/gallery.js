@@ -84,6 +84,7 @@ function gallery_open_modal(element, pid) {
 				mdl.find("#change_description textarea").attr("name", "desc["+pid+"]").html(resp.desc);
 			} else {
 				mdl.find("#gallery_delete").css("display", "none");
+				mdl.find("#gallery_change_album").css("display", "none");
 				mdl.find("#gallery_change_group").css("display", "none");
                 mdl.find("#change_description").css("display", "none");
 			}

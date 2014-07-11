@@ -17,7 +17,7 @@
 			
 			<div class="sff-block">
 				<label>Страна</label>
-				<select name="country">
+				<select name="country" style="width: 206px;">
 					<option selected disabled>Не важно</option>
 					{foreach $countries as $country}
 						<option>{$country}</option>

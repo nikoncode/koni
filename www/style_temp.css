@@ -6,3 +6,7 @@
 #advTabsContent .chosen-container.chosen-with-drop {z-index: 9999; position: absolute; margin-bottom: 70px;}
 #advTabsContent .chosen-container.chosen-with-drop .chosen-drop {z-index: 9999; position: absolute;}
 .noread {background: #F8E4DA}
+.user-info .user-info {font-size: 13px; font-style: italic; color: #444; margin-bottom: 0; text-align: right;  margin-right: 10px;}
+.user-info .user-profs {list-style: none; margin-left: 0; margin-bottom: 0px; text-align: right;  margin-right: 10px;}
+.user-info .user-profs li{padding: 0 1px; font-style: italic; font-size: 13px;}
+.user-info .user-club {font-style: italic; font-size: 13px; text-align: right;  margin-right: 10px;}
