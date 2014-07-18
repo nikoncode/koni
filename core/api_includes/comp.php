@@ -90,7 +90,7 @@ function api_comp_member() {
 }
 
 function api_comp_rider() {
-	validate_fields($fields, $_POST, array("act"), array("id"), array(), $errors); //act==0 remove
+	validate_fields($fields, $_POST, array("act"), array("id", "hid"), array(), $errors); //act==0 remove
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -99,7 +99,7 @@ function api_comp_rider() {
 	$db = new db;
 	$db->query("DELETE FROM comp_riders WHERE uid = ?i AND rid = ?i", $_SESSION["user_id"], $fields["id"]);
 	if ($fields["act"]) {
-		$db->query("INSERT INTO comp_riders (uid, rid) VALUES (?i, ?i)", $_SESSION["user_id"], $fields["id"]);
+		$db->query("INSERT INTO comp_riders (uid, rid, hid) VALUES (?i, ?i, ?i)", $_SESSION["user_id"], $fields["id"], $fields["hid"]);
 	}
 	aok(array(isset($fields["act"])));
 }

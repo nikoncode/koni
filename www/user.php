@@ -24,7 +24,11 @@ if (!session_check()) {
 
 	$assigned_vars["page_title"] = $assigned_vars["another_user"]["fio"]." > Одноконники";
 	$db = new db;
-	$assigned_vars["photos"] = $db->getCol("SELECT preview FROM gallery_photos WHERE o_uid = ?i ORDER BY time DESC LIMIT 3", $assigned_vars["another_user"]["id"]);
+	$assigned_vars["photos"] = $db->getAll("SELECT preview, id FROM gallery_photos WHERE o_uid = ?i ORDER BY time DESC LIMIT 3", $assigned_vars["another_user"]["id"]);
+	foreach ($assigned_vars["photos"] as $ph) {
+		$ids[] = $ph["id"];
+	}
+	$assigned_vars["photos_ids"] = implode(",", $ids);
 	$assigned_vars["news"] = news_wall_build("user", $assigned_vars["another_user"]["id"], 0, 5);
 	template_render($assigned_vars, "user.tpl");
 }

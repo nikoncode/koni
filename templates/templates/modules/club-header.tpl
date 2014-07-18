@@ -72,11 +72,12 @@
 				{/if}
 			</dl>
 		</div>
-		
-		{if $club.adv}
-			<div class="span3 club-banners">
+		<div class="span3 club-banners">
+			{if $club.adv}
 				<a href="{$club.adv.url}"><img src="{$club.adv.img}" /></a>
-			</div>
-		{/if}
+			{else}
+				<a href="#"><img src="/images/default-rec.png" /></a>
+			{/if}
+		</div>
 	</div>
 </div>

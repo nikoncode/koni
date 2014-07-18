@@ -87,6 +87,6 @@ if (!session_check()) {
 		} 
 	}
 
-	//print_r($assigned_vars["comp"]["members"]);
+	$assigned_vars["horses"] = $db->getAll("SELECT id, nick FROM horses WHERE o_uid = ?i", $_SESSION["user_id"]);
 	template_render($assigned_vars, "competition.tpl");
 }

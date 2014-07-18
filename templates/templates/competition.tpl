@@ -1,5 +1,6 @@
 {* Smarty *}
 {include "modules/header.tpl"}
+{include "modules/modal-be-member.tpl"}
 <script type="text/javascript">
 	
 function membership(cid, role, val, element) {
@@ -28,7 +29,7 @@ function membership(cid, role, val, element) {
 	})
 }
 
-function rider(rid, act, element) {
+/*function rider(rid, act, element) {
 	api_query({
 		amethod: "comp_rider",
 		qmethod: "POST",
@@ -37,7 +38,7 @@ function rider(rid, act, element) {
 			act : act
 		},
 		success: function (data) {
-			var el = $(element);
+			var el = $("[data-rider-rid=" + rid + "]");
 			if (data[0] != "0") {
 				el.removeClass("btn-warning").addClass("btn-success");
                 el.html('Учавствую <i class="icon-play icon-white"></i>');
@@ -53,7 +54,44 @@ function rider(rid, act, element) {
 			}
 		},
 		fail: "standart"
+	})*/
+
+function query_to_ride(rid, hid, act, callback) {
+	api_query({
+		amethod: "comp_rider",
+		qmethod: "POST",
+		params: {
+			id: rid,
+			hid: hid,
+			act : act
+		},
+		success: function (data) {
+			var el = $("[data-rider-rid=" + rid + "]");
+			if (data[0] != "0") {
+				el.removeClass("btn-warning").addClass("btn-success");
+                el.html('Учавствую <i class="icon-play icon-white"></i>');
+			} else {
+				el.removeClass("btn-success").addClass("btn-warning");
+                el.html('Учавствовать <i class="icon-play icon-white"></i>');
+			}
+			el.attr("onclick", "rider(" + rid + ", '" + (+!!!data[0]) + "', this); return false;");
+			if ($("#routes .btn-success").length == 0) {
+				$("#riders li.me").remove();
+			} else if ($("#riders li.me").length == 0) {
+				$("#riders").append("<li class='me'><a href='/user.php?id={$user.id}'><img src='{$user.avatar}'><p>{$user.fio}</p></a></li>");
+			}
+			$("#be-member").modal("hide");
+		},
+		fail: "standart"
 	})
+}
+
+function rider(rid, act) {
+	if (act == 1) {
+		part_prepare(rid);
+	} else {
+		query_to_ride(rid, 1, 0);
+	}
 }
 
 
@@ -150,7 +188,7 @@ function rider(rid, act, element) {
 											<div class="curr-compt-for span2">{$route.exam}</div>
 											<div class="curr-compt-status span2">{$route.status}</div>
 											<div class="curr-compt-go">
-												<a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}" onclick="rider({$route.id}, '{!$route.is_rider}', this); return false;">
+												<a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}" onclick="rider({$route.id}, '{!$route.is_rider}', this); return false;" data-rider-rid="{$route.id}">
 													Участвовать <i class="icon-play icon-white"></i>
 												</a>
 											</div>

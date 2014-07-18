@@ -336,9 +336,9 @@ function user_permission(qid, qtype, qdesc, el) {
 											
 											<div class="controls controls-row">
 												<label class="span6">Веб-сайт клуба</label>
-												<input type="text" class="span6" placeholder="http://odnokonniki.ru/id4535423545667" name="site" value="{$club.site}" >
+												<input type="text" class="span6" placeholder="введите адрес вашего сайта" name="site" value="{$club.site}" >
 												<label class="span6">E-mail клуба</label>
-												<input type="text" class="span6" placeholder="http://odnokonniki.ru/id4535423545667" name="email" value="{$club.email}" >
+												<input type="text" class="span6" placeholder="введите официальный email клуба" name="email" value="{$club.email}" >
 												<div id="phones">
 													<label class="span6">Телефоны</label>
 													{if $club.c_phones}
