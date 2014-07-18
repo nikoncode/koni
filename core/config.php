@@ -1,6 +1,6 @@
 <?php
 /* This is main configuration file. */
-
+error_reporting(0);
 /* Main directories options */
 define("PROJECT_DIR", 			"D:/WORK/WEBSERVER/home/koni/");
 define("WEB_ROOT_DIR",			PROJECT_DIR . "www/");

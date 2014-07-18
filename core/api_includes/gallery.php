@@ -126,8 +126,16 @@ function api_gallery_upload_photo() {
 		aerr($errors);
 	}
 
-	if (!isset($fields["album_id"]))
-		$fields["album_id"] = 0;
+	$db = new db;
+	if(!isset($fields["album_id"])){ //if not set create new
+		$db->query("INSERT INTO albums (`name`,`att`,`o_uid`) VALUES (?s,?i,?i);", "Без альбома", 1, $_SESSION['user_id']);
+        $fields["album_id"] = $db->insertId();
+    } else { //if set check access
+    	$id = $db->getOne("SELECT id FROM albums WHERE o_uid = ?i AND id = ?i AND att = 1", $_SESSION["user_id"], $fields["album_id"]);
+    	if ($id == NULL) {
+    		aerr(array("Вы не можете загрузить фото в этот альбом, пожалуй	ста обновите страницу и попробуйте еще."));
+    	}
+    }
 
 	/* Checking path */
 	$path = $_SESSION["user_id"] . "/album_" . $fields["album_id"] . "/";
@@ -140,16 +148,7 @@ function api_gallery_upload_photo() {
 	$preview_img = $path . $filename . "_preview.jpg";
 	$full_img = $path . $filename . ".jpg";
 	$result = gallery_upload_photo($_FILES, "gallery", $full_img, 1000, 1000, true, $preview_img);
-    $db = new db;
-	if($fields['album_id'] == 0){ //if not set create new
-		$db->query("INSERT INTO albums (`name`,`att`,`o_uid`) VALUES (?s,?i,?i);", "Без альбома", 1, $_SESSION['user_id']);
-        $fields["album_id"] = $db->insertId();
-    } else { //if set check access
-    	$id = $db->getOne("SELECT id FROM albums WHERE o_uid = ?i AND id = ?i AND att = 1", $_SESSION["user_id"], $fields["album_id"]);
-    	if ($id == NULL) {
-    		aerr(array("Вы не можете загрузить фото в этот альбом, пожалуй	ста обновите страницу и попробуйте еще."));
-    	}
-    }
+
 	/* Insert to db */
 	if ($result === true) {
 		$db->query("INSERT INTO gallery_photos (full, preview, album_id, o_uid) VALUES (?s, ?s, ?i, ?i);", 

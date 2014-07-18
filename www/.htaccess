@@ -1,1 +1,7 @@
+php_flag display_errors off
+DirectoryIndex login.php
 AddDefaultCharset utf-8
+AuthType Basic
+AuthName "Restricted area"
+AuthUserFile /var/www/.htpasswd
+Require valid-user
