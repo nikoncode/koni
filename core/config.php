@@ -1,8 +1,8 @@
 <?php
 /* This is main configuration file. */
-
+error_reporting(0);
 /* Main directories options */
-define("PROJECT_DIR", 			"D:/WORK/WEBSERVER/home/koni/");
+define("PROJECT_DIR", 			"d:/WebServers/home/localhost/");
 define("WEB_ROOT_DIR",			PROJECT_DIR . "www/");
 define("LIBRARIES_DIR", 		PROJECT_DIR . "libraries/");
 define("CORE_DIR",				PROJECT_DIR . "core/");
@@ -17,7 +17,7 @@ define("SMARTY_CACHE_DIR",		PROJECT_DIR . "templates/cache/");
 /* MYSQL db options*/
 define("MYSQL_USER", "root");
 define("MYSQL_PASS", "");
-define("MYSQL_DB", "test");
+define("MYSQL_DB", "koni");
 
 /* SPHINX options*/
 define("SPHINX_PORT", 1338);

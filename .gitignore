@@ -216,6 +216,5 @@ pip-log.txt
 
 
 additions/node_modules
-www/uploads
-templates/compile
-additions/sphinx-daemon
+www/tools/
+
