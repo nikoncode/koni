@@ -19,14 +19,17 @@ $comp_info = $db->getRow("SELECT name, results FROM comp WHERE id = ?i", $cid);
 $routes = $db->getAll("SELECT id, name FROM routes WHERE cid = ?i", $cid);
 if (empty($comp_info["results"])) {
 	$temp = $db->getAll("SELECT routes.id,
-								routes.name,
-								CONCAT(fname,' ',lname) AS fio
-						FROM routes
-						LEFT JOIN comp_riders 
-							ON routes.id = comp_riders.rid
-						LEFT JOIN users 
-							ON comp_riders.uid = users.id
-						WHERE routes.cid = ?i", $cid);
+							routes.name,
+							CONCAT(fname,' ',lname) AS fio,
+							CONCAT(horses.nick,', ',horses.sex,', ',horses.mast) as horse
+					FROM routes
+					LEFT JOIN comp_riders 
+						ON routes.id = comp_riders.rid
+					LEFT JOIN users 
+						ON comp_riders.uid = users.id
+					LEFT JOIN horses 
+						ON comp_riders.hid = horses.id
+					WHERE routes.cid = ?i", $cid);
 
 	$results = array();
 	foreach ($temp as $element) {

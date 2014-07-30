@@ -34,7 +34,7 @@
 		</div>
 		<div class=" pull-right content-add-buttons">
 			<div class="fileupload">
-			  <input id="attach" type="file" name="gallery" data-album-id="{if $n}{$n.album_id}{else}0{/if}" multiple>
+			  <input id="attach" type="file" name="gallery" data-album-id="{if $n}{$n.album_id}{else}0{/if}"> <!-- NO MULTIPLE (ГАЛЕРЕЯ ИНИЦИАЛИЗИРУЕТСЯ ПРИ ЗАГРУЗКЕ ПЕРВОЙ ФОТОГРАФИИ, multiple ЗАГРУЖАЕТ ОДНОВРЕМЕННО, ВСЕ КРОМЕ ПЕРВОЙ УЙДУТ В МОЛОКО) -->
 			  <input type="hidden" name="album_id" value="{if $n}{$n.album_id}{else}0{/if}" />
 			  <button class="btn btn-add-photo"><i class="icon-camera"></i> Добавить фото</button>
 			</div>

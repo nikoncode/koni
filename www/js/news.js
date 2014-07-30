@@ -38,9 +38,9 @@ function remove_comment(cid, element) {
 
 function news_form_init(form) {
 	var element = form.find("#attach");
-    var album_id = element.attr('data-album-id');
+	album_id = element.attr("data-album-id");
 	element.fileupload({
-        url: "/api/api.php?m=gallery_upload_photo&album_id={$album_id}",
+        url: "/api/api.php?m=gallery_upload_photo&album_id=" + album_id,
 		dataType: 'json',
 		done: function (e, data) {
 			var result = data.result
@@ -50,8 +50,8 @@ function news_form_init(form) {
 					<img class='img-polaroid' src='" + response.preview + "' /> \
 					<a href='#remove-image' onclick='news_form_delete_att(" + response.id + ", this); return false;'><img class='remove-image-icon' src='images/icon-remove-image.png' /></a> \
 				   </div>").appendTo(form.find(".previews"));
-                $("input[name=album_id]").val(response.album_id);
-                element.attr("data-album-id", response.album_id);
+                $(this).closest("form").find("input[name=album_id]").val(response.album_id);
+                $(this).fileupload("option", "url", "/api/api.php?m=gallery_upload_photo&album_id=" + response.album_id);
 			} else {
 				for (i = 0;i < response.length; ++i)
 					alert(response[i]);

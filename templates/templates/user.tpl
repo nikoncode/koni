@@ -29,9 +29,9 @@
 			{if $photos}
 			<div>
 				<h3 class="inner-bg">Фотографии <span class="pull-right"><a href="gallery.php?id={$another_user.id}">Альбомы</a></span></h3>
-						<ul class="club-photo-wall">
+						<ul class="club-photo-wall" data-gallery-list="{$photos_ids}">
 							{foreach $photos as $photo}
-								<li><img src="{$photo}" /></li>
+								<li><a href="#" data-gallery-pid="{$photo.id}"><img src="{$photo.preview}" /></a></li>
 							{/foreach}
 						</ul>
 						<div class="clearfix"></div>

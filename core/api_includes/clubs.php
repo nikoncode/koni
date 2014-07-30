@@ -53,6 +53,10 @@ function api_club_edit2() {
 		aerr($errors);
 	}
 
+	if (strlen($fields["sdesc"]) > 450) {
+		aerr(array("Слишком длинное 'Краткое описание'."));
+	}
+
 	$db = new db;
 	if (isset($fields["ability"])) {
 		$fields["ability"] = implode(", ", $fields["ability"]);
