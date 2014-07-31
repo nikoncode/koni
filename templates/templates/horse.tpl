@@ -85,18 +85,13 @@
 				<div class="future-events">
 					<h5>Будущие соревнования</h5>
 					<table class="table table-striped competitions-table">
+                        {foreach $be_events as $event}
 						  <tr><td>
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
+								<p class="comp-date">{$event.date}</p>
+								<p><a href="/competition.php?id={$event.id}">{$event.name} [{$event.route}, {$event.height} см, {$event.exam}]</a></p>
 						</td></tr>
-						 <tr><td>
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
-						</td></tr>
-						 <tr><td>
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
-						</td></tr>
+                        {/foreach}
+
 					</table>
 				</div>
 			
@@ -158,54 +153,18 @@
 						  <th>Место</th>
 						  <th>Результат</th>
 						</tr>
+                        {foreach $end_events as $event}
 						 <tr>
 							<td class="competition">
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
+								<p class="comp-date">{$event.date}</p>
+								<p><a href="/competition.php?id={$event.id}">{$event.name} [{$event.route}, {$event.height} см, {$event.exam}]</a></p>
 							</td>
 							<td class="place"><p>9 место</p></td>
 							<td class="result"><p>75,30 / 0,00</p></td>
 						</tr>
+                        {/foreach}
 						<tr>
-							<td class="competition">
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
-							</td>
-							<td class="place"><p>9 место</p></td>
-							<td class="result"><p>75,30 / 0,00</p></td>
-						</tr>
-						<tr>
-							<td class="competition">
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
-							</td>
-							<td class="place"><p>9 место</p></td>
-							<td class="result"><p>75,30 / 0,00</p></td>
-						</tr>
-						<tr>
-							<td class="competition">
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
-							</td>
-							<td class="place"><p>9 место</p></td>
-							<td class="result"><p>75,30 / 0,00</p></td>
-						</tr>
-						<tr>
-							<td class="competition">
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
-							</td>
-							<td class="place"><p>9 место</p></td>
-							<td class="result"><p>75,30 / 0,00</p></td>
-						</tr>
-						<tr>
-							<td class="competition">
-								<p class="comp-date">26 октября</p>
-								<p><a href="/events.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a></p>
-							</td>
-							<td class="place"><p>9 место</p></td>
-							<td class="result"><p>75,30 / 0,00</p></td>
-						</tr>
+
 					</table>
 					
 				</div>

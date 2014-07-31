@@ -20,6 +20,7 @@ if (isset($_GET["mail"], $_GET["code"])) {
 		$new_password = others_generate_code(8);
 		$password = password_hash($new_password, PASSWORD_DEFAULT);
 		$db->query("UPDATE users SET restore = '', password = ?s WHERE id = ?i", $password, $id);
+        $headers  = 'Content-type: text/plain; charset=utf-8';
 	    mail($_GET["mail"], "Odnokonniki", " 
 	    	Здравствуйте.
 			Ваш пароль успешно изменен. Данные для входа расположены ниже:
@@ -27,7 +28,7 @@ if (isset($_GET["mail"], $_GET["code"])) {
 			Пароль: {$new_password}
 			Ссылка для входа: http://odnokonniki.ru/login.php?login={$_GET["mail"]}
 			После входа вы сможете сменить пароль на другой.
-		");
+		",$headers);
 	}
 	$restored = true;
 }

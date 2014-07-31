@@ -96,13 +96,14 @@ function api_auth_register() {
 	$db->query("INSERT INTO users (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
 
 	/* Mail client details to user */
+    $headers  = 'Content-type: text/plain; charset=utf-8';
     mail($fields["mail"], "Odnokonniki", "
     	Здравствуйте. 
 		Спасибо за регистрацию.
 		Логин: {$fields["login"]}
 		Код подтверждения: {$fields["hash"]}
 		Ссылка для подтверждения: http://odnokonniki.ru/sms.php?login={$fields["login"]}
-	");
+	",$headers);
 
 	aok(array("Пользователь успешно зарегистрирован. На вашу почту отправлено письмо, код с которого нужно будет указать далее."), "/sms.php?login={$fields["login"]}");
 }
@@ -143,6 +144,7 @@ function api_auth_sms_resend(){
     ), array(), $errors, false);
     $db = new db;
     $hash = $db->getRow("SELECT hash,mail FROM users WHERE login=?s", $fields["login"]);
+    $headers  = 'Content-type: text/plain; charset=utf-8';
     if ($hash['hash'] != '') {
         mail($hash["mail"], "Odnokonniki", "
     	Здравствуйте.
@@ -150,7 +152,7 @@ function api_auth_sms_resend(){
 		Логин: {$fields["login"]}
 		Код подтверждения: {$hash['hash']}
 		Ссылка для подтверждения: http://odnokonniki.ru/sms.php?login={$fields["login"]}
-	");
+	",$headers);
         aok(array("Повторное письмо с SMS-кодом отправлено."));
     }else{
         $errors[] = "Пользователь с таким логином не найден.";
@@ -233,12 +235,13 @@ function api_auth_pass_restore() {
 	$id = $db->getOne("SELECT id FROM users WHERE mail=?s", $fields["mail"]);
 	if ($id !== false) {
 		$db->query("UPDATE users SET restore = ?s WHERE id = ?s", $code, $id);
+        $headers  = 'Content-type: text/plain; charset=utf-8';
 	    mail($fields["mail"], "Odnokonniki", " 
 	    	Здравствуйте.
 			На вашем аккаунте была заказана смена пароля.
 			Для подтверждения смены пароля, пройдите по ссылке: http://odnokonniki.ru/restore.php?mail={$fields["mail"]}&code={$code}
 			Если вы этого не делали, просто проигнорируйте это письмо.
-		");
+		",$headers);
 	}
 	aok(array("Если такой пользователь существует, то ему выслано письмо с подтверждением."));
 }

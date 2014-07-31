@@ -36,12 +36,25 @@ if (!session_check()) {
 															concat(fname,' ',lname) as fio,
 															avatar,
 															(SELECT COUNT(id) FROM likes WHERE cid = c.id) as likes_cnt,
-															(SELECT COUNT(id) FROM likes WHERE cid = c.id AND o_uid = ?i) as is_liked 
+															(SELECT COUNT(id) FROM likes WHERE cid = c.id AND o_uid = ?i) as is_liked
 													FROM (
 														SELECT * FROM comments WHERE hid = ?i ORDER BY time DESC LIMIT 3
 													) c, users
 													WHERE o_uid = users.id
 													ORDER BY time ASC", $_SESSION["user_id"], $assigned_vars["horse"]["id"]);
+            $assigned_vars["be_events"] = $db->getAll("SELECT c.*,r.name as route, r.exam, r.bdate as date, r.height
+													FROM comp_riders as cr
+													INNER JOIN routes as r on (cr.rid = r.id)
+													INNER JOIN comp as c on (c.id = r.cid)
+													WHERE cr.uid = ?i AND cr.hid = ?i AND r.bdate > ?s
+													ORDER BY bdate ASC", $_SESSION["user_id"], $assigned_vars["horse"]["id"], date('Y-m-d H:i:s'));
+
+            $assigned_vars["end_events"] = $db->getAll("SELECT c.*,r.name as route, r.exam, r.bdate as date, r.height
+													FROM comp_riders as cr
+													INNER JOIN routes as r on (cr.rid = r.id)
+													INNER JOIN comp as c on (c.id = r.cid)
+													WHERE cr.uid = ?i AND cr.hid = ?i AND r.bdate <= ?s
+													ORDER BY bdate ASC", $_SESSION["user_id"], $assigned_vars["horse"]["id"], date('Y-m-d H:i:s'));
 			$assigned_vars["comments_cnt"] = $assigned_vars["horse"]["comments_cnt"];
 			$assigned_vars["c_key"] = "hid";
 			$assigned_vars["c_value"] = $assigned_vars["horse"]["id"];

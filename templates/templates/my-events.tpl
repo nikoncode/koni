@@ -42,66 +42,18 @@
                                 <th>Время и место</th>
                                 <th>Название</th>
                             </tr>
+                            {foreach $be_events as $event}
                             <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg"></a></td>
+                                <td class="compt-img"><a href="#"><img src="{$event.avatar}"></a></td>
                                 <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
+                                    <p class="date">{$event.bdate}<span class="rel-date">(через 1 год)</span></p>
+                                    <p class="place">г. {$event.city}, клуб <a href="/club.php?id={$event.club_id}">«{$event.club}»</a></p>
                                 </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
+                                <td class="competition"><a href="competition.php?id={$event.id}">{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}</a>
                                     <div class="i-fan">Я болею за 3х человек</div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="my-fans">За вас болеют 23 человека</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-3.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="i-fan">Я болею за 3х человек</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="my-fans">За вас болеют 23 человека</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-2.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="i-fan">Я болею за 3х человек</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-4.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="my-fans">За вас болеют 23 человека</div>
-                                </td>
-                            </tr>
+                            {/foreach}
                             </tbody></table>
                     </div>
                 </div> <!-- //near-events -->
@@ -133,46 +85,18 @@
                                 <th>Название</th>
                             </tr>
 
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-3.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="i-fan">Я болею за 3х человек</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-1.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="my-fans">За вас болеют 23 человека</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-2.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="i-fan">Я болею за 3х человек</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="compt-img"><a href="#"><img src="images/icon-competition-4.jpg"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">26 июля 2014 г. <span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. Москва, клуб <a href="#">«Битца»</a></p>
-                                </td>
-                                <td class="competition"><a href="club-sample-compt.php">CSI2*-W/ CSIYH1* - Riga (Латвия)  [М3, 115 см, любители (н)]</a>
-                                    <div class="my-fans">За вас болеют 23 человека</div>
-                                </td>
-                            </tr>
+                            {foreach $end_events as $event}
+                                <tr>
+                                    <td class="compt-img"><a href="#"><img src="{$event.avatar}"></a></td>
+                                    <td class="compt-date">
+                                        <p class="date">{$event.bdate}<span class="rel-date">(через 1 год)</span></p>
+                                        <p class="place">г. {$event.city}, клуб <a href="/club.php?id={$event.club_id}">«{$event.club}»</a></p>
+                                    </td>
+                                    <td class="competition"><a href="competition.php?id={$event.id}">{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}</a>
+                                        <div class="i-fan">Я болею за 3х человек</div>
+                                    </td>
+                                </tr>
+                            {/foreach}
                             </tbody></table>
                     </div>
                 </div> <!-- //online-friends -->
