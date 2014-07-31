@@ -2,7 +2,7 @@
 /* This is main configuration file. */
 error_reporting(0);
 /* Main directories options */
-define("PROJECT_DIR", 			"d:/WebServers/home/localhost/");
+define("PROJECT_DIR", 			"d:/my_documents/!my_work/!WebServers/home/odk/www/1koni/koni/");
 define("WEB_ROOT_DIR",			PROJECT_DIR . "www/");
 define("LIBRARIES_DIR", 		PROJECT_DIR . "libraries/");
 define("CORE_DIR",				PROJECT_DIR . "core/");
