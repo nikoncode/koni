@@ -131,7 +131,7 @@ function api_gallery_upload_photo() {
 		$db->query("INSERT INTO albums (`name`,`att`,`o_uid`) VALUES (?s,?i,?i);", "Без альбома", 1, $_SESSION['user_id']);
         $fields["album_id"] = $db->insertId();
     } else { //if set check access
-    	$id = $db->getOne("SELECT id FROM albums WHERE o_uid = ?i AND id = ?i AND att = 1", $_SESSION["user_id"], $fields["album_id"]);
+    	$id = $db->getOne("SELECT id FROM albums WHERE o_uid = ?i AND id = ?i", $_SESSION["user_id"], $fields["album_id"]);
     	if ($id == NULL) {
     		aerr(array("Вы не можете загрузить фото в этот альбом, пожалуй	ста обновите страницу и попробуйте еще."));
     	}

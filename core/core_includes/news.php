@@ -55,6 +55,7 @@ function news_wall_build($type, $id, $start, $count) {
 							(SELECT COUNT(id) FROM likes WHERE nid = news.id) as likes_cnt,
 							(SELECT COUNT(id) FROM likes WHERE nid = news.id AND o_uid = ?i) as is_liked,
 							(SELECT GROUP_CONCAT(full) FROM gallery_photos WHERE album_id = news.album_id) as photos,
+							(SELECT COUNT(id) FROM comments WHERE nid = news.id) as comments_cnt,
 							(SELECT GROUP_CONCAT(id) FROM gallery_photos WHERE album_id = news.album_id) as photo_ids
 					FROM news, users
 					WHERE news.o_uid = ?i
@@ -74,6 +75,7 @@ function news_wall_build($type, $id, $start, $count) {
 							(SELECT COUNT(id) FROM likes WHERE nid = news.id) as likes_cnt,
 							(SELECT COUNT(id) FROM likes WHERE nid = news.id AND o_uid = ?i) as is_liked,
 							(SELECT GROUP_CONCAT(full) FROM gallery_photos WHERE album_id = news.album_id) as photos,
+							(SELECT COUNT(id) FROM comments WHERE nid = news.id) as comments_cnt,
 							(SELECT GROUP_CONCAT(id) FROM gallery_photos WHERE album_id = news.album_id) as photo_ids
 					FROM news, users
 					WHERE (o_uid IN (SELECT fid FROM friends WHERE uid = ?i) OR o_uid = ?i)
@@ -93,6 +95,7 @@ function news_wall_build($type, $id, $start, $count) {
 							(SELECT COUNT(id) FROM likes WHERE nid = news.id) as likes_cnt,
 							(SELECT COUNT(id) FROM likes WHERE nid = news.id AND o_uid = ?i) as is_liked,
 							(SELECT GROUP_CONCAT(full) FROM gallery_photos WHERE album_id = news.album_id) as photos,
+							(SELECT COUNT(id) FROM comments WHERE nid = news.id) as comments_cnt,
 							(SELECT GROUP_CONCAT(id) FROM gallery_photos WHERE album_id = news.album_id) as photo_ids
 					FROM news, clubs
 					WHERE news.o_cid = ?i

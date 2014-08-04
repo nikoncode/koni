@@ -1,14 +1,4 @@
 {* Smarty *}
-<script>
-    $(function () {
-        $(".answer-message").keydown(function (e) {
-            if (e.ctrlKey && e.keyCode == 13) {
-               $(this).closest('form').find('.comment-submit').click();
-                return false;
-            }
-        });
-    });
-</script>
 <li class="answer-form">
     <form class="min" onsubmit="{if $loaded_comment}edit{else}add{/if}_comment(this); return false;">
         <table class="controls-row">

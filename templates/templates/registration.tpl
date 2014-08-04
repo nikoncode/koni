@@ -35,10 +35,10 @@ function change_country(select) {
         fail:    "standart"
     })
 	phone = $("input[name=phone]");
-	country = $(select).val();
-	if (country == "Беларусь") phone.val("+375");
-	else if(country == "Россия") phone.val("+7");
-	else if(country == "Украина") phone.val("+380");
+	var country_name = $('.chosen-country option:selected').html();
+	if (country_name == "Беларусь") phone.val("+375");
+	else if(country_name == "Россия") phone.val("+7");
+	else if(country_name == "Украина") phone.val("+380");
 	else phone.val("");
 }
 $(document).ready(function()
@@ -83,7 +83,7 @@ $(document).ready(function()
 						<div class="row">	
 							
 							<div class="controls controls-row">
-							<label class="span7">Ваш логин: <span class="req">*</span></label>
+							<label class="span7">Ваш логин: <span class="req">*</span> (только английские буквы)</label>
 							<input type="text" class="span6 login" placeholder="Введите ваш логин" name="login">
 							</div>
 							
@@ -96,8 +96,8 @@ $(document).ready(function()
 							<div class="controls controls-row">
 								<label class="span7">Как вас зовут? <span class="req">*</span></label>
 								<input type="text" class="span3" placeholder="Имя" name="fname">
-								<input type="text" class="span3" placeholder="Фамилия" name="lname">
-								<input type="text" class="span3" placeholder="Отчество" name="mname">
+								<input type="text" class="span3" placeholder="Фамилия" name="lname"> <br/>
+								<div class="span6"><input type="text" placeholder="Отчество" name="mname"> (не обязательно)</div>
 							</div>
 							
 							<div class="controls controls-row">
@@ -156,10 +156,10 @@ $(document).ready(function()
 				
 		<div class="row">
 			<div class="span2 offset4">
-				<a class="white-color tar" href="home.php"><p class="tar">Забыли пароль?</p></a>
+				<a class="white-color tar" href="restore.php"><p class="tar">Забыли пароль?</p></a>
 			</div>
 			<div class="span1">
-				<a class="white-color" href="index.php"><p class="tar">Войти</p></a>
+				<a class="white-color" href="login.php"><p class="tar">Войти</p></a>
 			</div>
 		</div>	
 

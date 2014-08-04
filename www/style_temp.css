@@ -1,4 +1,4 @@
-.search-filter-block .span3.chosen-select{margin:0}
+.search-filter-block .span3.chosen-select, .search-clubs-filter-block .span3.chosen-select{margin:0}
 /*#advTabsContent .tab-pane {overflow: hidden; position: absolute; width: 940px; height: 260px; z-index: 1}*/
 #adv-tab1 {position: static !important; z-index: 1; overflow: hidden}
 

@@ -23,8 +23,15 @@ if (!session_check()) {
 	if ($assigned_vars["club"]["o_uid"] != $_SESSION["user_id"]) {
 		template_render_error("Вы не можете редактировать этот клуб.");
 	}
-
-	$assigned_vars["countries"] = $const_countries_old;
+    $assigned_vars['cities'] = array();
+	$assigned_vars["countries"] = $const_countries;
+    if($assigned_vars['club']['country'] != ''){
+        $assigned_vars['cities'] = $db->getAll("SELECT ct.id,ct.city_name_ru
+                                                FROM city_ as ct
+                                                INNER JOIN country_ as c ON (c.id = ct.id_country)
+                                                WHERE c.country_name_ru = ?s
+                                                ORDER BY ct.oid",$assigned_vars['club']['country']);
+    }
 	$assigned_vars["club"]["c_phones"] = unserialize($assigned_vars["club"]["c_phones"]);
 	$assigned_vars["club"]["adv"] = json_decode($assigned_vars["club"]["adv"], 1);
 	$assigned_vars["club"]["ability"] = explode(", ", $assigned_vars["club"]["ability"]);
@@ -36,5 +43,6 @@ if (!session_check()) {
 	$assigned_vars["types"] = $const_club_type;
 	$assigned_vars["members"] = $db->getAll("SELECT *, CONCAT(fname,' ',lname) as fio FROM users WHERE cid = ?i", $_GET["id"]);
 	$assigned_vars["types"] = $const_horses_spec;
+	$assigned_vars["metros"] = $const_metro;
 	template_render($assigned_vars, "club-admin.tpl");
 }

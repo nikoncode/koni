@@ -17,6 +17,7 @@ input[type="color"],.uneditable-input {box-sizing: content-box;}
 .flr {float: right}
 .fll {float: left}
 ul.nodots {list-style: none; margin-left: 0}
+.no-mrg {margin-left: 0 !important}
 .row.mrg10 {margin-bottom: 10px}
 .row.mrg20 {margin-bottom: 20px}
 .row.nomrg {margin-bottom: 0px !important}
@@ -29,6 +30,8 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .btn-warning-primary:hover, .btn-warning-primary:focus {background: #792800 !important}
 .fileupload {height: 30px; float: left; position: relative; overflow: hidden; margin-right: 5px; width: 150px}
 .fileupload input {position: absolute;  top: 0;   right: 0;  cursor: pointer;  opacity: 0.0; filter: alpha(opacity=0);  font-size: 300px; height: 200px;}
+
+
 
 .banner img, img.banner {border: 3px #fff solid; border-radius: 4px; box-shadow: 0px 1px 5px rgba(0,0,0,0.5);}
 .banner img:hover, img.banner:hover {box-shadow: 0px 0px 3px rgba(0,0,0,0.5)}
@@ -56,7 +59,7 @@ span.req-field {color: #c00}
 .block {border-radius: 5px; margin: 0 -8px 0 12px ;	padding: 8px}
 .block .row {margin-left: 0px}
 .block .row [class*="span"] {margin-left: 8px;} 
-.controls-row, .controls {margin-left: -2px; overflow: hidden}
+.controls-row, .controls {margin-left: -2px;}
 .span6 input.span6 {width: 434px}
 .span6 select.span6 {width: 434px} 
 .span6 textarea.span6 {width: 434px}
@@ -166,7 +169,7 @@ header .site-descr, header .soc-share {font-size: 12px; color: #fff; line-height
 
 .main-menu .navbar-inner {border: 0; box-shadow: none}
 .main-menu .navbar-inner {padding-right: 0px; margin-bottom: 50px; background: url(images/bg-main-menu.png) top left repeat-x; border-radius: 5px}
-.main-menu .navbar-inner .nav li a{color: #973d00; text-transform: uppercase; font-size: 15px; font-weight: 600; text-shadow:  0 -1px 1px #4b1e00; margin: 0 15px;}
+.main-menu .navbar-inner .nav li a{color: #973d00; text-transform: uppercase; font-size: 15px; font-weight: 600; text-shadow:  0 -1px 1px #4b1e00; margin: 0 15px}
 .main-menu .navbar-inner .main-nav-1 li a{padding: 10px 7px}
 .main-menu .navbar-inner .main-nav-2 li a{padding: 10px 8px}
 .main-menu .navbar-inner .nav li{padding: 10px 0px;}
@@ -465,7 +468,7 @@ h5.title-hr {font-size: 13px; font-weight: 600; padding-left: 8px}
 .chat-dialog .message {margin-bottom: 20px}
 .chat-dialog .avatar {margin-right: 5px; margin-bottom: 25px; width: 60px; height: 60px; float: left}
 .chat-dialog {border-bottom: 1px #eee solid; padding-bottom: 10px; margin-bottom: 10px; margin-left: 0 !important}
-.chat-window {max-height: 600px; overflow-y: scroll;}
+.chat-window {height: 300px; overflow-y: scroll;}
 .chat-window .span5{width: 360px}
 form.add-chat-message {padding: 10px 0; margin-bottom: 0}
 form.add-chat-message .controls-row [class*="span"] {margin-left: 2px !important}
@@ -623,8 +626,8 @@ div.useful-review a.not-useful{background: url(images/icon-useful-review-no.png)
 .search-filter-block {padding: 0 2px}
 .search-clubs-filter-block label.radio, .search-filter-block label.radio{padding-left: 0}
 .search-clubs-filter-block label.radio > input, .search-filter-block label.radio > input{margin-right: 5px}
-.search-clubs-filter-block > label, .search-filter-block > label{font-weight: 600}
-.search-clubs-filter-block > label, .search-filter-block > label{font-weight: 600}
+.search-clubs-filter-block label, .search-filter-block label{font-weight: 600}
+.search-clubs-filter-block label, .search-filter-block label{font-weight: 600}
 .search-clubs-filter-block label.radio, .search-clubs-filter-block label.checkbox, .search-filter-block label.radio, .search-filter-block label.checkbox{font-weight: 400}
 .search-filter-block label.checkbox{padding-left: 0}
 .search-filter-block label.checkbox input[type="checkbox"]{margin-right: 10px}
@@ -700,10 +703,10 @@ ul.user-friends-menu li a{text-decoration: none}
 }
 
 /* modal */
-.modal {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; }
+.modal {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg); background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; position: absolute !important}
 .modal form{margin-bottom: 0px}
-.modal.bg-white {background-image:  url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png); background-color: #fff; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x; background-position: left, right, top, bottom; box-shadow: inset 0px 0px 20px #000; border: 0}
-.modal-notitle {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg) !important; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; }
+.modal.bg-white {background-image:  url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top-title.png), url(images/bg-bottom.png); background-color: #fff; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x; background-position: left, right, top, bottom; box-shadow: inset 0px 0px 20px #000; position: absolute !important; border: 0}
+.modal-notitle {background-image: url(images/bg-left.png), url(images/bg-right.png), url(images/bg-top.png), url(images/bg-bottom.png), url(images/bg-lthr-block.jpg) !important; background-repeat: repeat-y, repeat-y, repeat-x, repeat-x, repeat; background-position: left, right, top, bottom, top left ; box-shadow: inset 0px 0px 20px #000; position: absolute !important}
 .modal600 {width: 600px; margin-left: -300px}
 .modal700 {width: 700px; margin-left: -350px}
 .modal800 {width: 816px; margin-left: -408px}
@@ -814,20 +817,18 @@ ul.uploaded-photos-list li .new-uploaded-img img.img-polaroid {height: 90px; wid
 
 /* gallery-in-post */
 ul.gallery-in-post {margin-left: 0; list-style: none; height: 360px}
-ul.gallery-in-post li {width: 85px !important; height: 85px; padding-bottom: 0px;margin-bottom: 3px !important; margin-left: 360px; background-size: cover !important; background-position: center center; background-repeat: no-repeat;}
-ul.gallery-in-post li:first-child {height:auto !important;width: 350px !important; max-height: 350px; float: left; margin-left: 0}
-ul.gallery-in-post li:first-child img{max-height: 350px;}
+ul.gallery-in-post li a >div{width: 85px !important; height: 85px; padding-bottom: 0px;margin-bottom: 3px !important; margin-left: 360px; background-size: cover !important; background-position: center center; background-repeat: no-repeat;}
+ul.gallery-in-post li:first-child a > div{width: 350px !important; height: 350px; float: left; margin-left: 0}
 .modal-gallery-post div.comments {margin: 0 10px}
 .modal-gallery-post div.comments ul.comments-lists > li {margin-left: 0}
 div.modal900.modal-gallery-post div.comments ul.comments-lists li.answer-form form.max {background: none}
 div.modal900.modal-gallery-post div.comments ul.comments-lists li.answer-form form.max textarea.answer-message {width: 812px}
 ul.my-news-wall div.post .modal {position: absolute; top: -100px}
-.modal-gallery-post  table.image-info {margin-top: 20px;width:100%}
+.modal-gallery-post  table.image-info {margin-top: 20px}
 .modal-gallery-post  table.image-info td{padding: 0 5px; vertical-align: top;}
 .modal-gallery-post  table.image-info td div.answer-block {margin-top: 10px; float: left}
-.modal-gallery-post  table.image-info td.info{border-left: 1px #ccc solid}
+.modal-gallery-post  table.image-info td.info{width: 250px; border-left: 1px #ccc solid}
 .modal-gallery-post  table.image-info td.info ul{list-style: none; margin-left: 0}
-.modal-gallery-post  table.image-info td.info li{display: inline-block; margin-right: 20px}
 .modal-gallery-post  table.image-info td.info li p.dt{font-weight: 600}
 .modal-gallery-post  table.image-info td.info p.dd{margin-bottom: 10px; margin-left: 0px}
 .modal-gallery-post  table.image-info.without-descr td.info{width: auto;}
@@ -902,7 +903,7 @@ table.routes .route {min-width: 200px}
 #horse-sex li {padding: 0 5px 0 0; margin-top: 5px}
 #horse-sex li label{font-size: 12px}
 
-.adv-item.mini {background: #fff; box-sizing: border-box; box-shadow: 0 2px 5px rgba(0,0,0,0.5); padding: 10px; margin-bottom: 8px; margin-top: 8px; border: 2px transparent solid}
+.adv-item.mini {background: #fff; box-sizing: border-box; box-shadow: 0 2px 5px rgba(0,0,0,0.5); padding: 10px; margin-bottom: 8px; margin-top: 8px; border: 2px transparent solid; height: 150px; overflow-y: hidden}
 .adv-item.mini:hover {box-shadow: 0 0px 5px rgba(0,0,0,0.5); border: 2px #930 solid}
 .adv-item.mini .adv-img{max-height: 100px; max-width: 100px; height: auto; width: auto; float: left;}
 .adv-item.mini .adv-info {margin-left: 120px; position: relative}
@@ -925,18 +926,19 @@ table.routes .route {min-width: 200px}
 .adv-my-horses li.active img{border-color: #FAA52D}
 .adv-my-horses li img {display: block; max-width: 80px; max-height: 80px; height: auto; width: auto; border: 3px #fff solid; box-shadow: 0 2px 5px rgba(0,0,0,0.5); margin-bottom: 5px}
 
-.adv-new-page .lthr-bgborder {padding-bottom: 25px}
-.adv-new-page .adv-list {height: auto !important}
-.adv-new-page .chosen-container-multi .chosen-choices {border-radius: 4px; border-color: #ccc; padding: 3px 6px 4px 6px; min-height: 34px !important}
-.adv-new-page .chosen-container-multi .chosen-choices li.search-choice {margin: 1px 0 2px 5px}
-.adv-new-page .chosen-container-multi .chosen-choices li.search-choice:first-child {margin-left: 0px !important}
+.adv-page .lthr-bgborder {padding-bottom: 25px}
+.adv-page .adv-list {height: auto !important}
+.chosen-container-multi {margin-bottom: 10px}
+.chosen-container-multi .chosen-choices {border-radius: 4px; border-color: #ccc; padding: 3px 6px 4px 6px; min-height: 34px}
+.chosen-container-multi .chosen-choices li.search-choice {margin: 1px 0 2px 5px}
+.chosen-container-multi .chosen-choices li.search-choice:first-child {margin-left: 0px !important}
 
 .adv-single-page .block > .row > .span12 {margin-left: 0}
 .adv-single-page .comments ul.comments-lists > li{margin-left: 0px; }
 .adv-single-page h1 {color: #6d3512; font-weight: normal; font-size: 30px; margin: 0 0 10px 0}
 .adv-single-page h4 {color: #6d3512; font-weight: bold; font-size: 16px; text-transform: uppercase}
 .adv-bullets {padding: 7px 0 0px 0; margin: 7px 0; list-style: none; border-top: 1px rgba(120,100,90,0.25) solid}
-.adv-bullets li {width: 300px; display: inline-block; margin-bottom: 10px;}
+.adv-bullets li {width: 330px; display: inline-block; margin-bottom: 10px;}
 .adv-bullets li strong{padding-right: 5px;}
 .adv-price {display: inline-block; font-size: 20px; color: #6d3512; margin-right: 15px}
 .adv-price .p-amount {font-weight: 600; font-size: 25px;}
@@ -981,3 +983,52 @@ ul.multiselect-container li.active:hover a  {background: #F89406}
 .events-page ul.multiselect-container .multiselect-search, .events-page .rowspan2 ul.multiselect-container .multiselect-search {width: 410px; margin-left: 7px !important}
 .events-page img.country-flag {max-width: 16px; max-height: 16px; padding-right: 5px}
 table .ui-slider-horizontal {width: 90%; margin-left: 10px !important}
+
+/*rating*/
+.ratings-page h3.inner-bg {margin-bottom: 0}
+.ratings-page label {font-size: 12px; font-weight: bold}
+.ratings-page .btn-group .active {background: #f58f00; color: #fff; text-shadow: none}
+.ratings-main-tabs #rateNav > li {width: 188px}
+.nav-btns {display: block}
+.nav-btns > li > a {margin: 0; border: 1px #d9d9d9 solid !important; color: #333; background:#e6e6e6; box-shadow: inset 0 2px 5px rgba(0,0,0,0.15)}
+.nav-btns > li > a:hover {box-shadow: inset 0 2px 5px rgba(0,0,0,0); background: #eee; color: #333}
+.nav-btns > li.active > a {background: #f58f00; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.05); color: #fff}
+.nav-btns > li:first-child a {border-radius: 4px 0 0 4px; border-right: 0 !important}
+.nav-btns > li:last-child a {border-radius: 0 4px 4px 0; border-left: 0 !important}
+#rate-club-type-Content {border: 0; box-shadow: none}
+
+#rate-club-type {margin-left: 90px}
+.ratings-table td img {max-height: 32px; margin-right: 10px}
+.ratings-table .rt-n {font-size: 20px; color: #6d3512; font-weight: 300; text-align: right; width: 30px; }
+.ratings-table .rt-members {text-align: right; width: 120px}
+.ratings-table .rt-points {text-align: right; font-size: 20px; color: #6d3512; font-weight: 300; width: 120px}
+
+#rate-sportsmans select.span2 {width: 120px}
+ul.choose-age li {text-align: center; padding: 5px; border-radius: 5px; margin-right: 5px}
+ul.choose-age li.active {background: #b79a88; color: #fff}
+ul.choose-age li:hover {background: #e5d7cf}
+ul.choose-age li h5 {font-weight: bold; margin: 0; line-height: 13px}
+ul.choose-age li small {font-size: 12px; font-style: italic; line-height: 10px;}
+
+.rate-block .main-rate {font-size: 60px; text-align: center; font-weight: 300; color: #f49418; margin: 10px 0; line-height: 60px}
+.prog-rating .rate-1 .progress-warning .bar {background: #54280b !important}
+.prog-rating .rate-2 .progress-warning .bar {background: #6c380d !important}
+.prog-rating .rate-3 .progress-warning .bar {background: #ae6315 !important}
+.prog-rating .rate-4 .progress-warning .bar {background: #d47e17 !important}
+.prog-rating .rate-5 .progress-warning .bar {background: #ffa60d !important}
+.prog-rating .rate-5, .prog-rating .rate-4, .prog-rating .rate-3, .prog-rating .rate-2, .prog-rating .rate-1 {padding-left: 35px}
+.prog-rating li .progress {margin-bottom: 5px}
+.prog-rating .rate-5 {background: url(images/icon-club-rate-5.png) left center no-repeat}
+.prog-rating .rate-4 {background: url(images/icon-club-rate-4.png) left center no-repeat}
+.prog-rating .rate-3 {background: url(images/icon-club-rate-3.png) left center no-repeat}
+.prog-rating .rate-2 {background: url(images/icon-club-rate-2.png) left center no-repeat}
+.prog-rating .rate-1 {background: url(images/icon-club-rate-1.png) left center no-repeat}
+.voters-numb {text-align: center; font-size: 12px; line-height: 16px; margin-top: 5px}
+
+#map {position: relative; margin-top: 20px}
+#map .ymaps-map {position: absolute; top: 0; left: 0}
+
+.compt-descr .span2 a.btn {letter-spacing: -1px}
+
+.tab-content {overflow-y: visible}
+table.controls-row td.my-avatar img.my-avatar {left: 0; top: 0; padding-right: 0 !important}

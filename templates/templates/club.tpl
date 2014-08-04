@@ -82,7 +82,7 @@
 	<div class="span4">
 		<ul class="unstyled prog-rating">
 			{for $rate = 1 to 5}
-				<li class="rate-{$rate}"><div class="progress progress-warning"><div class="bar" style="width: {$club.percent.$rate}%">{$club.percent.$rate|string_format:"%.2f"}% ({$club.notes.$rate})</div></div></li>
+				<li class="rate-{$rate}"><div class="progress progress-warning"><div class="bar" style="{if $club.percent.$rate < 10}color: #000000;{/if}width: {$club.percent.$rate}%">{$club.percent.$rate|string_format:"%.2f"}% ({$club.notes.$rate})</div></div></li>
 			{/for}
 		</ul>
 	</div>
@@ -194,6 +194,11 @@ function useless(review_id, type, el) {
 								<p>{$club.desc}</p>
 								<hr/>
 							{/if}
+                            {if $club.ability}
+                                <h4>Тип клуба:</h4>
+                                <p>{$club.type}</p>
+                                <hr/>
+                            {/if}
 							{if $club.ability}
 								<h4>дополнительные возможности клуба</h4>
 								<ul class="club-additional-features">
@@ -246,8 +251,8 @@ function useless(review_id, type, el) {
 											<div class="span3"><a href="/user.php?id={$staff.id}"><img src="{$staff.avatar}" /><div>{$staff.fio}</div></a><div class="text-italic">{$staff.club_staff_descr}</div></div>
 											<div class="span3">
 												<ul class="unstyled">
-													<li>Тел: <a href="#">{$staff.phone}</a></li>
-													<li>Email: <a href="mailto:{$staff.mail}">{$staff.mail}</a></li>
+													{if $staff.show_phone}<li>Тел: <a href="#">{$staff.phone}</a></li>{/if}
+                                                    {if $staff.show_mail}<li>Email: <a href="mailto:{$staff.mail}">{$staff.mail}</a></li>{/if}
 												</ul>
 											</div>
 										</li>

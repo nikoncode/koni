@@ -13,7 +13,8 @@ if (!session_check()) {
 		"page_title" 		=> "Клубы > Одноконники",
 		"abilities" 		=> $const_ability,
 		"types" 			=> $const_horses_spec,
-		"countries" 		=> $const_countries_old,
+		"countries" 		=> $const_countries,
+		"metros" 		=> $const_metro,
 		"user"				=> template_get_short_user_info($_SESSION["user_id"])
 	);
 	template_render($assigned_vars, "clubs.tpl");	

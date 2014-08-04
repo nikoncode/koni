@@ -11,7 +11,7 @@ function api_comments_add() {
 		aerr($errors);
 	}
 
-	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid"))) { //check comment to news, horse, photo
+	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid", "cid"))) { //check comment to news, horse, photo
 		aerr(array("Ошибка."));
 	}
 
@@ -63,7 +63,7 @@ function api_comments_extra() {
 		aerr($errors);
 	}
 
-	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid"))) { //check comment to news, horse, photo
+	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid", "cid"))) { //check comment to news, horse, photo
 		aerr(array("Ошибка."));
 	}
 
@@ -75,7 +75,7 @@ function api_comments_extra() {
 									(SELECT COUNT(id) FROM likes WHERE cid = comments.id) as likes_cnt,
 									(SELECT COUNT(id) FROM likes WHERE cid = comments.id AND o_uid = ?i) as is_liked  
 							FROM comments, users 
-							WHERE ?n = ?i
+							WHERE comments.?n = ?i
 							AND users.id = comments.o_uid
 							ORDER BY time", $_SESSION["user_id"], $fields["type"], $fields["id"]);
 	/* render it */

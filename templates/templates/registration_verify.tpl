@@ -37,13 +37,13 @@ function send_sms(form) {
 		
 		<div class="row">
 		<div class="span4 lthr-bgbordertitle block offset4 login-block">
-				<h3 class="inner-bg">Проверка SMS-кода</h3>
+				<h3 class="inner-bg">Проверка кода</h3>
 					<div class="row">
 						<form method="post" action="#" onsubmit="validate(this);return false;">
 							<label>Введите ваш логин</label>
                             <input type="text" class="span4" name="login" placeholder="Ваш логин" value="{$login}">
-                            <label>Введите ваш SMS-код</label>
-							<input type="text" class="span4" name="code" placeholder="Ваш SMS-код">
+                            <label>Введите ваш код</label>
+							<input type="text" class="span4" name="code" placeholder="Ваш код">
 						<div class="row">
 							<button type="submit" class="span4 btn btn-warning" name="sms-submit">Ввести код</button>
 						</div>
@@ -66,10 +66,10 @@ function send_sms(form) {
 <div id="modal-send-sms" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 >Повторная отправка SMS</h3>
+        <h3 >Повторная отправка кода</h3>
     </div>
     <div class="modal-body">
-        <p>Вам повторно выслан SMS-код</p>
+        <p>Вам повторно выслан код</p>
     </div>
 </div>
 

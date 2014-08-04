@@ -25,6 +25,10 @@ $const_countries_old = $db->getCol("SELECT country_name_ru
                                                 FROM country_
                                                 ORDER BY oid ASC");
 
+$const_metro = $db->getCol("SELECT metro
+                                                FROM metro
+                                                ORDER BY metro ASC");
+
 $const_work = array(
 	"Тренер",
 	"Владелец лошади",
@@ -36,14 +40,15 @@ $const_work = array(
 	"Коваль",
 	"Фотограф",
 	"Конюх",
-	"Инструктор по ВЕ",
 	"Коновод",
 	"Начкон",
 	"Зоотехник",
 	"Наездник",
 	"Иппотерапевт",
 	"Продавец",
-	"Жокей"
+	"Жокей",
+	"Судья",
+	"Курс-Дизайнер"
 );
 
 $const_horses_sex = array(

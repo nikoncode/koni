@@ -1,8 +1,25 @@
 {* Smarty *}
 {include "modules/header.tpl"}
 {include "modules/modal-be-member.tpl"}
+<script type="text/javascript" src="js/likes.js"></script>
+<script type="text/javascript" src="js/comments.js"></script>
 <script type="text/javascript">
-	
+	$(function(){
+        $('.fans-member-list').on('click','.fan_btn',function(){
+            var $this = $(this).closest('td');
+            $this.find('input').prop('checked',true);
+            $(this).closest('li').addClass('member-chosen');
+            $(this).addClass('btn').addClass('btn-warning').addClass('btn-small').addClass('unfan_btn');
+            $(this).removeClass('fan_btn');
+        });
+        $('.fans-member-list').on('click','.unfan_btn',function(){
+            var $this = $(this).closest('td');
+            $this.find('input').prop('checked',false);
+            $(this).closest('li').removeClass('member-chosen');
+            $(this).removeClass('btn').removeClass('btn-warning').removeClass('btn-small').removeClass('unfan_btn');
+            $(this).addClass('fan_btn');
+        });
+    });
 function membership(cid, role, val, element) {
 	api_query({
 		amethod: "comp_member",
@@ -19,14 +36,31 @@ function membership(cid, role, val, element) {
 			if (data[0] == "1") {
 				el.removeClass("btn-warning").addClass("btn-success");
 				$(selector).append("<li class='me'><a href='/user.php?id={$user.id}'><img src='{$user.avatar}'><p>{$user.fio}</p></a></li>");
+                if(role == 'viewer') el.html('Приду!');
+                if(role == 'photographer') el.html('Фотографирую!');
 			} else {
 				el.removeClass("btn-success").addClass("btn-warning");
 				$(selector + " .me").remove();
+                if(role == 'viewer') el.html('Приду смотреть!');
+                if(role == 'photographer') el.html('Я фотограф!');
 			}
-			el.attr("onclick", "membership(" + cid + ", '" + role + "', '" + (+!!!data[0]) + "', this); return false;");
+            if(role == 'fan'){
+                el.html("Я болельщик!");
+                el.attr("onclick", "i_fan(" + cid + "); return false;");
+            }else{
+                el.attr("onclick", "membership(" + cid + ", '" + role + "', '" + (+!!!data[0]) + "', this); return false;");
+            }
+
+
 		},
 		fail: "standart"
 	})
+}
+
+function i_fan(cid){
+    var mdl = $("#i-am-fan");
+    mdl.find("[name=cid]").val(cid);
+    mdl.modal("show");
 }
 
 /*function rider(rid, act, element) {
@@ -56,6 +90,26 @@ function membership(cid, role, val, element) {
 		fail: "standart"
 	})*/
 
+    function query_fan(form){
+        var cid = $(form).find('[name="cid"]').val();
+        api_query({
+            amethod: "comp_fan_member",
+            qmethod: "POST",
+            params: $(form).serialize(),
+            success: function (data) {
+                var selector = "#fans";
+                console.log($(selector));
+                var el = $('.i_fan_btn');
+                el.removeClass("btn-warning").addClass("btn-success");
+                $(selector).append("<li class='me'><a href='/user.php?id={$user.id}'><img src='{$user.avatar}'><p>{$user.fio}</p></a></li>");
+                el.attr("onclick", "membership(" + cid + ", 'fan', '0', this); return false;");
+                el.html('Болею!');
+                $("#i-am-fan").modal("hide");
+            },
+            fail: "standart"
+        })
+        return false;
+    }
 function query_to_ride(rid, hid, act, callback) {
 	api_query({
 		amethod: "comp_rider",
@@ -141,17 +195,17 @@ function rider(rid, act) {
 							<div class="row">
 								<div class="span2">
 									<a href="#" class="span2 btn btn-small btn-{if $comp.is_viewer}success{else}warning{/if}" onclick="membership({$comp.id}, 'viewer', '{!$comp.is_viewer}', this); return false;">
-										Приду смотреть <i class="icon-play icon-white"></i>
+                                        {if $comp.is_viewer}Приду!{else}Приду смотреть{/if} <i class="icon-play icon-white"></i>
 									</a>
 								</div>
 								<div class="span2">
 									<a href="#" class="span2 btn btn-small btn-{if $comp.is_photographer}success{else}warning{/if}" onclick="membership({$comp.id}, 'photographer', '{!$comp.is_photographer}', this); return false;">
-										Я фотограф <i class="icon-play icon-white"></i>
+                                        {if $comp.is_photographer}Фотографирую!{else}Я фотограф{/if} <i class="icon-play icon-white"></i>
 									</a>
 								</div>
 								<div class="span2">
-									<a href="#" class="span2 btn btn-small btn-{if $comp.is_fan}success{else}warning{/if}" onclick="membership({$comp.id}, 'fan', '{!$comp.is_fan}', this); return false;">
-										Я болельщик <i class="icon-play icon-white"></i>
+									<a href="#" class="i_fan_btn span2 btn btn-small btn-{if $comp.is_fan}success{else}warning{/if}" onclick="{if !$comp.is_fan}i_fan({$comp.id});{else}membership({$comp.id}, 'fan', '{!$comp.is_fan}', this);{/if} return false;">
+                                        {if $comp.is_fan}Болею!{else}Я болельщик{/if} <i class="icon-play icon-white"></i>
 									</a>
 								</div>
 								<div class="span6 descr-title"><p>{$comp.desc}</p></div>
@@ -342,82 +396,7 @@ function rider(rid, act) {
 			
 			<div class="tab-pane" id="compt-disqus">
 					<ul class="my-news-wall">
-								<li>
-									<div class="post">
-																
-										<img src="i/avatar-1.jpg" class="avatar">
-										<p class="user-name"><a href="#">Leon Ramos</a></p>
-										<p class="date">15.02.2013 в 14:11</p>
-										<div class="edit-my-topic">
-											<ul class="unstyled inline">
-												<li><a href="#"><i class="icon-pencil" title="Редактировать запись"></i></a></li>
-												<li><a href="#"><i class="icon-remove" title="Удалить запись"></i></a></li>
-											</ul>
-										</div>
-										<p class="message">
-										</p>
-										Для того, чтобы быть вместе. Просто быть вместе. А это ведь трудно, очень трудно, и не только шизофреникам и юродивым. Всем трудно раскрываться, верить, отдавать, считаться, терпеть, понимать. Так трудно, что порой перспектива сдохнуть от одиночества видится не самым плохим вариантом.<p></p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#" class="likebox">Мне нравится: 13 <i class="icon-like liked"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-2.jpg" class="avatar">
-										<p class="user-name"><a href="#">Вася Горбунков</a></p>
-										<p class="date">15.02.2013 в 13:11</p>
-										<p class="message">Так трудно, что порой перспектива видится не самым плохим вариантом.</p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-1.jpg" class="avatar">
-										<p class="user-name"><a href="#">Leon Ramos</a></p>
-										<p class="date">15.02.2013 в 14:11</p>
-										<p class="message">Для того, чтобы быть вместе. Просто быть вместе.</p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-2.jpg" class="avatar">
-										<p class="user-name"><a href="#">Вася Горбунков</a></p>
-										<p class="date">15.02.2013 в 13:11</p>
-										<p class="message">Так трудно, что порой перспектива видится не самым плохим вариантом.</p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-2.jpg" class="avatar">
-										<p class="user-name"><a href="#">Вася Горбунков</a></p>
-										<p class="date">15.02.2013 в 13:11</p>
-										<p class="message">Так трудно, что порой перспектива видится не самым плохим вариантом.</p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<div class="post">
-										<img src="i/avatar-1.jpg" class="avatar">
-										<p class="user-name"><a href="#">Leon Ramos</a></p>
-										<p class="date">15.02.2013 в 14:11</p>
-										<p class="message">Для того, чтобы быть вместе. Просто быть вместе. А это ведь трудно, очень трудно, и не только шизофреникам и юродивым. Всем трудно раскрываться, верить, отдавать, считаться, терпеть, понимать. Так трудно, что порой перспектива сдохнуть от одиночества видится не самым плохим вариантом.</p>
-										<div class="answer-block">
-											<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#">Мне нравится: 13 <i class="icon-heart"></i></a></span></p>
-										</div>
-									</div>
-								</li>
-							</ul>
+                        {$comments_bl}
              </div><!-- compt-disqus -->
 			 
             </div>
@@ -439,105 +418,23 @@ function rider(rid, act) {
 			<h3>За кого будете болеть в этом соревновании?</h3>
 	</div>
 	<div class="modal-body">
-			<form class="form-horizontal" method="post" action="">
+			<form class="form-horizontal" method="post" onsubmit="query_fan(this); return false;">
 						<div class="row">	
 							<div class="fans-member-list">	
 								<ul class="unstyled">
+                                    {foreach $comp.riders as $rider}
 									<li>
 										<table class="member">
 											<tr valign="top">
-												<td class="m-photo"><a href="user-sample.php"><img src="i/sample-ava-1.jpg"></a></td>
-												<td class="m-name"><div class="name"><a href="#">Александр Гетманский</a></div><div class="m-pos">Всадник №5</div></td>
-												<td class="m-address">г. Москва, клуб «Битца»</td>
-												<td class="m-horse">Лошадь «Беркут», Казахская порода</td>
-												<td class="m-btn"><a href="#">Буду болеть</a></td>
+												<td class="m-photo"><a href="user.php?id={$rider.id}"><img src="{$rider.avatar}"></a></td>
+												<td class="m-name"><div class="name"><a href="user.php?id={$rider.id}">{$rider.fio}</a></div><div class="m-pos">Всадник №5</div></td>
+												<td class="m-address">г. {$rider.city}, клуб «{$rider.club}»</td>
+												<td class="m-horse">{$rider.horse}</td>
+												<td class="m-btn"><a href="#" class="fan_btn">Буду болеть</a><input type="checkbox" name="user_id[]" value="{$rider.id}" style="display: none"></td>
 											</tr>
 										</table>
 									</li>
-									
-									<li class="member-chosen">
-										<table class="member">
-											<tr valign="top">
-												<td class="m-photo"><a href="user-sample.php"><img src="i/sample-ava-2.jpg"></a></td>
-												<td class="m-name"><div class="name"><a href="#">Александр Гетманский</a></div><div class="m-pos">Всадник №5</div></td>
-												<td class="m-address">г. Москва, клуб «Битца»</td>
-												<td class="m-horse">Лошадь «Беркут», Казахская порода</td>
-												<td class="m-btn"><a href="#" class="btn btn-warning btn-small">Буду болеть</a></td>
-											</tr>
-										</table>
-									</li>
-									
-									<li>
-										<table class="member">
-											<tr valign="top">
-												<td class="m-photo"><a href="user-sample.php"><img src="i/sample-ava-3.jpg"></a></td>
-												<td class="m-name"><div class="name"><a href="#">Александр Гетманский</a></div><div class="m-pos">Всадник №5</div></td>
-												<td class="m-address">г. Москва, клуб «Битца»</td>
-												<td class="m-horse">Лошадь «Беркут», Казахская порода</td>
-												<td class="m-btn"><a href="#">Буду болеть</a></td>
-											</tr>
-										</table>
-									</li>
-									
-									<li>
-										<table class="member">
-											<tr valign="top">
-												<td class="m-photo"><a href="user-sample.php"><img src="i/sample-ava-4.jpg"></a></td>
-												<td class="m-name"><div class="name"><a href="#">Александр Гетманский</a></div><div class="m-pos">Всадник №5</div></td>
-												<td class="m-address">г. Москва, клуб «Битца»</td>
-												<td class="m-horse">Лошадь «Беркут», Казахская порода</td>
-												<td class="m-btn"><a href="#">Буду болеть</a></td>
-											</tr>
-										</table>
-									</li>
-									
-									<li>
-										<table class="member">
-											<tr valign="top">
-												<td class="m-photo"><a href="user-sample.php"><img src="i/sample-ava-5.jpg"></a></td>
-												<td class="m-name"><div class="name"><a href="#">Александр Гетманский</a></div><div class="m-pos">Всадник №5</div></td>
-												<td class="m-address">г. Москва, клуб «Битца»</td>
-												<td class="m-horse">Лошадь «Беркут», Казахская порода</td>
-												<td class="m-btn"><a href="#">Буду болеть</a></td>
-											</tr>
-										</table>
-									</li>
-									
-									<li>
-										<table class="member">
-											<tr valign="top">
-												<td class="m-photo"><a href="user-sample.php"><img src="i/sample-ava-6.jpg"></a></td>
-												<td class="m-name"><div class="name"><a href="#">Александр Гетманский</a></div><div class="m-pos">Всадник №5</div></td>
-												<td class="m-address">г. Москва, клуб «Битца»</td>
-												<td class="m-horse">Лошадь «Беркут», Казахская порода</td>
-												<td class="m-btn"><a href="#">Буду болеть</a></td>
-											</tr>
-										</table>
-									</li>
-									
-									<li>
-										<table class="member">
-											<tr valign="top">
-												<td class="m-photo"><a href="user-sample.php"><img src="i/sample-ava-1.jpg"></a></td>
-												<td class="m-name"><div class="name"><a href="#">Александр Гетманский</a></div><div class="m-pos">Всадник №5</div></td>
-												<td class="m-address">г. Москва, клуб «Битца»</td>
-												<td class="m-horse">Лошадь «Беркут», Казахская порода</td>
-												<td class="m-btn"><a href="#">Буду болеть</a></td>
-											</tr>
-										</table>
-									</li>
-									
-									<li>
-										<table class="member">
-											<tr valign="top">
-												<td class="m-photo"><a href="user-sample.php"><img src="i/sample-ava-2.jpg"></a></td>
-												<td class="m-name"><div class="name"><a href="#">Александр Гетманский</a></div><div class="m-pos">Всадник №5</div></td>
-												<td class="m-address">г. Москва, клуб «Битца»</td>
-												<td class="m-horse">Лошадь «Беркут», Казахская порода</td>
-												<td class="m-btn"><a href="#">Буду болеть</a></td>
-											</tr>
-										</table>
-									</li>
+                                    {/foreach}
 								</ul>	
 							</div>
 						</div>
@@ -545,6 +442,7 @@ function rider(rid, act) {
 						<div class="row">	
 							<div class="controls controls-row foo-row">
 								<center>
+                                    <input type="hidden" name="cid">
 								<button type="submit" class="btn btn-warning span3 offset2">Сохранить</button>
 								<button class="btn  span3" data-dismiss="modal" aria-hidden="true">Отмена</button>
 								</center>

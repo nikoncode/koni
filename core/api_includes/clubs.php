@@ -8,7 +8,8 @@ function api_club_edit1() {
 		"email",
 		"phones",
 		"p_desc",
-		"coords"
+		"coords",
+		"metro"
 	), array(
 		"id",
 		"name",
@@ -22,9 +23,19 @@ function api_club_edit1() {
 	if (!empty($errors)) {
 		aerr($errors);
 	}
+    if($fields['city'] != 'Москва') $fields['metro'] = '';
+    if (isset($fields["site"])) {
+        if(strpos($fields["site"], 'http://') !== 0) {
+            $fields["site"] = 'http://' . $fields["site"];
+        }
+    }
 
 	if (isset($fields["coords"])) {
 		$fields["coords"] = implode(", ", $fields["coords"]);
+	}
+
+    if (isset($fields["type"])) {
+		$fields["type"] = implode(",", $fields["type"]);
 	}
 
 	if (isset($fields["phones"]) && isset($fields["p_desc"])) {
@@ -74,12 +85,14 @@ function api_club_user_permission() { //NOT-SAFE
 	validate_fields($fields, $_POST, array("desc"), array("id", "type"), array(), $errors);
 
 	if (!empty($errors)) {
-		err($errors);
+		aerr($errors);
 	}
 
 	$fields["is_moderator"] = 0;
 	$fields["is_club_staff"] = 0;
 	$fields["club_staff_descr"] = 0;
+	$fields["show_mail"] = ($_POST['show_mail'] == 1)?1:0;
+	$fields["show_phone"] = ($_POST['show_phone'] == 1)?1:0;
 
 	if ($fields["type"] == "moderator") {
 		$fields["is_moderator"] = 1;
@@ -154,7 +167,8 @@ function api_club_search() {
 		"name",
 		"ability",
 		"amount_start",
-		"amount_end"
+		"amount_end",
+		"metro"
 	), array("range_type"), array(), $errors);
 
 	if (!empty($errors)) {
@@ -181,6 +195,10 @@ function api_club_search() {
 
 	if (isset($fields["city"])) {
 		$conditions .= "@city \"" . $db->parse("?w", $fields["city"]) . "\" ";
+	}
+
+    if (isset($fields["metro"])) {
+		$conditions .= "@metro \"" . $db->parse("?w", $fields["metro"]) . "\" ";
 	}
 
 	if (isset($fields["ability"])) {
@@ -213,9 +231,9 @@ function api_club_search() {
 
 function api_club_create() {
 	validate_fields($fields, $_POST, array(), array(
-		"accept",
-		"phone",
-		"name"
+		"accept|Перед созданием клуба, вы должна подтвердить, что являетесь уполномоченным лицом!",
+		"phone|Телефон",
+		"name|Название клуба"
 	), array("phone" => "phone"), $errors);
 
 	if (!empty($errors)) {

@@ -110,11 +110,11 @@
                 <div class="navbar">
                     <div class="navbar-inner">
                         <ul class="nav span5 main-nav-1">
-                            <li class="active"><a href="/">Главная</a></li>
+                            <li class="active"><a href="/inner.php">Главная</a></li>
                             <li><a href="events.php">Мероприятия</a></li>
                             <li><a href="clubs.php">Клубы</a></li>
                         </ul>
-                        <a href="home.php" class="brand span2 logo"><center><img src="images/logo.png" /></center></a>
+                        <a href="/inner.php" class="brand span2 logo"><center><img src="images/logo.png" /></center></a>
                         <ul class="nav span5 main-nav-2">
                             <li><a href="find-users.php">Люди</a></li>
                             <li><a href="ratings.php">Рейтинги</a></li>

@@ -58,11 +58,13 @@ if (!session_check()) {
 							AND comp_members.uid = users.id", $assigned_vars["comp"]["id"]);
 	$assigned_vars["comp"]["riders"] = $db->getAll("SELECT 	users.id,
 															users.avatar,
-															CONCAT(fname, ' ', lname) as fio
-													FROM comp_riders, users
+															CONCAT(fname, ' ', lname) as fio,
+															GROUP_CONCAT(DISTINCT CONCAT(horses.nick,',',horses.poroda )) as horse,
+															clubs.name as club, clubs.city
+													FROM comp_riders, users, horses, clubs
 													WHERE comp_riders.rid IN 
 														(SELECT id FROM routes WHERE cid = ?i)
-													AND comp_riders.uid = users.id
+													AND comp_riders.uid = users.id AND horses.id = comp_riders.hid AND clubs.id = users.cid
 													GROUP BY id", $assigned_vars["comp"]["id"]);
 
 	$assigned_vars["comp"]["viewers"] = 
@@ -86,7 +88,27 @@ if (!session_check()) {
 			$assigned_vars["comp"]["fans"][] = $temp;
 		} 
 	}
-
+    $comments = $db->getAll("SELECT c.*,
+										concat(fname,' ',lname) as fio,
+										avatar,
+										(SELECT COUNT(id) FROM likes WHERE cid = c.id) as likes_cnt,
+										(SELECT COUNT(id) FROM likes WHERE cid = c.id AND o_uid = ?i) as is_liked
+								FROM (
+									SELECT * FROM comments WHERE cid = ?i ORDER BY time DESC LIMIT 3
+								) c, users
+								WHERE o_uid = users.id
+								ORDER BY time ASC", $_SESSION["user_id"], $assigned_vars["comp"]["id"]);
+    $comments_count = $db->getOne("SELECT COUNT(id) as comments_cnt FROM comments WHERE cid = ?i", $assigned_vars["comp"]["id"]);
+    /* Render comments to var */
+    $comments_bl = template_render_to_var(array(
+        "comments" => $comments,
+        "comments_cnt" => $comments_count,
+        "user_avatar" => $assigned_vars["avatar"],
+        "c_key" => "cid",
+        "c_value" => $assigned_vars["comp"]["id"],
+        "user" => array("id" => $_SESSION["user_id"])
+    ), "iterations/comments_block.tpl");
+    $assigned_vars['comments_bl'] = $comments_bl;
 	$assigned_vars["horses"] = $db->getAll("SELECT id, nick FROM horses WHERE o_uid = ?i", $_SESSION["user_id"]);
 	template_render($assigned_vars, "competition.tpl");
 }

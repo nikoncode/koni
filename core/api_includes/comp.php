@@ -89,6 +89,23 @@ function api_comp_member() {
 	aok(array($fields["val"]));
 }
 
+function api_comp_fan_member() {
+	validate_fields($fields, $_POST, array(), array("user_id", "cid"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+    $fields['user_id'] = implode(',',$fields['user_id']);
+	$db = new db;
+	$id = $db->getOne("SELECT id FROM comp_members WHERE uid = ?i AND cid = ?i", $_SESSION["user_id"], $fields["cid"]); //check exists
+	if ($id == NULL) {
+		$db->query("INSERT INTO comp_members (cid, uid, fan, fan_riders) VALUES (?i, ?i, ?i, ?s)", $fields["cid"], $_SESSION["user_id"], 1, $fields['user_id']);
+	} else {
+		$db->query("UPDATE comp_members SET fan = 1, fan_riders = ?s WHERE id = ?i", $fields['user_id'], $id);
+	}
+	aok(array(0));
+}
+
 function api_comp_rider() {
 	validate_fields($fields, $_POST, array("act"), array("id", "hid"), array(), $errors); //act==0 remove
 

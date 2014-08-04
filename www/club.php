@@ -52,7 +52,7 @@ if (!session_check()) {
 				$assigned_vars["club"]["ability"] = explode(", ", $assigned_vars["club"]["ability"]);
 			}
 			$assigned_vars["club"]["adv"] = others_club_adv_choose($assigned_vars["club"]["adv"]);
-			$assigned_vars["club"]["staff"] = $db->getAll("SELECT concat(fname,' ',lname) as fio, avatar,id, club_staff_descr, phone, mail FROM users WHERE cid = ?i AND is_club_staff = 1", $assigned_vars["club"]["id"]); 
+			$assigned_vars["club"]["staff"] = $db->getAll("SELECT concat(fname,' ',lname) as fio, avatar,id, club_staff_descr, phone, mail, show_mail, show_phone FROM users WHERE cid = ?i AND is_club_staff = 1", $assigned_vars["club"]["id"]);
 			$assigned_vars["club"]["members"] = $db->getAll("SELECT concat(fname,' ',lname) as fio, avatar,id FROM users WHERE cid = ?i LIMIT 6", $assigned_vars["club"]["id"]);
 			$assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]); //many info
 			$assigned_vars["news"] = news_wall_build("club", $assigned_vars["club"]["id"], 0, 5);

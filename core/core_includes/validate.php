@@ -96,8 +96,17 @@ function validate_email($mail) {
 
 /* maybe not safe, this is standart function */
 function validate_url($url) {
-	if (filter_var($url, FILTER_VALIDATE_URL) === false)
-		return false;
+	if (filter_var($url, FILTER_VALIDATE_URL) === false){
+        if(strpos($url, 'http://') !== 0) {
+            $url = 'http://' . $url;
+            if (filter_var($url, FILTER_VALIDATE_URL) === false){
+                return false;
+            }else{
+                return true;
+            }
+        }
+
+    }
 	else
 		return true;
 }

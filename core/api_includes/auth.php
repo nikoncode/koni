@@ -153,7 +153,7 @@ function api_auth_sms_resend(){
 		Код подтверждения: {$hash['hash']}
 		Ссылка для подтверждения: http://odnokonniki.ru/sms.php?login={$fields["login"]}
 	",$headers);
-        aok(array("Повторное письмо с SMS-кодом отправлено."));
+        aok(array("Повторное письмо с кодом отправлено."));
     }else{
         $errors[] = "Пользователь с таким логином не найден.";
     }

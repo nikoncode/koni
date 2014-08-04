@@ -50,7 +50,11 @@
                                     <p class="place">г. {$event.city}, клуб <a href="/club.php?id={$event.club_id}">«{$event.club}»</a></p>
                                 </td>
                                 <td class="competition"><a href="competition.php?id={$event.id}">{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}</a>
-                                    <div class="i-fan">Я болею за 3х человек</div>
+                                    {if $event.fan > 0}
+                                        {assign var="riders_count" value=","|explode:$event.fan_riders}
+                                        <div class="i-fan">Я болею за {$riders_count|count} человек</div>
+                                    {/if}
+                                    {if isset($be_events_fans[$event.id].count)}<div class="my-fans">За вас болеют {$be_events_fans[$event.id].count} человек</div>{/if}
                                 </td>
                             </tr>
                             {/foreach}
@@ -93,7 +97,11 @@
                                         <p class="place">г. {$event.city}, клуб <a href="/club.php?id={$event.club_id}">«{$event.club}»</a></p>
                                     </td>
                                     <td class="competition"><a href="competition.php?id={$event.id}">{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}</a>
-                                        <div class="i-fan">Я болею за 3х человек</div>
+                                        {if $event.fan > 0}
+                                            {assign var="riders_count" value=","|explode:$event.fan_riders}
+                                            <div class="i-fan">Я болею за {$riders_count|count} человек</div>
+                                        {/if}
+                                        {if isset($end_events_fans[$event.id].count)}<div class="my-fans">За вас болеют {$end_events_fans[$event.id].count} человек</div>{/if}
                                     </td>
                                 </tr>
                             {/foreach}

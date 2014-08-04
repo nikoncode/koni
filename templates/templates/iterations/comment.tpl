@@ -13,6 +13,6 @@
 	{/if}
 	<p class="message">{$comment.text}</p>
 	<div class="answer-block">
-	<p><span><a href="#">Ответить </a></span><span> | </span><span><a href="#" class="likebox" onclick="{if $comment.is_liked}un{/if}like('c', {$comment.id}, this); return false;">Мне нравится: <span class="likes_cnt">{$comment.likes_cnt}</span> <i class="icon-like{if $comment.is_liked} liked{/if}"></i></a></span></p>
+	<p><span><a href="#" onclick="name_to_comment('{$comment.fio}',this); return false;">Ответить </a></span><span> | </span><span><a href="#" class="likebox" onclick="{if $comment.is_liked}un{/if}like('c', {$comment.id}, this); return false;">Мне нравится: <span class="likes_cnt">{$comment.likes_cnt}</span> <i class="icon-like{if $comment.is_liked} liked{/if}"></i></a></span></p>
 	</div>
 </li>

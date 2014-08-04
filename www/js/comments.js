@@ -1,6 +1,13 @@
 /* comments unit file */
 console.info("Comments.js linked");
-
+$(function () {
+    $(".answer-message").keydown(function (e) {
+        if (e.ctrlKey && e.keyCode == 13) {
+            $(this).closest('td').find('.comment-submit').click();
+            return false;
+        }
+    });
+});
 function comments_extra(key, id, element) {
 	if ($(element).attr("data-cached") === "0") {
 		api_query({
@@ -19,7 +26,7 @@ function comments_extra(key, id, element) {
 			fail: "standart"
 		})
 	} else {
-		$(element).closest(".comments-lists").find("li.comment").slice(1, length - 4).css("display", "block");		
+		$(element).closest(".comments-lists").find("li.comment").slice(1, length - 5).css("display", "block");
 	}
 
 	$(element).text("Свернуть");
@@ -27,7 +34,7 @@ function comments_extra(key, id, element) {
 }
 
 function comments_hide(key, id, element) {
-	$(element).closest(".comments-lists").find("li.comment").slice(1, length - 4).css("display", "none");
+	$(element).closest(".comments-lists").find("li.comment").slice(1, length - 5).css("display", "none");
 	$(element).text("Показать еще");
 	$(element).attr("onclick", "comments_extra('" + key + "', " + id + ", this);");
 }
@@ -47,6 +54,15 @@ function response(element) {
 	if (box.css("display") == "none") {
 		box.css("display", "block");
 	}
+	box.find("textarea").focus();
+}
+
+function name_to_comment(name,element) {
+	var box = $(element).closest(".comments");
+	if (box.css("display") == "none") {
+		box.css("display", "block");
+	}
+	box.find("textarea").html(name+', ');
 	box.find("textarea").focus();
 }
 

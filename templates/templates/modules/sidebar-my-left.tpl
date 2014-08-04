@@ -122,10 +122,10 @@
 			<li class="my-news"><a href="inner.php">Моя страница</a></li>
 			<li class="my-news"><a href="news.php">Новости</a></li>
 			<li class="my-messages"><a href="messages.php">Сообщения</a> <span id="unread_count">(0)</span></li>
+            <li class="my-horses"><a href="horses.php">Лошади</a></li>
 			<!--<li class="my-clubs"><a href="groups.php">Группы</a></li>-->
 			<li class="my-events"><a href="my-events.php">Мероприятия</a></li>
 			<li class="my-contacts"><a href="friends.php">Друзья</a></li>
-			<li class="my-horses"><a href="horses.php">Лошади</a></li>
 			<li class="my-gallery"><a href="gallery.php" >Галерея</a></li>
 			<li class="my-adv"><a href="adv.php">Объявления</a></li>
 			<li class="my-profile"><a href="profile.php">Настройки</a></li>

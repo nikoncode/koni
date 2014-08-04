@@ -4,7 +4,8 @@
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/clubs-find-functions.js"></script>
 <link rel="stylesheet" href="css/range.css">
-
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/chosen.css" rel="stylesheet">
 <script type="text/javascript">
 	function club_search(form) {
 		api_query({
@@ -38,12 +39,40 @@
 			<button class='btn add-rem span1' onclick='del_ability(this); return false;'>-</button> \
 		</div>").prependTo("#abilities");
 	}
-
+    {literal}
+    function change_country(select) {
+        var country = $('.country option:selected').attr('country_id');
+        api_query({
+            qmethod: "POST",
+            amethod: "auth_get_city",
+            params:  {country_id:country},
+            success: function (response, data) {
+                var values = '<option value="0">Все города</option>'+response;
+                $('select.city').html(values);
+                $('select.city option').each(function(){
+                    if($(this).html() != "Все города") $(this).val($(this).html());
+                })
+                $('select.city').trigger("chosen:updated");
+            },
+            fail:    "standart"
+        })
+        country = $(select).val();
+    }
+    function change_city(select){
+        var city = $('option:selected',select).html();
+        if (city == 'Москва'){
+            $('.metro').css('display','');
+        }else{
+            $('.metro').css('display','none');
+        }
+    }
+    {/literal}
 	function del_ability(el) {
 		$(el).closest("div.opt").remove();
 	}
     $(function(){
         club_search($('.search-clubs-filter'));
+        {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true});{/literal}
     })
 </script>
 
@@ -63,27 +92,29 @@
 					<div class="span3">
 							<div class="search-clubs-filter-block">
 								<label>Страна</label>
-								<select  class="span3" name="country">
+								<select  class="span3 country chosen-select" name="country" onchange="change_country(this);">
 									<option selected="" value="">Не важно</option>
 									{foreach $countries as $country}
-										<option>{$country}</option>
+                                        <option country_id="{$country.id}" value="{$country.country_name_ru}">{$country.country_name_ru}</option>
 									{/foreach}
 								</select>
 							</div>
 							
 							 <div class="search-clubs-filter-block">
 								<label>Город</label>
-								<input type="text" placeholder="Любой город" class="span3" name="city">
-								
+                                 <select name="city" class="span3 city chosen-select" onchange="change_city(this);">
+                                     <option value="">Все города</option>
+                                 </select>
 								<ul class="inline unstyled">
 									<li><label class="radio"><input type="radio" name="area" value="metro"> Метро</label></li>
 									<li><label class="radio"><input type="radio" name="area" value="district"> Округ</label></li>
 								</ul>
 								
-								<select  class="span3">
-									<option>Метро-или-округ #1</option>
-									<option>Метро-или-округ #2</option>
-									<option>Метро-или-округ #3</option>
+								<select name="metro" class="span3 metro" style="display: none">
+									<option value="">Не важно</option>
+                                    {foreach $metros as $metro}
+                                        <option>{$metro}</option>
+                                    {/foreach}
 								</select>
 						
 							<div class="club-range-block">
@@ -253,6 +284,11 @@
 
 <script>
 function create_club(form) {
+    var accept = $('#createClub .accept:checked').size();
+    if(accept == 0) {
+        alert('Перед созданием клуба, вы должны подтвердить, что являетесь уполномоченным лицом!');
+        return false;
+    }
 	api_query({
 		qmethod: "POST",
 		amethod: "club_create",
@@ -284,11 +320,11 @@ function create_club(form) {
 				</div>
 				<div class="controls controls-row">
 					<label class="span6">Ваш контактный телефон</label>
-					<input type="text" class="span6" name="phone"  placeholder="Для подтверждения Вашего статуса">
+					<input type="text" class="span6" name="phone"  placeholder="Для подтверждения Вашего статуса" value="+7">
 				</div>
 				<div class="controls controls-row">
 					<label class="checkbox span6">
-					  <input type="checkbox" name="accept"> Да, я являюсь уполномоченным лицом от клуба
+					  <input type="checkbox" class="accept" name="accept"> Да, я являюсь уполномоченным лицом от клуба
 					</label>
 				</div>
 				<div class="controls controls-row">

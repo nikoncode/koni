@@ -5,6 +5,8 @@
 <script src="js/upload/jquery.ui.widget.js"></script>
 <script src="js/upload/jquery.iframe-transport.js"></script>
 <script src="js/upload/jquery.fileupload.js"></script>
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/chosen.css" rel="stylesheet">
 <!-- yandex map -->
 <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
 <script>
@@ -28,7 +30,8 @@ $(function () {
 			}
 		}
 	});
-
+    {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true});{/literal}
+    change_city($('select.metro'));
 	var data = $.parseJSON('{$club.additions}');
 	$.each(data, function (index, value) {
 		console.log(value);
@@ -37,7 +40,8 @@ $(function () {
 			el.find("[name*='" + sub_index + "']").val(sub_value);
 		});
 	})
-}); 
+
+});
 
 function step_one(form) {
 	api_query({
@@ -62,6 +66,38 @@ function step_two(form) {
 		fail: "standart"
 	})
 }
+{literal}
+function change_country(select) {
+    var country = $('select.country option:selected').attr('country_id') || 0;
+    var city = $('#club_city').val();
+
+    api_query({
+        qmethod: "POST",
+        amethod: "auth_get_city",
+        params:  {country_id:country},
+        success: function (response, data) {
+            var values = '<option value="0">Все города</option>'+response;
+            $('select.city').html(values);
+            $('select.city option').each(function(){
+                if($(this).html() != "Все города") $(this).val($(this).html());
+            });
+            $('select.city option[value="'+city+'"]').prop('selected',true);
+            $('select.city').trigger("chosen:updated");
+            update_mark();
+        },
+        fail:    "standart"
+    })
+}
+function change_city(select){
+    var city = $('option:selected',select).html();
+    if (city == 'Москва'){
+        $('.metro').css('display','');
+    }else{
+        $('.metro').css('display','none');
+    }
+    update_mark();
+}
+{/literal}
 
 function update_mark() {
 	country = $("[name=country]").val();
@@ -194,24 +230,28 @@ function add_new_addition() {
 	return $(new_add).appendTo("#new_addition");
 }
 
-function make_staff_form(id, fio, avatar, descr) {
+function make_staff_form(id, fio, avatar, descr, show_mail, show_phone) {
 	var mdl = $("#modal-edit-member");
-	mdl.find("form").attr("onsubmit", "user_permission(" + id + ", 'staff', $(this).find('[name=desc]').val()); return false;");
+	mdl.find("form").attr("onsubmit", "user_permission(" + id + ", 'staff', $(this).find('[name=desc]').val(), $(this).find('[name=show_mail]:checked').size(),$(this).find('[name=show_phone]:checked').size()); return false;");
 	mdl.find(".link").attr("href", "/user.php?id=" + id);
 	mdl.find("img").attr("src", avatar);
 	mdl.find(".link:last").text(fio);
 	mdl.find("input[name=desc]").val(descr);
+	mdl.find("input[name=show_mail]").prop('checked',show_mail);
+	mdl.find("input[name=show_phone]").prop('checked',show_phone);
 	mdl.modal("show");
 }
 
-function user_permission(qid, qtype, qdesc, el) {
+function user_permission(qid, qtype, qdesc, show_mail, show_phone) {
 	api_query({
 		qmethod: "POST",
 		amethod: "club_user_permission",
 		params: {
 			id: qid,
 			type: qtype,
-			desc: qdesc
+			desc: qdesc,
+			show_mail: show_mail,
+			show_phone: show_phone
 		},
 		success: function (data) {
 			alert(data[0]);
@@ -220,6 +260,7 @@ function user_permission(qid, qtype, qdesc, el) {
 		fail: "standart"
 	});
 }
+
 </script>
 
 <div class="container clubs-page club-admin main-blocks-area club-block">
@@ -276,9 +317,9 @@ function user_permission(qid, qtype, qdesc, el) {
 												<label class="span6">Адрес страницы клуба</label>
 												<input type="text" class="span6" placeholder="http://odnokonniki.ru/id4535423545667" >*}
 												<label class="span6">Тип клуба</label>
-												<select class="span6" name="type">
+												<select class="span6 chosen-select" name="type[]" multiple>
 													{foreach $types as $type}
-														<option {if $club.type == $type}selected{/if}>{$type}</option>
+														<option {if $club.type|strstr:$type}selected{/if}>{$type}</option>
 													{/foreach}
 											   </select>
 											</div>
@@ -295,6 +336,7 @@ function user_permission(qid, qtype, qdesc, el) {
 												<div class="content-add-buttons row">
 												<div class="fileupload" id="fileupload">
 													<input type="file" name="avatar">
+													<button class="btn btn-add-photo"><i class="icon-camera"></i> Добавить фото</button>
 												</div>
 												</div>
 												<p class="avatar-descr"><br>Вы можете загрузить изображение в формате JPG, GIF или PNG. Если у Вас возникают проблемы с загрузкой, попробуйте выбрать фотографию меньшего размера.</p>
@@ -309,14 +351,31 @@ function user_permission(qid, qtype, qdesc, el) {
 											<div class="row">
 											<div class="controls controls-row">
 												<label class="span6">Адрес клуба</label>
-												<select class="span3" name="country" onblur="update_mark();">
-													{foreach $countries as $country}
-														<option {if $club.country == $country}selected{/if}>{$country}</option>
-													{/foreach}
-											   	</select>
-												<input type="text" class="span3" name="city" onblur="update_mark();" value="{$club.city}">
+                                                <input type="hidden" id="club_country" name="club_country" value="{$club.country}">
+                                                <select  class="span3 country chosen-select" name="country" onchange="change_country(this);">
+                                                    <option value="">Не важно</option>
+                                                    {foreach $countries as $country}
+                                                        <option country_id="{$country.id}" value="{$country.country_name_ru}" {if $club.country == $country.country_name_ru}selected="selected"{/if}>{$country.country_name_ru}</option>
+                                                    {/foreach}
+                                                </select>
+												<input type="hidden" id="club_city" name="club_city" value="{$club.city}">
+                                                <select name="city" class="span3 city chosen-select" onchange="change_city(this);">
+                                                    <option value="">Все города</option>
+                                                    {foreach $cities as $city}
+                                                        <option value="{$city.city_name_ru}" {if $club.city == $city.city_name_ru}selected="selected"{/if}>{$city.city_name_ru}</option>
+                                                    {/foreach}
+                                                </select>
 												<input type="text" class="span6" name="address" placeholder="Адрес" onblur="update_mark();" value="{$club.address}">
 											</div>
+                                                <div class="controls controls-row metro" >
+                                                    <label class="span6">Ближайшее метро</label>
+                                                    <select  class="span3 chosen-select" name="metro">
+                                                        <option>Не важно</option>
+                                                        {foreach $metros as $metro}
+                                                            <option {if $club.metro == $metro}selected="selected"{/if}>{$metro}</option>
+                                                        {/foreach}
+                                                    </select>
+                                                </div>
 											
 											{*<!-- new 28-03-14 -->
 											<div class="controls controls-row">
@@ -366,7 +425,7 @@ function user_permission(qid, qtype, qdesc, el) {
 						<div class="row option-row">	
 									<hr/>
 									<button type="submit" class="btn btn-warning  offset3 span3">Сохранить</button>
-									<button class="btn span3" data-dismiss="modal" aria-hidden="true">Отмена</button>
+									<a class="btn span3" href="club.php?id={$club.id}">Отмена</a>
 						</div>
 				</form>	
 				</div> <!-- //news-club -->
@@ -425,7 +484,7 @@ function user_permission(qid, qtype, qdesc, el) {
 					<div class="row option-row">	
 									<hr/>
 									<button type="submit" class="btn btn-warning  offset3 span3">Сохранить</button>
-									<button class="btn span3" data-dismiss="modal" aria-hidden="true">Отмена</button>
+                        <a class="btn span3" href="club.php?id={$club.id}">Отмена</a>
 					</div>
 					</form>
 				</div> <!-- //about-club -->
@@ -452,10 +511,8 @@ function user_permission(qid, qtype, qdesc, el) {
 							<div class="controls controls-row">
 								<label class="span6">Должность руководителя</label>
 								<input type="text" class="span6" name="desc">
-								{*<label class="span6">Телефон</label>
-								<input type="text" class="span6">
-								<label class="span6">E-mail</label>
-								<input type="text" class="span6">*}
+								<label class="span6">Показывать телефон <input type="checkbox" name="show_phone" value="1"></label>
+								<label class="span6">Показывать E-mail <input type="checkbox" name="show_mail"  value="1"></label>
 							</div>
 						</div>
 							
@@ -517,11 +574,11 @@ function user_permission(qid, qtype, qdesc, el) {
 									<ul>
 										<li><a href="/user.php?id={$member.id}">Написать сообщение</a></li>
 										{if $member.is_moderator}
-											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '', this); return false;">В руководители</a></li>
+											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '', {$member.show_mail}, {$member.show_phone}, this); return false;">В руководители</a></li>
 										{elseif $member.is_club_staff}
-											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '{$member.club_staff_descr}', this); return false;">Изменить данные</a></li>
+											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '{$member.club_staff_descr}', {$member.show_mail}, {$member.show_phone}, this); return false;">Изменить данные</a></li>
 										{else}
-											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '', this); return false;">В руководители</a> <span class="muted">|</span> <a href="#" onclick="user_permission({$member.id}, 'moderator', '', this); return false;">в модераторы</a></li>
+											<li><a href="#" onclick="make_staff_form({$member.id}, '{$member.fio}', '{$member.avatar}', '', {$member.show_mail}, {$member.show_phone}, this); return false;">В руководители</a> <span class="muted">|</span> <a href="#" onclick="user_permission({$member.id}, 'moderator', '', $member.show_mail, $member.show_phone, this); return false;">в модераторы</a></li>
 										{/if}
 										<li><a href="#">Удалить из сообщества</a></li>
 									</ul>
@@ -638,7 +695,7 @@ function user_permission(qid, qtype, qdesc, el) {
 					<div class="row option-row">	
 						<hr/>
 						<button type="submit" class="btn btn-warning  offset3 span3">Сохранить</button>
-						<button class="btn span3" data-dismiss="modal" aria-hidden="true">Отмена</button>
+                        <a class="btn span3" href="club.php?id={$club.id}">Отмена</a>
 					</div>
 				</div> <!-- //members-club -->
 				
@@ -699,6 +756,7 @@ function adv_update(form) {
 		fail: "standart"
 	})
 }
+
 </script>				
 				<div class="tab-pane" id="adv-admin">
 				<form onsubmit="adv_update(this);return false;">
@@ -733,7 +791,7 @@ function adv_update(form) {
 					<div class="row option-row">	
 						<hr/>
 						<button type="submit" class="btn btn-warning  offset3 span3">Сохранить</button>
-						<button class="btn span3" data-dismiss="modal" aria-hidden="true">Отмена</button>
+                        <a class="btn span3" href="club.php?id={$club.id}">Отмена</a>
 					</div>
 				</form>
 				</div> <!-- //adv-club -->

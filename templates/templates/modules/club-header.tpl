@@ -2,7 +2,7 @@
 <div class="span12 lthr-bgborder block club-info" style="background-color: #fff">
 	<h3 class="inner-bg">{$club.name}{*<span class="pull-right text-italic">Общий рейтинг: <strong>2367</strong> / Рейтинг по соревнованиям: <strong>7632</strong>*}
 		{if $club.o_uid == $user.id}
-			<a href="club-admin.php?id={$club.id}">[админ]</a></span>
+			<a href="club-admin.php?id={$club.id}" class="pull-right" style="color:#ffffff"><i>[Управление страницей клуба]</i></a></span>
 		{/if}
 	</h3>
 	<div class="row">
