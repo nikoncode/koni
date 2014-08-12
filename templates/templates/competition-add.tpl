@@ -1,6 +1,7 @@
 {* Smarty *}
 {include "modules/header.tpl"}
-
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/chosen.css" rel="stylesheet">
 <script>
 	function add_comp(form) {
 		api_query({
@@ -13,6 +14,9 @@
 			fail: "standart"
 		});
 	}
+    $(function(){
+        {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true, placeholder_text_multiple: "Выберите виды"});{/literal}
+    });
 </script>
 
 <div class="container clubs-page club-admin main-blocks-area club-block club-add-comp">
@@ -68,7 +72,7 @@
 											   <label class="span6">Адрес проведения соревнования</label>
 												<input type="text" class="span6" name="address">
 												<label class="span6">Вид соревнований</label>
-												<select class="span6" name="type">
+												<select class="span6 chosen-select" name="type[]" multiple>
 													{foreach $const_types as $type}
 														<option>{$type}</option>
 													{/foreach}

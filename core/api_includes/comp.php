@@ -20,7 +20,9 @@ function api_comp_add() {
 
 	$fields["bdate"] = others_data_format($fields["bdate"], ".", "-");
 	$fields["edate"] = others_data_format($fields["edate"], ".", "-");
-
+    if (isset($fields["type"])) {
+        $fields["type"] = implode(",", $fields["type"]);
+    }
 	$db = new db;
 	$permission = $db->getOne("SELECT o_uid FROM clubs WHERE id = ?i", $fields["o_cid"]);
 
@@ -51,7 +53,9 @@ function api_comp_edit() {
 
 	$fields["bdate"] = others_data_format($fields["bdate"], ".", "-");
 	$fields["edate"] = others_data_format($fields["edate"], ".", "-");
-
+    if (isset($fields["type"])) {
+        $fields["type"] = implode(",", $fields["type"]);
+    }
 	$db = new db;
 	$perm = $db->getOne("SELECT o_uid FROM clubs, comp WHERE comp.id = ?i AND comp.o_cid = clubs.id", $fields["id"]);
 

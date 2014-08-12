@@ -2,6 +2,25 @@
 {include "modules/header.tpl"}
 <script type="text/javascript" src="/js/gallery.js"></script>
 {include "modules/modal-gallery-lightbox.tpl"}
+<script>
+    $(function(){
+        $('.search_comp').change(function(){
+            var type = $('.search_comp.type_comp option:selected').html();
+            var month = $('.search_comp.month option:selected').val();
+            var year = $('.search_comp.year option:selected').html();
+            $('.competitions-table .event_row').each(function(){
+                var comp_type = $(this).attr('data-type');
+                var comp_month = $(this).attr('data-month');
+                var comp_year = $(this).attr('data-year');
+                if((type == comp_type || type == 'Не важно') && (comp_month == month || month == '') && (comp_year == year || year == 'Не важно')){
+                    $(this).css('display','');
+                }else{
+                    $(this).css('display','none');
+                }
+            });
+        });
+    });
+</script>
 <div class="container current-horse-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
@@ -23,6 +42,7 @@
 			<div class="tab-pane in active" id="horse-info">
 				<div class="my-horses">
 					<div class="common-info row">
+
 						<img src="{$horse.avatar}" class="avatar-my-horse-top"/>
 						<h2 class="my-horse-name">{$horse.nick}</h2>
 						<p class="my-horse-info">{$horse.age} лет ({$horse.byear} г. р.)</p>
@@ -104,29 +124,21 @@
 						
 							<div class="controls controls-row">
 								<label class="span2">Тип соревнования:</label><label class="span2">Месяц:</label><label class="span2">Год проведения:</label>
-								<select class="span2">
-									<option>Тип 1</option>
-									<option>Тип 2</option>
-									<option>Тип 3</option>
-									<option>Тип 4</option>
-									<option>Тип 5</option>
-									<option>Тип 6</option>
+								<select class="span2 search_comp type_comp">
+                                    <option value="">Не важно</option>
+									{foreach $horses_spec as $spec}
+                                    <option>{$spec}</option>
+                                    {/foreach}
 							   </select>
-								<select class="span2">
-									<option>Январь</option>
-									<option>Февараль</option>
-									<option>Март</option>
-									<option>Апрель</option>
-									<option>Май</option>
-									<option>Июнь</option>
-									<option>Июль</option>
-									<option>Август</option>
-									<option>Сентябрь</option>
-									<option>Октябрь</option>
-									<option>Ноябрь</option>
-									<option>Декабрь</option>
+								<select class="span2 search_comp month">
+                                    <option value="">Не важно</option>
+                                    {foreach $mounths as $nom=>$month}
+									<option value="{$nom}">{$month}</option>
+                                    {/foreach}
 							   </select>
-							   <select class="span2">
+							   <select class="span2 search_comp year">
+									<option>Не важно</option>
+									<option>2014</option>
 									<option>2013</option>
 									<option>2012</option>
 									<option>2011</option>
@@ -154,7 +166,7 @@
 						  <th>Результат</th>
 						</tr>
                         {foreach $end_events as $event}
-						 <tr>
+						 <tr class="event_row" data-type="{$event.type}" data-month="{$event.month}" data-year="{$event.year}">
 							<td class="competition">
 								<p class="comp-date">{$event.date}</p>
 								<p><a href="/competition.php?id={$event.id}">{$event.name} [{$event.route}, {$event.height} см, {$event.exam}]</a></p>

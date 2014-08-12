@@ -13,7 +13,7 @@ if (!session_check()) {
     $assigned_vars = array(
         "page_title" 		=> "Объявления > Одноконники",
     );
-    $assigned_vars["be_events"] = $db->getAll("SELECT c.*,r.name as route, r.exam, r.bdate as date, r.height, cm.fan,cl.city,cl.name as club, cl.avatar, cl.id as club_id, cm.fan_riders
+    $assigned_vars["be_events"] = $db->getAll("SELECT c.*,r.name as route, r.exam, r.bdate as date, r.height, cm.fan,cl.city,cl.name as club, cl.avatar, cl.id as club_id, cm.fan_riders, r.type
 													FROM comp as c
 													INNER JOIN clubs as cl on (cl.id = c.o_cid)
 													LEFT JOIN routes as r on (r.cid = c.id)
@@ -23,7 +23,7 @@ if (!session_check()) {
 													ORDER BY bdate ASC", $_SESSION["user_id"], $_SESSION["user_id"], date('Y-m-d H:i:s'));
 
     $my_fans = $db->getAll("SELECT COUNT(cm.id) as count,cm.cid FROM `users` as u
-                            INNER JOIN comp_members as cm ON (u.id IN (cm.fan_riders))
+                            INNER JOIN comp_members as cm ON (cm.fan_riders IN (u.id))
                             INNER JOIN comp as c ON (c.id = cm.cid)
                             WHERE u.id = ?i AND c.bdate > ?s GROUP BY cm.cid", $_SESSION["user_id"], date('Y-m-d'));
     $my_fans_ar = array();
@@ -32,17 +32,17 @@ if (!session_check()) {
     }
     $assigned_vars['be_events_fans'] = $my_fans_ar;
 
-    $assigned_vars["end_events"] = $db->getAll("SELECT c.*,r.name as route, r.exam, r.bdate as date, r.height, cm.fan,cl.city,cl.name as club, cl.avatar, cl.id as club_id, cm.fan_riders
+    $assigned_vars["end_events"] = $db->getAll("SELECT c.*,r.name as route, r.exam, r.bdate as date, r.height, cm.fan,cl.city,cl.name as club, cl.avatar, cl.id as club_id, cm.fan_riders, r.type
 													FROM comp as c
 													INNER JOIN clubs as cl on (cl.id = c.o_cid)
 													LEFT JOIN routes as r on (r.cid = c.id)
 													LEFT JOIN comp_riders as cr on (cr.uid = ?i AND cr.rid = r.id)
 													LEFT JOIN comp_members as cm on (cm.uid = ?i AND cm.cid = c.id)
-													WHERE c.bdate < ?s AND (cm.fan > 0 OR cr.id > 0)
+													WHERE c.bdate <= ?s AND (cm.fan > 0 OR cr.id > 0)
 													ORDER BY bdate ASC", $_SESSION["user_id"], $_SESSION["user_id"], date('Y-m-d H:i:s'));
 
     $my_fans = $db->getAll("SELECT COUNT(cm.id) as count,cm.cid FROM `users` as u
-                            INNER JOIN comp_members as cm ON (u.id IN (cm.fan_riders))
+                            INNER JOIN comp_members as cm ON (cm.fan_riders IN (u.id))
                             INNER JOIN comp as c ON (c.id = cm.cid)
                             WHERE u.id = ?i AND c.bdate <= ?s GROUP BY cm.cid", $_SESSION["user_id"], date('Y-m-d'));
     $my_fans_ar = array();

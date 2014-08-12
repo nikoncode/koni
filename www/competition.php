@@ -90,7 +90,7 @@ if (!session_check()) {
 	}
     $comments = $db->getAll("SELECT c.*,
 										concat(fname,' ',lname) as fio,
-										avatar,
+										users.avatar,
 										(SELECT COUNT(id) FROM likes WHERE cid = c.id) as likes_cnt,
 										(SELECT COUNT(id) FROM likes WHERE cid = c.id AND o_uid = ?i) as is_liked
 								FROM (
@@ -103,7 +103,7 @@ if (!session_check()) {
     $comments_bl = template_render_to_var(array(
         "comments" => $comments,
         "comments_cnt" => $comments_count,
-        "user_avatar" => $assigned_vars["avatar"],
+        "user_avatar" => $assigned_vars["user"]["avatar"],
         "c_key" => "cid",
         "c_value" => $assigned_vars["comp"]["id"],
         "user" => array("id" => $_SESSION["user_id"])

@@ -5,6 +5,7 @@ include_once (CORE_DIR . "core_includes/templates.php");
 include_once (CORE_DIR . "core_includes/session.php");
 include_once (LIBRARIES_DIR . "safe_mysql/safemysql.php");
 include_once (CORE_DIR . "core_includes/others.php");
+include_once (CORE_DIR . "constant.php");
 
 /* Logic part of 'horses' page */
 if (!session_check()) {
@@ -49,7 +50,7 @@ if (!session_check()) {
 													WHERE cr.uid = ?i AND cr.hid = ?i AND r.bdate > ?s
 													ORDER BY bdate ASC", $_SESSION["user_id"], $assigned_vars["horse"]["id"], date('Y-m-d H:i:s'));
 
-            $assigned_vars["end_events"] = $db->getAll("SELECT c.*,r.name as route, r.exam, r.bdate as date, r.height
+            $assigned_vars["end_events"] = $db->getAll("SELECT c.*,r.name as route, r.exam, r.bdate as date, r.height, r.type, MONTH(r.bdate) as month, YEAR(r.bdate) as year
 													FROM comp_riders as cr
 													INNER JOIN routes as r on (cr.rid = r.id)
 													INNER JOIN comp as c on (c.id = r.cid)
@@ -59,6 +60,8 @@ if (!session_check()) {
 			$assigned_vars["c_key"] = "hid";
 			$assigned_vars["c_value"] = $assigned_vars["horse"]["id"];
 			$assigned_vars["user_avatar"] = $assigned_vars["horse"]["user_avatar"];
+			$assigned_vars["horses_spec"] = $const_horses_spec;
+			$assigned_vars["mounths"] = $const_mounth;
 			template_render($assigned_vars, "horse.tpl");
 		}
 	}

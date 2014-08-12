@@ -1,5 +1,21 @@
 {* Smarty *}
 {include "modules/header.tpl"}
+<script>
+    $(function(){
+        $('.search_comp').click(function(){
+            var search = $(this).closest('.tab-pane').find('.search-query').val();
+            $(this).closest('.tab-pane').find('.event_row').each(function(){
+                var comp_type = $(this).attr('data-type');
+                var comp_time = $(this).attr('data-time');
+                if(comp_type.indexOf(search) > -1 || comp_time.indexOf(search) > -1){
+                    $(this).css('display','');
+                }else{
+                    $(this).css('display','none');
+                }
+            });
+        });
+    });
+</script>
 <div class="container my-events-page main-blocks-area">
     <div class="row">
         {include "modules/sidebar-my-left.tpl"}
@@ -30,7 +46,7 @@
                                 </div>
 
                                 <input type="text" class="span3 search-query" placeholder="Введите дату или название">
-                                <a href="friends-add.php" class="btn btn-warning span2">Искать</a>
+                                <a href="javascript:void(0)" class="btn btn-warning span2 search_comp">Искать</a>
                             </div>
                         </form>
                     </div>
@@ -43,7 +59,7 @@
                                 <th>Название</th>
                             </tr>
                             {foreach $be_events as $event}
-                            <tr>
+                            <tr class="event_row" data-time="{$event.bdate}" data-type="{$event.type}">
                                 <td class="compt-img"><a href="#"><img src="{$event.avatar}"></a></td>
                                 <td class="compt-date">
                                     <p class="date">{$event.bdate}<span class="rel-date">(через 1 год)</span></p>
@@ -54,7 +70,7 @@
                                         {assign var="riders_count" value=","|explode:$event.fan_riders}
                                         <div class="i-fan">Я болею за {$riders_count|count} человек</div>
                                     {/if}
-                                    {if isset($be_events_fans[$event.id].count)}<div class="my-fans">За вас болеют {$be_events_fans[$event.id].count} человек</div>{/if}
+                                    {if isset($be_events_fans[$event.id])}<div class="my-fans">За вас болеют {$be_events_fans[$event.id]} человек</div>{/if}
                                 </td>
                             </tr>
                             {/foreach}
@@ -76,7 +92,7 @@
                                 </div>
 
                                 <input type="text" class="span3 search-query" placeholder="Введите дату или название">
-                                <a href="friends-add.php" class="btn btn-warning span2">Искать</a>
+                                <a href="javascript:void(0)" class="btn btn-warning span2 search_comp">Искать</a>
                             </div>
                         </form>
                     </div>
@@ -90,7 +106,7 @@
                             </tr>
 
                             {foreach $end_events as $event}
-                                <tr>
+                                <tr class="event_row" data-time="{$event.bdate}" data-type="{$event.type}">
                                     <td class="compt-img"><a href="#"><img src="{$event.avatar}"></a></td>
                                     <td class="compt-date">
                                         <p class="date">{$event.bdate}<span class="rel-date">(через 1 год)</span></p>
@@ -101,7 +117,7 @@
                                             {assign var="riders_count" value=","|explode:$event.fan_riders}
                                             <div class="i-fan">Я болею за {$riders_count|count} человек</div>
                                         {/if}
-                                        {if isset($end_events_fans[$event.id].count)}<div class="my-fans">За вас болеют {$end_events_fans[$event.id].count} человек</div>{/if}
+                                        {if isset($end_events_fans[$event.id])}<div class="my-fans">За вас болеют {$end_events_fans[$event.id]} человек</div>{/if}
                                     </td>
                                 </tr>
                             {/foreach}

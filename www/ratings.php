@@ -13,6 +13,12 @@ if (!session_check()) {
     $assigned_vars = array(
         "page_title" 		=> "Рейтинг > Одноконники",
     );
+    $assigned_vars["clubs"] = $db->getAll("SELECT c.avatar, cr.cid,SUM(cr.rating)/COUNT(cr.cid) as rating, c.name, CONCAT(c.country,', ',c.city) as address,
+                                            (SELECT COUNT(id) as members FROM users WHERE cid = cr.cid) as members
+                                            FROM `club_reviews` as cr
+                                            INNER JOIN clubs as c ON(c.id = cr.cid)
+                                            GROUP BY cr.cid ORDER BY rating DESC");
     $assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]); //many info
+    $assigned_vars['countries'] =$const_countries;
     template_render($assigned_vars, "ratings.tpl");
 }

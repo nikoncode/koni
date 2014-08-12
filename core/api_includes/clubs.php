@@ -247,3 +247,39 @@ function api_club_create() {
 	$db->query("INSERT INTO clubs SET ?u", $fields);
 	aok($db->insertId());
 }
+
+function api_rating_search(){
+    validate_fields($fields, $_POST, array(
+        "period",
+        "country",
+        "city"
+    ), array(), array(), $errors);
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    $db = new db;
+    $get_where = '';
+    if($fields['period'] == 12) $get_where = " cr.time >= '".date("Y-m-d H:i:s",time()-31556926)."'";
+    if($fields['country'] != '') {
+        if($get_where != '') $get_where .= ' AND';
+        $get_where .= " c.country = '".$fields['country']."'";
+    }
+    if($fields['city'] != '') {
+        if($get_where != '') $get_where .= ' AND';
+        $get_where .= " c.city = '".$fields['city']."'";
+    }
+    if($get_where != '') $get_where = ' WHERE '.$get_where;
+    $clubs = $db->getAll("SELECT c.avatar, cr.cid,SUM(cr.rating)/COUNT(cr.cid) as rating, c.name, CONCAT(c.country,', ',c.city) as address,
+                                            (SELECT COUNT(id) as members FROM users WHERE cid = cr.cid) as members
+                                            FROM `club_reviews` as cr
+                                            INNER JOIN clubs as c ON(c.id = cr.cid) ".$get_where."
+                                            GROUP BY cr.cid ORDER BY rating DESC");
+    $result = template_render_to_var(array(
+        "clubs" => $clubs
+    ), "iterations/rating_row.tpl");
+    aok(array(
+        "rendered" 	=> $result,
+        "source"	=> $clubs
+    ));
+}
