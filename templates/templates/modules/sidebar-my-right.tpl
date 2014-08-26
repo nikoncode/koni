@@ -1,5 +1,5 @@
 {* Smarty *}
-<div class="span3  lthr-bgborder block">
+<div class="span3  lthr-bgborder block" id="sidebarRight">
 	{*<div class="my-awards">
 		<h3 class="inner-bg">Мои награды<span class="pull-right">5 наград</span></h3>
 		<center>

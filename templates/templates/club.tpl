@@ -43,9 +43,9 @@
 					<li class="active"><a href="#news-club" data-toggle="tab">Новости/отзывы</a></li>
 					<li><a href="#about-club" data-toggle="tab">О клубе</a></li>
 					<li><a href="#competitions-club" data-toggle="tab">Соревнования</a></li>
-					<li><a href="#rating-club" data-toggle="tab">Рейтинги (156,16)</a></li>
+					<li><a>Рейтинги (156,16)</a></li>
 					<li><a href="#gallery-club" data-toggle="tab">Галерея</a></li>
-					<li><a href="#contact-club" data-toggle="tab">Контакты</a></li>
+					<li><a>Контакты</a></li>
 				</ul>
 				
 				<div id="clubTabContent" class="tab-content bg-white">

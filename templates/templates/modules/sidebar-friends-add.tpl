@@ -1,4 +1,4 @@
-<div class="span3  lthr-bgborder block">
+<div class="span3  lthr-bgborder block" id="sidebarRight">
 	<div>
 		<h3 class="inner-bg">По параметрам</h3>
 		<form class="search-friends-filter">

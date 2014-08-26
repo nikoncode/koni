@@ -23,7 +23,7 @@
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-border block" style="background-color: #fff">
+			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 			<div class="clear"></div>
 			<div>
 			<h3 class="inner-bg">Новости</h3>

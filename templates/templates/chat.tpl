@@ -118,7 +118,7 @@ $(function () {
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-border block" style="background-color: #fff">
+			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 				<div>
 				<h3 class="inner-bg">{$another_user.fio}<span class="pull-right"><a href="/messages.php">Вернуться к диалогам</a></span></h3>
 					<div class="row">

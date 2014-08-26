@@ -21,7 +21,7 @@
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-border block" style="background-color: #fff">
+			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 				<div>
 				<h3 class="inner-bg">Сообщения<!--<span class="pull-right">3 диалога</span>--></h3>
 					<div class="row">

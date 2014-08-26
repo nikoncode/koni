@@ -16,7 +16,7 @@ function delete_from_friend_callback(uid) {
 	});
 }
 </script>
-<div class="span3 lthr-bgborder block">
+<div class="span3 lthr-bgborder block" id="sidebarRight">
 	
 	<div class="user-info">
 		<center><a href="/user.php?id={$another_user.id}"><img src="{$another_user.avatar}" class="current-user-avatar" /></a></center>
@@ -51,7 +51,7 @@ function delete_from_friend_callback(uid) {
 			<h3 class="inner-bg">Друзья</h3>
 			<ul class="my-friends-menu">
 				{foreach $another_user.friends as $friend}
-					<li><a href="user-sample.php?id={$friend.id}"><img src="{$friend.avatar}" /><p>{$friend.fio}</p></a></li>
+					<li><a href="user.php?id={$friend.id}"><img src="{$friend.avatar}" /><p>{$friend.fio}</p></a></li>
 				{/foreach}
 			</ul>
 			<div class="clear"></div>

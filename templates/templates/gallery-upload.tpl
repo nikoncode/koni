@@ -72,7 +72,7 @@ function update_description(form) {
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
 			
-			<div class="span6 lthr-border gallery-upload block" style="background-color: #fff">
+			<div class="span6 lthr-border gallery-upload block" id="centerBlock" style="background-color: #fff">
 			<h3 class="inner-bg">Загрузка фото в "{$album_name}" <span class="pull-right"><a class="back_album" href="gallery-album.php?id={$album_id}">назад к альбому</a></span></h3>
 				<div class="row">
 					<div class="span6">

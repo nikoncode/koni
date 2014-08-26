@@ -3,9 +3,9 @@
 <script>
     $(function(){
         $('.search_comp').click(function(){
-            var search = $(this).closest('.tab-pane').find('.search-query').val();
+            var search = $(this).closest('.tab-pane').find('.search-query').val().toLowerCase();
             $(this).closest('.tab-pane').find('.event_row').each(function(){
-                var comp_type = $(this).attr('data-type');
+                var comp_type = $(this).attr('data-type').toLowerCase();
                 var comp_time = $(this).attr('data-time');
                 if(comp_type.indexOf(search) > -1 || comp_time.indexOf(search) > -1){
                     $(this).css('display','');
@@ -22,7 +22,7 @@
         <div class="brackets" id="bra-2"></div>
         <div class="brackets" id="bra-3"></div>
 
-        <div class="span6 lthr-bgborder block" style="background-color: #fff">
+        <div class="span6 lthr-bgborder block" id="centerBlock" style="background-color: #fff">
             <h3 class="inner-bg">Мероприятия</h3>
 
             <ul id="friendsTab" class="nav nav-tabs new-tabs tabs2">
@@ -59,7 +59,7 @@
                                 <th>Название</th>
                             </tr>
                             {foreach $be_events as $event}
-                            <tr class="event_row" data-time="{$event.bdate}" data-type="{$event.type}">
+                            <tr class="event_row" data-time="{$event.bdate}" data-type="{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}">
                                 <td class="compt-img"><a href="#"><img src="{$event.avatar}"></a></td>
                                 <td class="compt-date">
                                     <p class="date">{$event.bdate}<span class="rel-date">(через 1 год)</span></p>
@@ -106,7 +106,7 @@
                             </tr>
 
                             {foreach $end_events as $event}
-                                <tr class="event_row" data-time="{$event.bdate}" data-type="{$event.type}">
+                                <tr class="event_row" data-time="{$event.bdate}" data-type="{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}">
                                     <td class="compt-img"><a href="#"><img src="{$event.avatar}"></a></td>
                                     <td class="compt-date">
                                         <p class="date">{$event.bdate}<span class="rel-date">(через 1 год)</span></p>

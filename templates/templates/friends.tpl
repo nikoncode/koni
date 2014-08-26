@@ -24,7 +24,7 @@ function delete_from_friend_callback(uid, el) {
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-bgborder block" style="background-color: #fff">
+			<div class="span6 lthr-bgborder block" id="centerBlock" style="background-color: #fff">
 				<h3 class="inner-bg">Друзья <!--<span class="pull-right">4 друга</span>--></h3>
 			
 				

@@ -27,7 +27,7 @@
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-border block" style="background-color: #fff">
+			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 				<div>
 				<h3 class="inner-bg">{if $another_user}Лошади '{$another_user.fio}'{else}Ваши лошади{/if}<span class="pull-right"><a href="horses.php{if $another_user}?id={$another_user.id}{/if}">Назад ко всем лошадям</a></span></h3>
 				

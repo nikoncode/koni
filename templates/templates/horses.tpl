@@ -7,7 +7,7 @@
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-border block" style="background-color: #fff">
+			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 				<h3 class="inner-bg">
 					{if $another_user}
 						Лошади "{$another_user.fio}"

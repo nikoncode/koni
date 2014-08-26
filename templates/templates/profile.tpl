@@ -82,7 +82,7 @@
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-bgborder block">
+			<div class="span6 lthr-bgborder block" id="centerBlock">
 			<div class="row">
 			<h3 class="inner-bg">Настройки</h3>
 				

@@ -23,7 +23,7 @@
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-border block" style="background-color: #fff">
+			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 			{include "modules/horses_bar.tpl" horses_bar=$user.horses_bar horses_bar_id=$user.id}
 			<div class="clear"></div>
 			<div>

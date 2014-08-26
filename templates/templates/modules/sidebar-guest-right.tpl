@@ -1,5 +1,5 @@
 {* Smarty *}
-<div class="span3  lthr-bgborder block">
+<div class="span3  lthr-bgborder block" id="sidebarRight">
 	<div class="my-events">
 		<h3 class="inner-bg">Мероприятия</h3>
 		<div class="my-events-list">

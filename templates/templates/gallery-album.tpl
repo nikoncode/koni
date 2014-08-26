@@ -23,7 +23,7 @@ function delete_album(album_id) {
 <div class="container gallery-page album-page main-blocks-area">
 		<div class="row">
 			{include "modules/sidebar-my-left.tpl"}
-			<div class="span6 lthr-border block" style="background-color: #fff">
+			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 				<h3 class="inner-bg">{$album.name}<span class="pull-right"><a href="gallery.php?id={$user_id}">назад в галерею</a></span></h3>
 				<div class="row">
 					<div class="photos">

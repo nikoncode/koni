@@ -34,7 +34,7 @@ function user_search(form) {
 			<div class="brackets" id="bra-2"></div>
 			<div class="brackets" id="bra-3"></div>	
 			
-			<div class="span6 lthr-border block" style="background-color: #fff">
+			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 				<h3 class="inner-bg">Искать пользователей</h3>
 				<div class="row">
 						<form class="form-in-messages" onsubmit="user_search(this);return false;">

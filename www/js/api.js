@@ -40,4 +40,17 @@ $(function () { //to tab load in startup
     return $('a[data-toggle="tab"]').on('shown', function(e) {
         return location.hash = $(e.target).attr('href').substr(1);
     });
+
+
+});
+$(document).ready(function()
+{
+    var sidebarLeftHeight = $('.my-block').outerHeight(true);
+    var sidebarRightHeight = $('#sidebarRight').outerHeight(true);
+    var centerBlockHeight = $('#centerBlock').outerHeight(true);
+    if(centerBlockHeight < sidebarLeftHeight) sidebarLeftHeight = centerBlockHeight;
+    if(centerBlockHeight < sidebarRightHeight) sidebarRightHeight = centerBlockHeight;
+    $('#bra-3').height(sidebarRightHeight);
+    $('#bra-2').height(sidebarLeftHeight);
+
 });

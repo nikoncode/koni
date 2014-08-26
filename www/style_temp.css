@@ -12,3 +12,4 @@
 .user-info .user-club {font-style: italic; font-size: 13px; text-align: right;  margin-right: 10px;}
 .my-compts .compt-img img {max-width: 60px; max-height: 60px}
 .ratings-page .btn-group label {font-weight: normal}
+#modal-gallery-post .image-info {width: 100%}
