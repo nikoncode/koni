@@ -32,7 +32,16 @@ if (!session_check()) {
 													spec,
 													(YEAR(NOW()) - byear) as age
 											FROM horses
-											WHERE o_uid = ?i", $user_id); 
+											WHERE o_uid = ?i", $user_id);
+    $assigned_vars["horses_owners"] = $db->getAll("SELECT h.id,
+													h.avatar,
+													h.nick,
+													h.sex,
+													h.byear,
+													h.spec,
+													(YEAR(NOW()) - h.byear) as age
+											FROM horses as h,horses_to_users as htu
+											WHERE h.id=htu.hid AND htu.uid = ?i", $user_id);
 
 	$assigned_vars["const_horses_sex"] = $const_horses_sex;
 	$assigned_vars["const_horses_poroda"] = $const_horses_poroda;

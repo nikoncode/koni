@@ -1,6 +1,59 @@
 {* Smarty *}
 {include "modules/header.tpl"}
 <script src="js/chosen.jquery.min.js"></script>
+<script src="js/jquery-sortable.js"></script>
+<script>
+    $(function(){
+        $('#startlist_table').sortable({
+            containerSelector: 'div',
+            itemPath: '> .route_table',
+            itemSelector: 'div.dragabble',
+            placeholder: '<div class="placeholder row" style="border: 1px solid #000; height: 25px; background: #ffff00"/>',
+            onDrop: function  (item, container, _super) {
+                $('#startlist .route_table').each(function(){
+                    var i = 0;
+                    var route_id = $(this).attr('alt');
+                    $('.dragabble',this).each(function(){
+                         i++;
+                        var ride_id = $(this).attr('alt');
+                        $('.span1 .ordering',this).val(i);
+                        $('.span1 .ordering',this).attr('name','ordering['+ride_id+']['+route_id+']');
+                        $('.span1 .ordering_txt',this).html(i);
+                    });
+                });
+                change_riders_ordering();
+                _super(item)
+            }
+        });
+        {literal}
+        $('.delete_rider').click(function(){
+            var rid = $(this).attr('alt');
+            var $this = $(this).closest('div.dragabble');
+            api_query({
+                qmethod: "POST",
+                amethod: "delete_rider",
+                params: {rid:rid},
+                success: function (data) {
+                    $this.remove();
+                    $('#startlist .route_table').each(function(){
+                        var i = 0;
+                        var route_id = $(this).attr('alt');
+                        $('.dragabble',this).each(function(){
+                            i++;
+                            var ride_id = $(this).attr('alt');
+                            $('.span1 .ordering',this).val(i);
+                            $('.span1 .ordering',this).attr('name','ordering['+ride_id+']['+route_id+']');
+                            $('.span1 .ordering_txt',this).html(i);
+                        });
+                    });
+                    change_riders_ordering();
+                },
+                fail: "standart"
+            });
+        });
+        {/literal}
+    })
+</script>
 <link  href="css/chosen.css" rel="stylesheet">
 <script>
 	function edit_comp(form) {
@@ -14,6 +67,16 @@
 			fail: "standart"
 		});
 	}
+    function change_riders_ordering(){
+        api_query({
+            qmethod: "POST",
+            amethod: "change_riders_ordering",
+            params: $('#form_riders_ordering').serialize(),
+            success: function (data) {
+            },
+            fail: "standart"
+        });
+    }
     $(function(){
         {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true, placeholder_text_multiple: "Выберите виды"});{/literal}
     });
@@ -84,7 +147,7 @@
 									
 									<div class="span6">
 										<div class="controls controls-row">
-											<label class="span6">Описание соревнования</label>
+											<label class="span6">Описание соревнования
 											<textarea class="span6" rows="5" name="desc">{$comp.desc}</textarea>
 											{*<label class="span3">Документы  (pdf, word, excel):</label>
 											<a href="#" class="btn span3">Добавить файл</a>
@@ -93,6 +156,8 @@
 												<li class="pdf-file">Положение-2.pdf<button type="button" class="close">&times;</button></li>
 												<li class="pdf-file">Положение-c-длинным-описанием.pdf<button type="button" class="close">&times;</button></li>
 											</ul>*}
+                                            <label class="span6">Количество денников в наличии</label>
+                                            <input type="number" name="dennik" class="span1" value="{$comp.dennik}">
 										</div>
 									</div>
 						</div>
@@ -136,6 +201,7 @@
             <ul class="nav nav-tabs">
               {*<li><a href="#compt-members" data-toggle="tab">Участники</a></li>*}
               <li class="active"><a href="#compt-results" data-toggle="tab">Результаты</a></li>
+              <li><a href="#startlist" data-toggle="tab">Стартовый лист</a></li>
               <li><a href="#compt-gallery" data-toggle="tab">Галерея</a></li>
               <li><a href="#compt-disqus" data-toggle="tab">Обсуждения</a></li>
             </ul>
@@ -327,6 +393,56 @@ $(function () {
 					</table>
               	</form>
               </div><!-- compt-results -->
+              <div class="tab-pane" id="startlist">
+                  <form action="#" id="form_riders_ordering" onsubmit="change_riders_ordering(); return false;">
+                  <div class="table table-striped competitions-table compt-results admin-compts" id="startlist_table">
+                        <div class="row header">
+                          <div class="span1">№</div>
+                          <div class="span2">Всадник</div>
+                          <div class="span2">Разряд</div>
+                          <div class="span2">Лошадь</div>
+                          <div class="span2">Владелец лошади</div>
+                          <div class="span2">Клуб</div>
+                          <div class="span1">Удалить</div>
+                      </div>
+                      {if $comp.routes}
+
+                              {foreach $comp.routes as $route}
+                                  <div class="route_table" alt="{$route.id}"><div class="row"><div class="table-caption no-drag span12">{$route.name}</div></div>
+                                  {if $comp.startlist.{$route.id}}
+
+                                          {foreach $comp.startlist.{$route.id} as $res}
+                                              <div class="dragabble row" alt="{$res.ride_id}">
+                                                  <div class="span1">
+                                                      <span class="ordering_txt">{$res.ordering}</span>
+                                                      <input type="hidden" name="ordering[{$res.ride_id}][{$route.id}]" class="ordering" value="{$res.ordering}">
+                                                  </div>
+                                                  <div class="span2">{$res.fio}</div>
+                                                  <div class="span2">-</div>
+                                                  <div class="span2">{$res.horse}</div>
+                                                  <div class="span2">{if $res.owner}{$res.owner}{else}{$res.ownerName}{/if}</div>
+                                                  <div class="span2">{$res.club}</div>
+                                                  <div class="span1"><a href="javascript:void()" class="delete_rider" alt="{$res.ride_id}">удалить</a> </div>
+                                              </div>
+                                          {/foreach}
+
+                                  {else}
+                                      <div class="row dragabble">
+                                          <div class="span12" style="text-align: center;"></div>
+                                      </div>
+                                  {/if}
+
+                                   </div>
+                              {/foreach}
+
+                      {else}
+                          <div class="row">
+                              <div class="span12" style="text-align: center;">Нет маршрутов.</div>
+                          </div>
+                      {/if}
+                  </div>
+                  </form>
+              </div><!-- compt-startlist -->
 			  
 			  <div class="tab-pane" id="compt-gallery">
                 <div class="photos">

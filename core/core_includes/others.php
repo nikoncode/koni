@@ -33,21 +33,22 @@ function others_data_format($data, $sep1, $sep2) {
 
 function others_competitions_get($id) {
 	$db = new db;
-	$comp = $db->getAll("SELECT *, DATEDIFF(bdate, NOW()) as diff FROM comp WHERE o_cid = ?i", $id);
+	$comp = $db->getAll("SELECT *, DATEDIFF(bdate, NOW()) as diff, bdate,edate FROM comp WHERE o_cid = ?i", $id);
 	$competitions = array();
 	$min_diff = 999999999;
+    $now = date('Y-m-d');
 	foreach($comp as $c) {
 		if ($c["diff"] >= 0 && $c["diff"] < $min_diff) {
 			$competitions["soon"] = $c;
 			$min_diff = $c["diff"];
 		}
-		if ((int)$c["diff"] > 30) {
+        if(strtotime($c['bdate']) <= strtotime($now) && strtotime($c['edate']) >= strtotime($now)){
+            $competitions["coming"][] = $c;
+        }elseif ((int)$c["diff"] > 0) {
 			$competitions["future"][] = $c;
 		} else if ((int)$c["diff"] < 0) {
 			$c["diff"] = abs($c["diff"]);
 			$competitions["past"][] = $c;
-		} else {
-			$competitions["coming"][] = $c; 
 		}
 	}
 	return $competitions;

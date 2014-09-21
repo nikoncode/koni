@@ -57,7 +57,23 @@ function delete_from_friend_callback(uid) {
 			<div class="clear"></div>
 		</div>
 	{/if}
-	
+    <div class="my-events">
+        <h3 class="inner-bg">Мероприятия</h3>
+        <div class="my-events-list">
+            <h4 class="event-next">Ближайшие</h4>
+            {if $another_user.competitions}
+                <dl class="dl-horizontal">
+                    {foreach $another_user.competitions as $comp}
+                        <dt>{$comp.date.0}.{$comp.date.1}</dt>
+                        <dd><a href="/competition.php?id={$comp.id}">{$comp.name}</a></dd>
+                    {/foreach}
+                </dl>
+                <div class="text-center"><a href="/user-events.php?id={$another_user.id}">Все соревнования</a></div>
+            {else}
+                <p class="text-align: center;">Нет соревнований.</p>
+            {/if}
+        </div>
+    </div>
 	<!--<div class="my-awards">
 		<h3 class="inner-bg">Мои награды<span class="pull-right">5 наград</span></h3>
 		<center>

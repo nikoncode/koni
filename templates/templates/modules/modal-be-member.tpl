@@ -8,10 +8,22 @@ function part_prepare(rid) {
 
 function participate(form) {
 	var f = $(form);
-	var hid = f.find("[name=hid]").val();
+	var hid = '';
+    f.find(".horses option:selected").each(function(){
+        hid += $(this).val()+'-';
+    });
 	var rid = f.find("[name=rid]").val();
-	query_to_ride(rid, hid, 1);
+    var dennik = 0;
+    if($('.dennik:checked').size() > 0) dennik = f.find('.dennik_count').val();
+	query_to_ride(rid, hid, 1, dennik);
 }
+    $(function(){
+        $('.dennik').change(function(){
+            var selected = $('.dennik:checked').size();
+            if(selected > 0) $('.dennik_count').removeClass('hidden');
+            else $('.dennik_count').addClass('hidden');
+        });
+    })
 </script>
 <div id="be-member" class="modal hide in" tabindex="-1" role="dialog" aria-hidden="false">
 	 <div class="modal-header">
@@ -23,7 +35,7 @@ function participate(form) {
 						<div class="row">	
 							<div class="controls controls-row">
 								<label class="span6">Выберите лошадь:</label>
-								<select name="hid" class="span6">
+								<select name="hid[]" class="span6 horses" multiple>
 									{foreach $horses as $h}
 										<option value="{$h.id}">{$h.nick}</option>
 									{/foreach}
@@ -32,7 +44,11 @@ function participate(form) {
 							<input type="hidden" name="rid">
 							
 							<div class="controls controls-row">
-								<label class="checkbox span6"><input type="checkbox" name="dennik"> Мне нужен денник</label>
+                                <div class="span6">
+                                    <label class="checkbox inline"><input type="checkbox" name="dennik" class="dennik"> Мне нужен денник</label>
+                                     <input name="dennik_count" type="number" class="hidden dennik_count" value="1">
+                                </div>
+
 							</div>
 						</div>
 						

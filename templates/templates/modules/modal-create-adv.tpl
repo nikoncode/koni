@@ -16,6 +16,15 @@
             $('#horse_id').val(horse_id);
             $('.new_horse[value="2"]').prop('checked',true);
         });
+
+        $('#createAdv .usage').on('change',function(){
+            var val = $(this).val();
+            if(val == 1){
+                $('#createAdv .step3').css('display','');
+            }else{
+                $('#createAdv .step3').css('display','none');
+            }
+        });
     });
 </script>
 <div id="createAdv" class="modal hide modal600" tabindex="-1" role="dialog" aria-hidden="true">
@@ -27,7 +36,7 @@
         <form class="form-horizontal" action="adv_new.php" method="post">
             <div class="controls controls-row">
                 <label class="span6"><strong>Шаг 1:</strong> Выберите тематику объявления</label>
-                <select name="usage" class="span6">
+                <select name="usage" class="span6 usage">
                     <option value="1">Лошади</option>
                     <option value="2">Корма</option>
                     <option value="3">Транспорт</option>
@@ -48,7 +57,7 @@
                 </select>
             </div>
             <hr/>
-            <div class="controls controls-row">
+            <div class="controls controls-row step3">
                 <label class="span6"><strong>Шаг 3:</strong> Выберите лошадь для продажи</label>
                 <label class="radio span6"><input type="radio" name="new_horse" class="new_horse" value="1" checked="checked"> Создать объявление о новой лошади</label>
                 <label class="radio span6"><input type="radio" name="new_horse" class="new_horse" value="2"> Выбрать из своих лошадей</label>

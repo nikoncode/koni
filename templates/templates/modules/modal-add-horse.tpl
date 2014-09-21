@@ -116,7 +116,7 @@ $(function () {
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 			<h3 >Добавление лошади</h3>
 	</div>
-	<div class="modal-body">
+	<div class="modal-body" style="overflow-y: visible">
 			<form class="form-horizontal"  method="post" action="#" onsubmit="new_horse(this);return false;">
 						<div class="row">	
 														
@@ -221,6 +221,8 @@ $(function () {
 						<div class="row">	
 							<div class="controls controls-row">
 								<center>
+                                    <input type="hidden" name="name" class="name" value="">
+                                    <input type="hidden" name="lname" class="lname" value="">
 								<button type="submit" class="btn btn-warning span3">Сохранить</button>
 								<button class="btn  span3"  data-dismiss="modal" aria-hidden="true">Отмена</button>
 								</center>

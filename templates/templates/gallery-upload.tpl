@@ -6,7 +6,7 @@
 
 $(function () {
 	$("#gallery-upl").fileupload({
-		url: "/api/api.php?m=gallery_upload_photo&album_id={$album_id}",
+		url: "/api/api.php?m=gallery_upload_photo&album_id={$album_id}&club_id={$club_id}",
 		dataType: "json",
 		done: function (e, data) {
 			resp = data.result;
@@ -73,7 +73,13 @@ function update_description(form) {
 			{include "modules/sidebar-my-left.tpl"}
 			
 			<div class="span6 lthr-border gallery-upload block" id="centerBlock" style="background-color: #fff">
-			<h3 class="inner-bg">Загрузка фото в "{$album_name}" <span class="pull-right"><a class="back_album" href="gallery-album.php?id={$album_id}">назад к альбому</a></span></h3>
+			<h3 class="inner-bg">Загрузка фото в "{$album_name}" <span class="pull-right">
+                    {if $club_id > 0}
+                        <a class="back_album" href="club.php?id={$club_id}&album={$album_id}#gallery-club">назад к альбому</a>
+                    {else}
+                        <a class="back_album" href="gallery-album.php?id={$album_id}">назад к альбому</a>
+                    {/if}
+                </span></h3>
 				<div class="row">
 					<div class="span6">
 					
@@ -93,6 +99,7 @@ function update_description(form) {
 						<div class="uploaded-img-area row">
 						<form onsubmit="update_description(this);return false;">	
 							<input type="hidden" name="album_id" value="{$album_id}" />
+							<input type="hidden" name="club_id" value="{$club_id}" />
 							<div class="step1">
 								<div class="progress progress-striped active">
 									<div class="bar" style="width: 0%;"></div>

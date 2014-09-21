@@ -11,7 +11,7 @@ function api_comments_add() {
 		aerr($errors);
 	}
 
-	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid", "cid"))) { //check comment to news, horse, photo
+	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid", "cid", "vid"))) { //check comment to news, horse, photo
 		aerr(array("Ошибка."));
 	}
 
@@ -32,6 +32,12 @@ function api_comments_add() {
 								FROM `comments` as c, users
 	 							WHERE c.`id` = LAST_INSERT_ID()
 								AND users.id = c.o_uid");
+    if($fields['type'] == 'pid'){
+        $user_id = $db->getOne("SELECT users.id FROM users, gallery_photos WHERE users.id=gallery_photos.o_uid AND gallery_photos.id=".$fields['id']);
+        $message = 'Добавил комментарий к вашей фотографии.';
+        api_add_notice($user_id,$_SESSION["user_id"],$message,'user');
+    }
+
 	/* Render he */
 	$params = array(
 		"comment" => $new_comment,
@@ -63,7 +69,7 @@ function api_comments_extra() {
 		aerr($errors);
 	}
 
-	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid", "cid"))) { //check comment to news, horse, photo
+	if (!in_array($fields["type"], array("nid", "pid", "hid", "aid", "apid", "cid", "vid"))) { //check comment to news, horse, photo
 		aerr(array("Ошибка."));
 	}
 

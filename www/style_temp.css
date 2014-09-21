@@ -13,3 +13,42 @@
 .my-compts .compt-img img {max-width: 60px; max-height: 60px}
 .ratings-page .btn-group label {font-weight: normal}
 #modal-gallery-post .image-info {width: 100%}
+.my-compts .i-fan a, .my-compts .my-fans a{color:#fff}
+.dennik_count {width: 35px}
+ul.gallery-in-post {height: auto !important;}
+
+.dragabble, .dragabble * {
+    cursor: move;
+    margin: 8px 0;
+    line-height: 20px;
+}
+
+.dragabble a{
+    cursor: pointer !important;
+}
+
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+div.placeholder {
+    position: relative;
+    /** More li styles **/
+}
+div.placeholder:before {
+    position: absolute;
+    /** Define arrowhead **/
+}
+div.table-caption {
+    background: #ffeed7;
+    text-align: center;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 8px 0;
+    line-height: 20px;
+    clear: both;
+}
+.modal{z-index: 10000 !important;}

@@ -11,6 +11,8 @@ function api_friends_add() {
 	$db = new db;
 	$db->query("DELETE FROM friends WHERE uid = ?i AND fid = ?i;", $_SESSION["user_id"], $fields["id"]); // to exclude dublicates
 	$db->query("INSERT INTO friends (uid, fid) VALUES (?i, ?i);", $_SESSION["user_id"],  $fields["id"]);
+    $message = 'Добавил вас в друзья';
+    api_add_notice($fields["id"],$_SESSION['user_id'],$message,'user');
 	aok(array("Друг добавлен успешно."));
 }
 

@@ -4,7 +4,83 @@
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/chosen.jquery.min.js"></script>
 <link  href="css/chosen.css" rel="stylesheet">
+<link rel="stylesheet" href="css/range.css">
+<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        window.prettyPrint() && prettyPrint();
+
+        $('#car-options').multiselect({
+            /*includeSelectAllOption: true,*/
+            /*enableFiltering: true,*/
+            maxHeight: 150,
+            numberDisplayed: 10,
+            nonSelectedText: 'Выберите из списка'
+            /*						filterPlaceholder: 'Поиск'*/
+        });
+        {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true});{/literal}
+        $(".chosen-container.chosen-select").removeAttr('style');
+    });
+</script>
 <script>
+    $(function() {
+        $( "#adv-car-price" ).slider({
+            range: true,
+            min: 1,
+            max: 1000000,
+            values: [ 1, 1000000 ],
+            slide: function( event, ui ) {
+                var CustomAmount =  "От " + ui.values[ 0 ] + " до " + ui.values[ 1 ] + " руб.";
+                document.getElementById('adv-car-price-amount').innerHTML = CustomAmount;
+                $('#price_car_from').val(ui.values[ 0 ]);
+                $('#price_car_to').val(ui.values[ 1 ]);
+            }
+        });
+        $('#price_car_from').val($( "#adv-car-price" ).slider( "values", 0 ));
+        $('#price_car_to').val($( "#adv-car-price" ).slider( "values", 1 ));
+        var startAmount =   "От " + $( "#adv-car-price" ).slider( "values", 0 ) +
+                " до " + $( "#adv-car-price" ).slider( "values", 1 ) + " руб.";
+        document.getElementById('adv-car-price-amount').innerHTML = startAmount;
+    });
+
+    $(function() {
+        $( "#sleep-place" ).slider({
+            range: true,
+            min: 0,
+            max: 6,
+            values: [ 0, 6 ],
+            slide: function( event, ui ) {
+                var CustomAmount =  "От " + ui.values[ 0 ] + " до " + ui.values[ 1 ] + " шт.";
+                document.getElementById('sleep-place-amount').innerHTML = CustomAmount;
+                $('#mest_car_from').val(ui.values[ 0 ]);
+                $('#mest_car_to').val(ui.values[ 1 ]);
+            }
+        });
+        $('#mest_car_from').val($( "#sleep-place" ).slider( "values", 0 ));
+        $('#mest_car_to').val($( "#sleep-place" ).slider( "values", 1 ));
+        var startAmount =   "От " + $( "#sleep-place" ).slider( "values", 0 ) +  " до " + $( "#sleep-place" ).slider( "values", 1 ) + " шт.";
+        document.getElementById('sleep-place-amount').innerHTML = startAmount;
+    });
+
+    $(function() {
+        $( "#n-stail" ).slider({
+            range: true,
+            min: 0,
+            max: 12,
+            values: [ 0, 12 ],
+            slide: function( event, ui ) {
+                var CustomAmount =  "От " + ui.values[ 0 ] + " до " + ui.values[ 1 ] + " шт.";
+                document.getElementById('n-stail-amount').innerHTML = CustomAmount;
+                $('#stoil_car_from').val(ui.values[ 0 ]);
+                $('#stoil_car_to').val(ui.values[ 1 ]);
+            }
+        });
+        $('#stoil_car_from').val($( "#n-stail" ).slider( "values", 0 ));
+        $('#stoil_car_to').val($( "#n-stail" ).slider( "values", 1 ));
+        var startAmount =   "От " + $( "#n-stail" ).slider( "values", 0 ) + " до " + $( "#n-stail" ).slider( "values", 1 ) + " шт.";
+        document.getElementById('n-stail-amount').innerHTML = startAmount;
+    });
     $(function() {
         $( "#adv-price" ).slider({
             range: true,
@@ -23,7 +99,7 @@
         $('#price_from').val($( "#adv-price" ).slider( "values", 0 ));
         $('#price_to').val($( "#adv-price" ).slider( "values", 1 ));
         document.getElementById('adv-price-amount').innerHTML = startAmount;
-        {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true});{/literal}
+
     }  );
 
     $(function() {
@@ -69,11 +145,11 @@
 </script>
 {literal}
     <script>
-        function search(){
+        function search(form){
             api_query({
                 qmethod: "POST",
                 amethod: "find_adv",
-                params:  $('#find_horses').serialize(),
+                params:  $(form).serialize(),
                 success: function (data) {
                     if(data == ''){
                         $('#search-results').html('<div class="text-center"><strong>Ничего не найдено</strong></div>');
@@ -86,18 +162,18 @@
             })
         }
         function change_country(select) {
-            var country = $('.country option:selected').val();
+            var country = $('option:selected',select).val();
+            var $this = $(select).closest('form');
             api_query({
                 qmethod: "POST",
                 amethod: "auth_get_city",
                 params:  {country_id:country},
                 success: function (response, data) {
                     var values = '<option value="0">Все города</option>'+response;
-                    $('select.city').html(values).trigger("chosen:updated");
+                    $this.find('select.city').html(values).trigger("chosen:updated");
                 },
                 fail:    "standart"
-            })
-            country = $(select).val();
+            });
         }
     </script>
 {/literal}
@@ -218,7 +294,7 @@
 
                             <div class="span3">
                                 <label class="checkbox"><input type="checkbox" name="premium" id="premium"> Только премиум</label>
-                                <input type="button" value="Найти" class="span3 btn btn-warning btn-large" onclick="search()"/>
+                                <input type="button" value="Найти" class="span3 btn btn-warning btn-large" onclick="search('#find_horses')"/>
                             </div>
                         </form>
                     </div>
@@ -229,7 +305,93 @@
                 </div>
 
                 <div class="tab-pane" id="adv-tab3"><!-- транспорт -->
-                    транспорт
+                    <div class="row">
+                        <form class="search-filter" id="find_car">
+                            <input type="hidden" name="usage" value="3">
+                            <div class="span3 search-filter-block">
+                                <label>Тип объявления</label>
+                                <select name="type" class="span3">
+                                    <option value="1">Продажа</option>
+                                    <option value="2">Покупка</option>
+                                    <option value="3">Аренда</option>
+                                </select>
+
+                                <label>Страна</label>
+                                <select name="country" class="span3 country chosen-select" onchange="change_country(this);">
+                                    <option value="0">Все страны</option>
+                                    {foreach $countries as $country}
+                                        <option value="{$country.id}">{$country.country_name_ru}</option>
+                                    {/foreach}
+                                </select>
+
+                                <label>Город</label>
+                                <select name="city" class="span3 city chosen-select">
+                                    <option>Все города</option>
+                                </select>
+
+                                <div class="range-block">
+                                    <label>Цена</label>
+                                    <div id="adv-car-price" class="xxx"></div>
+                                    <div id="adv-car-price-amount" class="range-amount"></div>
+                                    <input type="hidden" name="price_from" id="price_car_from">
+                                    <input type="hidden" name="price_to" id="price_car_to">
+                                </div>
+                            </div>
+
+
+                            <div class="span3 search-filter-block">
+                                <label>Марка</label>
+                                <input name="marka" type="text" class="span3">
+
+                                <label>Тип</label>
+                                <ul class="inline unstyled" id="horse-sex">
+                                    <li><label class="radio"><input type="radio" name="type_car" value="Машина-коневоз">Машина</label></li>
+                                    <li><label class="radio"><input type="radio" name="type_car" value="Прицеп-коневоз">Прицеп</label></li>
+                                    <li><label class="radio"><input type="radio" name="type_car" value="Полуприцеп">Полупр.</label></li>
+                                </ul>
+
+                                <label>Год производства</label>
+                                <input name="age" type="text" class="span3">
+
+                                <label>Состояние</label>
+                                <select name="sost" class="span3">
+                                    <option>Отличное</option>
+                                    <option>Хорошее</option>
+                                    <option>Удовлетворительное</option>
+                                    <option>Плохое</option>
+                                </select>
+                            </div>
+
+
+                            <div class="span3 search-filter-block">
+                                <label>Спальные места</label>
+                                <div id="sleep-place"></div>
+                                <div id="sleep-place-amount" class="range-amount"></div>
+                                <input type="hidden" name="mest_from" id="mest_car_from">
+                                <input type="hidden" name="mest_to" id="mest_car_to">
+                                <label>Кол-во стойл</label>
+                                <div id="n-stail"></div>
+                                <div id="n-stail-amount" class="range-amount"></div>
+                                <input type="hidden" name="stoil_from" id="stoil_car_from">
+                                <input type="hidden" name="stoil_to" id="stoil_car_to">
+                                <label>Оборудование</label>
+                                <select id="car-options" multiple="multiple" name="oborud[]" class="span6">
+                                    <option>Ванная</option>
+                                    <option>Кондиционер</option>
+                                    <option>Кровать</option>
+                                    <option>Стол</option>
+                                    <option>Холодильник</option>
+                                </select>
+                            </div>
+
+
+
+                            <div class="span3">
+                                <label class="checkbox"><input type="checkbox"> Только премиум</label>
+                                <input type="button" value="Найти" class="span3 btn btn-warning btn-large" onclick="search('#find_car')"/>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="tab-pane" id="adv-tab4"><!-- для всадника -->

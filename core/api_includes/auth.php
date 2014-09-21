@@ -119,7 +119,7 @@ function api_auth_get_city(){
                                                 ORDER BY oid",$fields['country_id']);
     $city = '';
     foreach($cities as $row){
-        $selected = ($row['city_name_ru'] == $fields['city'])?'selected="selected"':'';
+        $selected = (isset($fields['city']) && $row['city_name_ru'] == $fields['city'])?'selected="selected"':'';
         $city .= '<option value="'.$row['id'].'" '.$selected.'>'.$row['city_name_ru'].'</option>';
     }
     aok($city, "");

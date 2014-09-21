@@ -37,6 +37,11 @@ function api_news_add() {
 		} else {
 			$fields["o_cid"] = $fields["id"];
 		}
+        $users = $db->getAll("SELECT id FROM users WHERE cid = ?i",$fields["id"]);
+        foreach($users as $row){
+            $message = 'В клубе добавлена новость';
+            api_add_notice($row['id'],$fields["id"],$message,'club');
+        }
 	} else {
 		aerr(array("Тип неопознан"));
 	}

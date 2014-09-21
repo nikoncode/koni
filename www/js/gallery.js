@@ -12,12 +12,15 @@ $(function () {
 /* initialize function */
 function gallery_initialize(parent) {
 	$(parent).find("[data-gallery-pid]").each(function (){
-		$(this).attr("onclick", "gallery_open_modal(this, "+$(this).attr("data-gallery-pid")+");return false;");
-	})
+		$(this).attr("onclick", "gallery_open_modal(this, "+$(this).attr("data-gallery-pid")+",0);return false;");
+	});
+    $(parent).find("[data-video-pid]").each(function (){
+		$(this).attr("onclick", "gallery_open_modal(this, "+$(this).attr("data-video-pid")+",1);return false;");
+	});
 }
 
 /* open modal & change photo function */
-function gallery_open_modal(element, pid) {
+function gallery_open_modal(element, pid, video) {
 	var mdl = $("#modal-gallery-post");
 	mdl.find("#gallery_full").attr("src", "/images/preloader.gif");
 	active_parent = $(element).closest("[data-gallery-list]");
@@ -33,7 +36,7 @@ function gallery_open_modal(element, pid) {
 	api_query({
 		qmethod: "POST",
 		amethod: "gallery_photo_info",
-		params: {id : pid},
+		params: {id : pid,video : video},
 		success: function (resp, data) {
 			mdl.find(".comments_container .comments").remove();
 			mdl.find(".comments_container").append(resp.comments);
@@ -52,8 +55,8 @@ function gallery_open_modal(element, pid) {
 			prev = photo_list[prev];
 
 			/* bind navigation arrows */
-			mdl.find("#gallery_next").attr("onclick", "gallery_open_modal(active_parent, " + next + "); return false;");
-			mdl.find("#gallery_prev").attr("onclick", "gallery_open_modal(active_parent, " + prev + "); return false;");
+			mdl.find("#gallery_next").attr("onclick", "gallery_open_modal(active_parent, " + next + ", " +video+ "); return false;");
+			mdl.find("#gallery_prev").attr("onclick", "gallery_open_modal(active_parent, " + prev + ", " +video+ "); return false;");
 
 			/* check if modal open */
 			if (!mdl.hasClass("in")) {
@@ -77,7 +80,7 @@ function gallery_open_modal(element, pid) {
 			active_parent.attr("data-gallery-pos", position);
 			if (resp.own == 1) {
 				mdl.find("#gallery_delete").attr("onclick",  "gallery_photo_delete(" + pid + "); return false;");
-				mdl.find("#gallery_change_album").attr("onclick",  "gallery_change_album(" + pid + "," + resp.album_id + "); return false;");
+				mdl.find("#gallery_change_album").attr("onclick",  "gallery_change_album(" + pid + "," + resp.album_id + "," + resp.album_club_id + "); return false;");
 				mdl.find("#gallery_delete").css("display", "block");
 				mdl.find("#gallery_change_album").css("display", "block");
 				mdl.find("#change_description").css("display", "block");
@@ -88,7 +91,14 @@ function gallery_open_modal(element, pid) {
 				mdl.find("#gallery_change_group").css("display", "none");
                 mdl.find("#change_description").css("display", "none");
 			}
-			mdl.find("#gallery_full").attr("src", resp.full);
+
+            if(video != '' && video > 0){
+                mdl.find("#video_full").attr("src", '//www.youtube.com/embed/'+resp.video);
+                mdl.find("#gallery_full").css("display", 'none');
+            }else{
+                mdl.find("#gallery_full").attr("src", resp.full);
+                mdl.find("#video_full").css("display", 'none');
+            }
 		},
 		fail: "standart"
 	})
@@ -112,9 +122,10 @@ function gallery_photo_delete(pid) {
     }
 }
 
-function gallery_change_album(pid,album_id) {
+function gallery_change_album(pid,album_id,club_id) {
     var mdl = $("#modal-gallery-change-album");
     mdl.find('#change-photo-id').val(pid);
+    mdl.find('#change-club-id').val(club_id);
     mdl.find('#change-photo-albums option[value="'+album_id+'"]').prop('selected',true);
     $("#modal-gallery-post").modal("hide");
     mdl.modal("show");

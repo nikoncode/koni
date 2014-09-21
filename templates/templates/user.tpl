@@ -24,7 +24,7 @@
 			
 			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 				<div>
-				{include "modules/horses_bar.tpl" horses_bar=$another_user.horses_bar horses_bar_id=$another_user.id}
+				{include "modules/horses_bar_user.tpl" horses_bar=$another_user.horses_bar horses_bar_id=$another_user.id}
 				<div class="clear"></div>
 			{if $photos}
 			<div>

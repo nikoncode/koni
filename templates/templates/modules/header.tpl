@@ -26,6 +26,7 @@
 <body>
 {include "modules/modal-info.tpl"}
 {include "modules/modal-confirm.tpl"}
+{include "modules/modal-myEvents.tpl"}
 <header>
 	{if $user}
 		<script>
@@ -69,9 +70,9 @@
 									<li class="my-messages"><a href="#modal-myMessages" role="button" data-toggle="modal">Сообщения</a></li>
 									<li class="my-info"><a href="#modal-myEvents" role="button" data-toggle="modal">Уведомления</a></li>
 								</ul>
-							<form class="form-search pull-right">
+							<form class="form-search pull-right" method="post" action="find-users.php">
 								<div class="input-append">
-									<input type="text" class="span4 search-query" placeholder="Поиск...">
+									<input type="text" class="span4 search-query" name="search" placeholder="Поиск...">
 									<button type="submit" class="btn"><i class="icon-search"></i></button>
 								</div>
 							</form>

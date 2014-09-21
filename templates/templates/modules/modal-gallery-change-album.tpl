@@ -33,6 +33,7 @@
                 <p style="text-align: center;">Нет альбомов</p>
             {/if}
             <input type="hidden" id="change-photo-id" name="photo_id" value="">
+            <input type="hidden" id="change-club-id" name="club_id" value="">
             <hr/>
             <div class="row">
                 <div class="controls controls-row">

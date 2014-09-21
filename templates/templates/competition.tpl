@@ -5,6 +5,9 @@
 <script type="text/javascript" src="js/comments.js"></script>
 <script type="text/javascript">
 	$(function(){
+
+
+
         $('.fans-member-list').on('click','.fan_btn',function(){
             var $this = $(this).closest('td');
             $this.find('input').prop('checked',true);
@@ -110,23 +113,24 @@ function i_fan(cid){
         })
         return false;
     }
-function query_to_ride(rid, hid, act, callback) {
+function query_to_ride(rid, hid, act, dennik, callback) {
 	api_query({
 		amethod: "comp_rider",
 		qmethod: "POST",
 		params: {
 			id: rid,
 			hid: hid,
+            dennik: dennik,
 			act : act
 		},
 		success: function (data) {
 			var el = $("[data-rider-rid=" + rid + "]");
 			if (data[0] != "0") {
 				el.removeClass("btn-warning").addClass("btn-success");
-                el.html('Учавствую <i class="icon-play icon-white"></i>');
+                el.html('Участвую <i class="icon-play icon-white"></i>');
 			} else {
 				el.removeClass("btn-success").addClass("btn-warning");
-                el.html('Учавствовать <i class="icon-play icon-white"></i>');
+                el.html('Участвовать <i class="icon-play icon-white"></i>');
 			}
 			el.attr("onclick", "rider(" + rid + ", '" + (+!!!data[0]) + "', this); return false;");
 			if ($("#routes .btn-success").length == 0) {
@@ -144,7 +148,7 @@ function rider(rid, act) {
 	if (act == 1) {
 		part_prepare(rid);
 	} else {
-		query_to_ride(rid, 1, 0);
+		query_to_ride(rid, 1, 0, 0);
 	}
 }
 
@@ -243,7 +247,7 @@ function rider(rid, act) {
 											<div class="curr-compt-status span2">{$route.status}</div>
 											<div class="curr-compt-go">
 												<a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}" onclick="rider({$route.id}, '{!$route.is_rider}', this); return false;" data-rider-rid="{$route.id}">
-													Участвовать <i class="icon-play icon-white"></i>
+                                                    {if $route.is_rider}Участвую{else}Участвовать{/if} <i class="icon-play icon-white"></i>
 												</a>
 											</div>
 											<div class="row curr-compt-more">
@@ -270,6 +274,7 @@ function rider(rid, act) {
 	<div class="span12">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#compt-members" data-toggle="tab">Участники</a></li>
+              <li><a href="#start-list" data-toggle="tab">Стартовый лист</a></li>
               <li><a href="#compt-results" data-toggle="tab">Результаты</a></li>
               <li><a href="#compt-gallery" data-toggle="tab">Галерея</a></li>
               <li><a href="#compt-disqus" data-toggle="tab">Обсуждения</a></li>
@@ -303,7 +308,7 @@ function rider(rid, act) {
 						</ul>
 					</div> 
 					<div class="span12">
-						<h3 class="inner-bg">Фотографы{*<span class="pull-right">{$comp.photographers|@count}</span>*}</h3>
+						<h3 class="inner-bg">Фотографы</h3>
 						<ul class="clubs-members" id="photographers">
 							{foreach $comp.photographers as $photographer}
 								<li {if $photographer.id == $user.id}class="me"{/if}><a href="/user.php?id={$photographer.id}"><img src="{$photographer.avatar}"><p>{$photographer.fio}</p></a></li>
@@ -312,7 +317,47 @@ function rider(rid, act) {
 					</div> 
               </div> <!-- compt-members -->
               
-			  <div class="tab-pane" id="compt-results">
+			  <div class="tab-pane" id="start-list">
+				<table class="table table-striped competitions-table compt-results admin-compts">
+						<tbody><tr>
+                            <th>№</th>
+                            <th>Всадник</th>
+                            <th>Разряд</th>
+                            <th>Лошадь</th>
+                            <th>Владелец лошади</th>
+                            <th>Клуб</th>
+                        </tr>
+						{if $comp.routes}
+							{foreach $comp.routes as $route}
+								<tr><td colspan="6" class="table-caption">{$route.name}</td></tr>
+								{if $comp.startlist.{$route.id}}
+									{foreach $comp.startlist.{$route.id} as $res}
+										<tr>
+											<td class="">
+												{$res.ordering}
+											</td>
+											<td>{$res.fio}</td>
+											<td>-</td>
+											<td>{$res.horse}</td>
+											<td>{if $res.owner}{$res.owner}{else}{$res.ownerName}{/if}</td>
+											<td>{$res.club}</td>
+										</tr> 
+									{/foreach}
+								{else}
+									<tr>
+										<td colspan="6" style="text-align: center;">Администратор мероприятия пока не установил турнирную таблицу. Попробуйте позже.</td>
+									</tr>
+								{/if}
+							{/foreach}
+						{else}
+							<tr>
+								<td colspan="6" style="text-align: center;">Нет маршрутов.</td>
+							</tr>
+						{/if}
+					</tbody>
+					</table>
+              </div><!-- compt-startlist -->
+                <div class="tab-pane" id="compt-results">
 				<table class="table table-striped competitions-table compt-results admin-compts">
 						<tbody><tr>
                             <th>№</th>
@@ -329,7 +374,7 @@ function rider(rid, act) {
                         </tr>
 						{if $comp.routes}
 							{foreach $comp.routes as $route}
-								<tr><td colspan="10" class="table-caption">{$route.name}</td></tr> 
+								<tr><td colspan="10" class="table-caption">{$route.name}</td></tr>
 								{if $comp.results.{$route.id}}
 									{foreach $comp.results.{$route.id} as $res}
 										<tr {if $res.disq}class="disq"{/if} data-disq={$res.disq}>
@@ -345,7 +390,7 @@ function rider(rid, act) {
 											<td>{$res.opt3}</td>
 											<td>{$res.opt4}</td>
 											<td>{$res.opt5}</td>
-										</tr> 
+										</tr>
 									{/foreach}
 								{else}
 									<tr>

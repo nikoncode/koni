@@ -78,12 +78,14 @@ function filter_by_type(element) {
 							{foreach $competitions.coming as $comp}
 							 <tr data-type="{$comp.type}" data-date="{$comp.bdate}">
 								<td class="compt-img"><a href="/club-compt.php?id={$comp.id}"><img src="images/icons/{$comp.type}.jpg"></a></td>
-								<td class="compt-date">{$comp.bdate} <div>через {$comp.diff} дней</div></td>
+								<td class="compt-date">{$comp.bdate}</td>
 								<td class="competition">
 									<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
 								</td>
 								<td class="compt-members">
+                                    {if $club.o_uid == $user.id}
 									[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
+                                    {/if}
 									<!--<ul class="inline compt-members">
 										<li>25 участников</li>
 										<li>4 фотографа</li>
@@ -117,7 +119,9 @@ function filter_by_type(element) {
 									<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
 								</td>
 								<td class="compt-members">
+                                    {if $club.o_uid == $user.id}
 									[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
+                                    {/if}
 									<!--<ul class="inline compt-members">
 										<li>25 участников</li>
 										<li>4 фотографа</li>

@@ -57,6 +57,9 @@ if (!session_check()) {
 			$assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]); //many info
 			$assigned_vars["news"] = news_wall_build("club", $assigned_vars["club"]["id"], 0, 5);
 			$assigned_vars["club"]["competitions"] = others_competitions_get($assigned_vars["club"]["id"]);
+            if (!empty($assigned_vars["club"]["coords"])) {
+                $assigned_vars["club"]["coords"] = explode(", ", $assigned_vars["club"]["coords"]);
+            }
 			$assigned_vars["datepicker"] = array();
 			foreach ($assigned_vars["club"]["competitions"] as $type => $comps) {
 				if ($type == "soon") continue;
@@ -66,6 +69,46 @@ if (!session_check()) {
 
 			}
 			$assigned_vars["datepicker"] = json_encode($assigned_vars["datepicker"]);
+
+            if(isset($_GET['album'])){
+                $ids = array();
+                $assigned_vars["gallery"] = $db->getRow("SELECT * FROM albums_clubs WHERE id = ?i AND c_uid = ?i", $_GET['album'], $_GET['id']);
+
+                if($assigned_vars["gallery"]["type_album"] == 0) {
+                    $assigned_vars["photos"] = $db->getAll("SELECT preview, id FROM gallery_photos WHERE album_club_id = ?i ORDER BY time DESC", $_GET['album']);
+                    foreach($assigned_vars["photos"] as $photo) {
+                        $ids[] = $photo["id"];
+                    }
+
+                }
+                if($assigned_vars["gallery"]["type_album"] == 1) {
+                    $assigned_vars["videos"] = $db->getAll("SELECT video, id FROM gallery_video WHERE album_club_id = ?i ORDER BY time DESC", $_GET['album']);
+                    foreach($assigned_vars["videos"] as $photo) {
+                        $ids[] = $photo["id"];
+                    }
+                }
+                $assigned_vars["albums"] = $db->getAll("SELECT * FROM albums_clubs WHERE type_album = ?i AND c_uid = ?i", $assigned_vars["gallery"]["type_album"], $_GET['id']);
+                $assigned_vars["gallery_id"] = $_GET['album'];
+
+
+                $assigned_vars["photos_ids_list"] = implode(",", $ids);
+            }else{
+                $assigned_vars["club"]["albums"] = $db->getAll("SELECT 	id,
+													name,
+													`desc`,
+													linked_event,
+													(SELECT name FROM comp WHERE id = linked_event) as linked_event_name,
+													(SELECT preview FROM gallery_photos where album_club_id=albums_clubs.id LIMIT 1) as cover
+											FROM albums_clubs WHERE type_album = 0 AND c_uid = ?i AND att = 0", $_GET["id"]);
+                $assigned_vars["club"]["albums_video"] = $db->getAll("SELECT 	id,
+													name,
+													`desc`,
+													linked_event,
+													(SELECT name FROM comp WHERE id = linked_event) as linked_event_name,
+													(SELECT video FROM gallery_video where album_club_id=albums_clubs.id LIMIT 1) as cover
+											FROM albums_clubs WHERE type_album = 1 AND c_uid = ?i AND att = 0", $_GET["id"]);
+            }
+
 			template_render($assigned_vars, "club.tpl");
 		}
 	}

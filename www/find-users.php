@@ -16,6 +16,7 @@ if (!session_check()) {
 	$assigned_vars["page_title"] = "Поиск пользователей > Одноконники";
 	$assigned_vars["works"] = $const_work;
 	$assigned_vars["countries"] = $const_countries_old;
+	$assigned_vars["search"] = $_POST['search'];
 	template_render($assigned_vars, "find-users.tpl");
 }
 

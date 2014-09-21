@@ -59,20 +59,20 @@
                                 <th>Название</th>
                             </tr>
                             {foreach $be_events as $event}
-                            <tr class="event_row" data-time="{$event.bdate}" data-type="{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}">
-                                <td class="compt-img"><a href="#"><img src="{$event.avatar}"></a></td>
-                                <td class="compt-date">
-                                    <p class="date">{$event.bdate}<span class="rel-date">(через 1 год)</span></p>
-                                    <p class="place">г. {$event.city}, клуб <a href="/club.php?id={$event.club_id}">«{$event.club}»</a></p>
-                                </td>
-                                <td class="competition"><a href="competition.php?id={$event.id}">{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}</a>
-                                    {if $event.fan > 0}
-                                        {assign var="riders_count" value=","|explode:$event.fan_riders}
-                                        <div class="i-fan"><a href="/fans.php?cid={$event.id}&ifan=1">Я болею за {$riders_count|count} человек</a></div>
-                                    {/if}
-                                    {if isset($be_events_fans[$event.id])}<div class="my-fans"><a href="/fans.php?cid={$event.id}">За вас болеют {$be_events_fans[$event.id]} человек</a></div>{/if}
-                                </td>
-                            </tr>
+                                <tr class="event_row" data-time="{$event.bdate}" data-type="{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}">
+                                    <td class="compt-img"><a href="#"><img src="{$event.avatar}"></a></td>
+                                    <td class="compt-date">
+                                        <p class="date">{$event.bdate}<span class="rel-date">(через 1 год)</span></p>
+                                        <p class="place">г. {$event.city}, клуб <a href="/club.php?id={$event.club_id}">«{$event.club}»</a></p>
+                                    </td>
+                                    <td class="competition"><a href="competition.php?id={$event.id}">{$event.name} {if $event.route}[{$event.route}, {$event.height} см, {$event.exam}]{/if}</a>
+                                        {if $event.fan > 0}
+                                            {assign var="riders_count" value=","|explode:$event.fan_riders}
+                                            <div class="i-fan"><a href="/fans.php?cid={$event.id}&ifan=1&id={$another_user.id}">Он болеет за {$riders_count|count} человек</a></div>
+                                        {/if}
+                                        {if isset($be_events_fans[$event.id])}<div class="my-fans"><a href="/fans.php?cid={$event.id}&id={$another_user.id}">За него болеют {$be_events_fans[$event.id]} человек</a></div>{/if}
+                                    </td>
+                                </tr>
                             {/foreach}
                             </tbody></table>
                     </div>
@@ -130,7 +130,7 @@
 
         </div>
 
-        {include "modules/sidebar-my-right.tpl"}
+        {include "modules/sidebar-user-right.tpl"}
 
     </div> <!-- /row -->
 </div>

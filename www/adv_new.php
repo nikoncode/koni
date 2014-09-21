@@ -36,5 +36,10 @@ if (!session_check()) {
 													spec
 											FROM horses
 											WHERE o_uid = ?i", $_SESSION['user_id']);
-    template_render($assigned_vars, "adv_new.tpl");
+    if($_POST['usage'] == 1){
+        template_render($assigned_vars, "adv_new.tpl");
+    }else{
+        template_render($assigned_vars, "adv_new_sell_car.tpl");
+    }
+
 }

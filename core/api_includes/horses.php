@@ -2,7 +2,7 @@
 
 function api_horses_add() {
 	/* validate data */
-	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec"),  array("nick",
+	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec","name", "lname"),  array("nick",
 		"sex",
 		"poroda",
 		"mast",
@@ -24,12 +24,29 @@ function api_horses_add() {
 	unset($fields["parent"]);
 	unset($fields["pname"]);
 	$fields["o_uid"] = $_SESSION["user_id"];
-
+    $fields['owner'] = $fields['lname'].' '.$fields['name'];
+    unset($fields["lname"]);
+    unset($fields["name"]);
 	/* insert to db */
 	$db = new db;
 	$db->query("INSERT INTO albums (name, o_uid, att) VALUES (?s, ?i, 1)", $fields["nick"], $_SESSION["user_id"]);
 	$fields["album_id"] = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
 	$db->query("INSERT INTO horses (`" . implode("`, `", array_keys($fields)) . "`) VALUES (?a);", $fields);
+	aok(array("Конь добавлен C:"));
+}
+
+function api_horse_owner_add() {
+	/* validate data */
+	validate_fields($fields, $_POST, array(),  array("horse"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* insert to db */
+	$db = new db;
+	$db->query("DELETE FROM horses_to_users WHERE hid = ?i AND uid = ?i;", $fields['horse'],$_SESSION["user_id"]);
+	$db->query("INSERT INTO horses_to_users (hid,uid) VALUES (?i,?i);", $fields['horse'],$_SESSION["user_id"]);
 	aok(array("Конь добавлен C:"));
 }
 
@@ -100,4 +117,35 @@ function api_horses_delete() {
 	$db = new db;
 	$db->query("DELETE FROM horses WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
 	aok(array("Лошадь удалена"));	
+}
+
+function api_horses_user_delete() {
+	/* validate data */
+	validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* delete horse */
+	$db = new db;
+	$db->query("DELETE FROM horses_to_users WHERE hid = ?i AND uid = ?i", $fields["id"], $_SESSION["user_id"]);
+	aok(array("Лошадь удалена"));
+}
+
+function api_user_horses() {
+	/* validate data */
+	validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* find user horses */
+	$db = new db;
+    $horses = $db->getAll("SELECT * FROM horses WHERE o_uid = ?i", $fields["id"]);
+    $rendered = template_render_to_var(array(
+        "finded_horses" => $horses
+    ), "iterations/select_options.tpl");
+    aok($rendered);
 }

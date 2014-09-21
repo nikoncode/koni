@@ -14,13 +14,19 @@ if (!session_check()) {
 		template_render_error("Запрашиваемый альбом не найден. Мы сожалеем :C");	
 	} else {
 		$db = new db;
-		$album_info = $db->getRow("SELECT id, name FROM albums WHERE id = ?i AND o_uid = ?i", $_GET["id"], $_SESSION["user_id"]);
+        if(isset($_GET['club_id'])){
+            $album_info = $db->getRow("SELECT id, name FROM albums_clubs WHERE id = ?i AND c_uid = ?i", $_GET["id"], $_GET["club_id"]);
+        }else{
+            $album_info = $db->getRow("SELECT id, name FROM albums WHERE id = ?i AND o_uid = ?i", $_GET["id"], $_SESSION["user_id"]);
+        }
+
 		if ($album_info === NULL) {
 			template_render_error("Запрашиваемый альбом не найден. Мы сожалеем :C");	
 		} else {
 			$assigned_vars  = array(
 				"page_title" => "Загрузить фото > Одноконники",
 				"album_id"	 => $album_info["id"],
+				"club_id"	 => intval($_GET['club_id']),
 				"album_name" => $album_info["name"],
 				"user"		 => $user
 			);

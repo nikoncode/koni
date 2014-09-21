@@ -13,6 +13,7 @@
 <script type="text/javascript" src="js/comments.js"></script>
 <script type="text/javascript" src="js/news.js"></script>
 <script type="text/javascript" src="js/autoload.js"></script>
+<script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
 
 <script>
 	$(function () {
@@ -28,8 +29,56 @@
             $("#modal-confirm").modal('hide');
         });
 	})
-</script>
+    var myMap, geoResult = undefined, coords;
+    ymaps.ready(init);
+    function init () {
+        myMap = new ymaps.Map('map', {
+            center:[55.76, 37.64],
+            zoom: 13
+        });
+        myMap.controls.add('zoomControl');
+        {if $club.coords}
+        show_address([{$club.coords.0}, {$club.coords.1}]);
+        {/if}
+    }
 
+    function update_coords (data) {
+        coords = data;
+        $("#x").val(coords[0]);
+        $("#y").val(coords[1]);
+        console.log(coords);
+    }
+
+    {literal}
+    function show_address(adress) {
+        if (geoResult !== undefined) {
+            myMap.geoObjects.remove(geoResult);
+        }
+        ymaps.geocode(adress, {results: 1}).then(function(res) {
+            if (res.metaData.geocoder.found !== 0) {
+                geoResult = res.geoObjects.get(0);
+                update_coords(geoResult.geometry.getCoordinates());
+                geoResult.options.set("draggable", "true");
+                geoResult.events.add("dragend", function () {
+                    update_coords(geoResult.geometry.getCoordinates());
+                });
+                myMap.geoObjects.add(geoResult);
+                myMap.setCenter(coords);
+                geoResult.balloon.open();
+            } else {
+                alert("Яндекс не справился с поиском адреса, проверьте введенные данные.");
+            }
+        }, function (err) {
+            alert("Яндекс не справился с поиском адреса, проверьте введенные данные.");
+        });
+    }
+    {/literal}
+</script>
+{include "modules/modal-add-edit-album-club.tpl"}
+{include "modules/modal-add-edit-album-video.tpl"}
+{include "modules/modal-add-video.tpl"}
+{include "modules/modal-gallery-lightbox.tpl"}
+{include "modules/modal-gallery-change-album.tpl"}
 <div class="container clubs-page main-blocks-area club-block img.club-avatar">
 		<div class="row">
 		
@@ -45,7 +94,7 @@
 					<li><a href="#competitions-club" data-toggle="tab">Соревнования</a></li>
 					<li><a>Рейтинги (156,16)</a></li>
 					<li><a href="#gallery-club" data-toggle="tab">Галерея</a></li>
-					<li><a>Контакты</a></li>
+					<li><a href="#contact-club" data-toggle="tab">Контакты</a></li>
 				</ul>
 				
 				<div id="clubTabContent" class="tab-content bg-white">
@@ -243,24 +292,7 @@ function useless(review_id, type, el) {
 						
 						<div class="span6">
 							
-								<h4>Администрация клуба <!--<span class="pull-right">5 человек</span>--></h4>
-							{if $club.staff}
-								<ul class="club-admins">
-									{foreach $club.staff as $staff}
-										<li class="row">
-											<div class="span3"><a href="/user.php?id={$staff.id}"><img src="{$staff.avatar}" /><div>{$staff.fio}</div></a><div class="text-italic">{$staff.club_staff_descr}</div></div>
-											<div class="span3">
-												<ul class="unstyled">
-													{if $staff.show_phone}<li>Тел: <a href="#">{$staff.phone}</a></li>{/if}
-                                                    {if $staff.show_mail}<li>Email: <a href="mailto:{$staff.mail}">{$staff.mail}</a></li>{/if}
-												</ul>
-											</div>
-										</li>
-									{/foreach}	
-								</ul>
-							{else}
-								<p>Администрация инкогнито :]</p>
-							{/if}
+
 							
 							
 							<h3 class="inner-bg">Участники клуба<!--<span class="pull-right">223 человека</span>--></h3>
@@ -488,145 +520,197 @@ function useless(review_id, type, el) {
 				</div> <!-- //rating-club -->
 				
 				<div class="tab-pane" id="gallery-club">
-					<div class="row">
+                    {if $gallery_id}
+                        <div class="row">
+                            <div class="albums">
+                                <h3 class="inner-bg">{$gallery.name}<span class="pull-right"><a href="club.php?id={$club.id}#gallery-club">назад в галерею</a></span></h3>
+                                <div class="row">
+                                    <div class="photos">
+                                        <p class="album-descr">{$gallery.desc}</p>
+                                        {if $club.o_uid == $user.id}
+                                            {if $gallery.type_album == 0}<a href="/gallery-upload.php?id={$gallery_id}&club_id={$club.id}" class="pull-right btn btn-warning">Добавить фото</a>{/if}
+                                            {if $gallery.type_album == 1}<a href="#modal-add-video" role="button" data-toggle="modal" class="pull-right btn btn-warning">Добавить видео</a>{/if}
+                                        {/if}
+                                        <div class="photos" data-gallery-list="{$photos_ids_list}">
+                                            {if $gallery.type_album == 0}
+                                                {if $photos}
+                                                    <ul class="photo-wall">
+                                                        {foreach $photos as $photo}
+                                                            <li><a href="#" data-gallery-pid="{$photo.id}"><img src="{$photo.preview}" /></a></li>
+                                                        {/foreach}
+                                                    </ul>
+                                                {else}
+                                                    <p style="text-align: center;">Нет фотографий</p>
+                                                {/if}
+                                            {/if}
+                                            {if $gallery.type_album == 1}
+                                                {if $videos}
+                                                    <ul class="photo-wall">
+                                                        {foreach $videos as $photo}
+                                                            <li><a href="#" data-video-pid="{$photo.id}"><img src="http://img.youtube.com/vi/{$photo.video}/1.jpg" /></a></li>
+                                                        {/foreach}
+                                                    </ul>
+                                                {else}
+                                                    <p style="text-align: center;">Нет видео</p>
+                                                {/if}
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
 
-						<ul id="gallery-tabs" class="nav nav-tabs new-tabs tabs2">
-							<li class="active"><a href="#gal-foto" data-toggle="tab">Фото</a></li>
-							<li><a href="#gal-video" data-toggle="tab">Видео</a></li>
-						</ul>
-						<div id="GalTabContent" class="tab-content">
-							<div class="tab-pane in active" id="gal-foto"> <!-- tab-photo-->
-								
-								<div class="albums">
-									<div class="span12">
-										<a href="#modal-add-edit-album" role="button" data-toggle="modal" class="pull-right btn btn-default btn-create-album" >Создать альбом</a>
-										<a href="#" class="pull-right btn btn-warning">Добавить фото</a>
-										<h5 class="title-hr">Альбомы</h5>
-									</div>
-									
-									<div class="span12">
-									<ul class="album-wall">
-										<li>
-											<a href="http://odk/club-sample-gallery-album.php"><img src="i/sample-img-1.jpg"></a>
-											<a href="http://odk/club-sample-gallery-album.php"><p>Маршрут №1</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="http://odk/club-sample-gallery-album.php"><img src="i/sample-img-3.jpg"></a>
-											<a href="http://odk/club-sample-gallery-album.php"><p>Маршрут №2</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="http://odk/club-sample-gallery-album.php"><img src="i/sample-img-5.jpg"></a>
-											<a href="http://odk/club-sample-gallery-album.php"><p>Маршрут №3</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="http://odk/club-sample-gallery-album.php"><img src="i/sample-img-4.jpg"></a>
-											<a href="http://odk/club-sample-gallery-album.php"><p>Маршрут №4</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="http://odk/club-sample-gallery-album.php"><img src="i/sample-img-2.jpg"></a>
-											<a href="http://odk/club-sample-gallery-album.php"><p>Маршрут №5</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="http://odk/club-sample-gallery-album.php"><img src="i/sample-img-1.jpg"></a>
-											<a href="http://odk/club-sample-gallery-album.php"><p>Маршрут №6</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="http://odk/club-sample-gallery-album.php"><img src="i/sample-img-5.jpg"></a>
-											<a href="http://odk/club-sample-gallery-album.php"><p>Маршрут №7</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-									</ul>
-									</div>
-									
-									<div class="span12">
-										<h5 class="title-hr">Фотографии пользователей</h5>
-										<div class="row users-albums">
-											<ul class="inline unstyled">
-												<li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-4.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
-											</ul>
-										
-										</div>
-									</div>
-									
-								</div>
-								
-							</div> <!-- /tab-photo-->
-							
-							<div class="tab-pane" id="gal-video"> <!-- tab-video-->
-								
-								<div class="albums">
-									<div class="span12">
-										<a href="#modal-add-edit-album" role="button" data-toggle="modal" class="pull-right btn btn-default btn-create-album">Создать альбом</a>
-										<a href="#" class="pull-right btn btn-warning">Добавить видео</a>
-										<h5 class="title-hr">Альбомы</h5>
-									</div>
-									
-									<div class="span12">
-									<ul class="album-wall">
-										<li>
-											<a href="#"><img src="i/sample-img-1.jpg"></a>
-											<a href="#"><p>Маршрут №1</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="#"><img src="i/sample-img-3.jpg"></a>
-											<a href="#"><p>Маршрут №2</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="#"><img src="i/sample-img-5.jpg"></a>
-											<a href="#"><p>Маршрут №3</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-										<li>
-											<a href="#"><img src="i/sample-img-4.jpg"></a>
-											<a href="#"><p>Маршрут №4</p></a>
-											<p>Наряду с этим врожденная интуиция рассматривается смысл жизни, открывая ...</p>
-										</li>
-									</ul>
-									</div>
-									
-									<div class="span12">
-										<h5 class="title-hr">Видео пользователей</h5>
-										<div class="row users-albums">
-											<ul class="inline unstyled">
-												<li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Александр Гетманский</a> (123 видео)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Елена Урановая</a> (123 видео)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Наталья Валюженич</a> (123 видео)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-4.jpg" class="avatar"> Александр Гетманский</a> (123 видео)</li>
-												<li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Елена Урановая</a> (123 видео)</li>												
-											</ul>
-										
-										</div>
-									</div>
-									
-								</div>
-								
-							</div> <!-- /tab-video-->
-						</div>	
-					
-					</div>
+                            </div>
+                        </div>
+                    {else}
+                        <div class="row">
+
+                            <ul id="gallery-tabs" class="nav nav-tabs new-tabs tabs2">
+                                <li class="active"><a href="#gal-foto" data-toggle="tab">Фото</a></li>
+                                <li><a href="#gal-video" data-toggle="tab">Видео</a></li>
+                            </ul>
+                            <div id="GalTabContent" class="tab-content">
+                                <div class="tab-pane in active" id="gal-foto"> <!-- tab-photo-->
+
+                                    <div class="albums">
+                                        <div class="span12">
+                                            {if $club.o_uid == $user.id}
+                                                <a href="#modal-add-edit-album" role="button" data-toggle="modal" class="pull-right btn btn-default btn-create-album" >Создать альбом</a>
+
+                                            {/if}
+                                            <h5 class="title-hr">Альбомы</h5>
+                                        </div>
+
+                                        <div class="span12">
+                                            {if $club.albums}
+                                                <ul class="album-wall">
+                                                    {foreach $club.albums as $album}
+                                                        <li>
+                                                            <a href="/club.php?id={$club.id}&album={$album.id}#gallery-club">
+                                                                {if !$album.cover}
+                                                                    <img src="http://placehold.it/190x130">
+                                                                {else}
+                                                                    <img src="{$album.cover}">
+                                                                {/if}</a>
+
+                                                            <a href="/club.php?id={$club.id}&album={$album.id}#gallery-club">
+                                                                <p>{$album.name}</p>
+                                                            </a>
+                                                            <p>{$album.desc}</p>
+                                                        </li>
+                                                    {/foreach}
+                                                </ul>
+                                            {else}
+                                                <p style="text-align: center;">Нет альбомов</p>
+                                            {/if}
+                                        </div>
+
+                                        <div class="span12">
+                                            <h5 class="title-hr">Фотографии пользователей</h5>
+                                            <div class="row users-albums">
+                                                <ul class="inline unstyled">
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-4.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div> <!-- /tab-photo-->
+
+                                <div class="tab-pane" id="gal-video"> <!-- tab-video-->
+
+                                    <div class="albums">
+                                        <div class="span12">
+                                            {if $club.o_uid == $user.id}
+                                                <a href="#modal-add-edit-album-video" role="button" data-toggle="modal" class="pull-right btn btn-default btn-create-album">Создать альбом</a>
+                                            {/if}
+                                            <h5 class="title-hr">Альбомы</h5>
+                                        </div>
+
+                                        <div class="span12">
+                                            {if $club.albums_video}
+                                                <ul class="album-wall">
+                                                    {foreach $club.albums_video as $album}
+                                                        <li>
+                                                            <a href="/club.php?id={$club.id}&album={$album.id}#gallery-club">
+                                                                {if !$album.cover}
+                                                                    <img src="http://placehold.it/190x130">
+                                                                {else}
+                                                                    <img src="http://img.youtube.com/vi/{$album.cover}/1.jpg">
+                                                                {/if}</a>
+
+                                                            <a href="/club.php?id={$club.id}&album={$album.id}#gallery-club">
+                                                                <p>{$album.name}</p>
+                                                            </a>
+                                                            <p>{$album.desc}</p>
+                                                        </li>
+                                                    {/foreach}
+                                                </ul>
+                                            {else}
+                                                <p style="text-align: center;">Нет альбомов</p>
+                                            {/if}
+                                        </div>
+
+                                        <div class="span12">
+                                            <h5 class="title-hr">Видео пользователей</h5>
+                                            <div class="row users-albums">
+                                                <ul class="inline unstyled">
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Александр Гетманский</a> (123 видео)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Елена Урановая</a> (123 видео)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Наталья Валюженич</a> (123 видео)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-4.jpg" class="avatar"> Александр Гетманский</a> (123 видео)</li>
+                                                    <li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Елена Урановая</a> (123 видео)</li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div> <!-- /tab-video-->
+                            </div>
+
+                        </div>
+                    {/if}
 				</div> <!-- //gallery-club -->
 				
 				<div class="tab-pane" id="contact-club">
 					<div class="row">
-							<div class="span12">
-									<p>еальность. Катарсис, как следует из вышесказанного, решительно подчеркивает смысл жизни, учитывая опасность, которую представляли собой писания Дюринга для не окрепшего еще немецкого рабочего движения. Отношение к современности понимает под собой конфликт, однако Зигварт считал критерием истинности необходимость и общезначимость, для которых нет никакой опоры в объективном мире. Искусство заполняет бабувизм, при этом буквы А, В, I, О символизируют соответственно общеутвердительное, общеотрицательное, частноутвердительное и частноотрицательное суждения.</p>
-							</div>
+                        <div class="span6">
+                            <div class="controls controls-row">
+                                <div id="map" style="width:460px; height:330px"></div>
+                                <input type="hidden" id="x" name="coords[]" value = "{$club.coords.0}" />
+                                <input type="hidden" id="y" name="coords[]" value = "{$club.coords.1}" />
+                            </div>
+                        </div>
+                        <div class="span6">
+                            <h4>Администрация клуба <!--<span class="pull-right">5 человек</span>--></h4>
+                            {if $club.staff}
+                                <ul class="club-admins">
+                                    {foreach $club.staff as $staff}
+                                        <li class="row">
+                                            <div class="span3"><a href="/user.php?id={$staff.id}"><img src="{$staff.avatar}" /><div>{$staff.fio}</div></a><div class="text-italic">{$staff.club_staff_descr}</div></div>
+                                            <div class="span3">
+                                                <ul class="unstyled">
+                                                    {if $staff.show_phone}<li>Тел: <a href="#">{$staff.phone}</a></li>{/if}
+                                                    {if $staff.show_mail}<li>Email: <a href="mailto:{$staff.mail}">{$staff.mail}</a></li>{/if}
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    {/foreach}
+                                </ul>
+                            {else}
+                                <p>Администрация инкогнито :]</p>
+                            {/if}
+                        </div>
 						</div>
 				</div> <!-- //contact-club -->
 				

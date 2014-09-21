@@ -20,7 +20,7 @@ if (!session_check()) {
         "year_now" => date('Y'),
     );
     $assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]); //many info
-    $assigned_vars["horses"] = $db->getAll("SELECT *, (SELECT preview FROM adv_photos WHERE adv_id = adv.id LIMIT 1) as preview FROM adv ORDER BY add_time");
+    $assigned_vars["horses"] = $db->getAll("SELECT *, (SELECT preview FROM adv_photos WHERE adv_id = adv.id LIMIT 1) as preview FROM adv WHERE `usage` = 1 ORDER BY add_time");
     $assigned_vars["my_horses"] = $db->getAll("SELECT id,
 													avatar,
 													nick,

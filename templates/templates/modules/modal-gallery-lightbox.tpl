@@ -31,6 +31,7 @@
 											<a href="#" class="gallery-slide-right" id="gallery_next"></a>
 											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 											<img src="i/sample-img-1.jpg" id="gallery_full" />
+                                            <iframe id="video_full" width="886" height="490" src="" frameborder="0" allowfullscreen></iframe>
 										</div>
 										<div class="modal-body">
 											<table class="image-info"> <!-- класс .without-descr добавленный к таблице делает модалку без начального описания-->

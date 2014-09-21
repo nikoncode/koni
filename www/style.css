@@ -835,7 +835,7 @@ ul.my-news-wall div.post .modal {position: absolute; top: -100px}
 .modal-gallery-post  table.image-info.without-descr td.info li{float: left; max-width: 150px; margin-left: 20px}
 .modal-images-gallery {background: #222; margin: 7px 7px 0 7px; position: relative;}
 .modal-gallery-post .modal-body {background: #fff !important; margin: 0 7px;}
-.modal-images-gallery button.close {color: #fff; text-shadow: none; position: absolute; top: 7px; right: 10px}
+.modal-images-gallery button.close {color: #fff; text-shadow: none; position: absolute; top: -30px; right: -30px; opacity: 0.5; font-size: 40px; text-shadow: 0 2px 3px #000}
 .modal-images-gallery img{display: block; margin: 0 auto; padding: 0px 0; max-width: 886px0; height: auto}
 .gallery-slide-left, .gallery-slide-right {width: 26px; height: 52px; padding: 40px 20px; position: absolute; top: 50%; margin-top: -92px; opacity: 0.2}
 .gallery-slide-left:hover, .gallery-slide-right:hover {background-color: rgba(23, 23, 23, 0.3); opacity: 1}

@@ -36,6 +36,7 @@ if (!session_check()) {
         "c_value" => $horse["id"],
         "user" => array("id" => $_SESSION["user_id"])
     ), "iterations/comments_block.tpl");
+    if($horse['usage'] == 3) $horse['dop'] = json_decode($horse['dop_params'],true);
     $assigned_vars = array(
         "page_title" 		=> "Объявления > Одноконники",
         "masti" => $const_horses_mast,
@@ -62,5 +63,10 @@ if (!session_check()) {
 													spec
 											FROM horses
 											WHERE o_uid = ?i", $_SESSION['user_id']);
-    template_render($assigned_vars, "adv_page.tpl");
+    if($horse['usage'] == 1){
+        template_render($assigned_vars, "adv_page.tpl");
+    }else{
+        template_render($assigned_vars, "adv_page_car.tpl");
+    }
+
 }

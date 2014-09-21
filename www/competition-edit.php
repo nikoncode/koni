@@ -27,6 +27,20 @@ if (!session_check()) {
 
 	foreach ($assigned_vars["comp"]["routes"] as &$route) {
 		$route["options"] = unserialize($route["options"]);
+        $assigned_vars["comp"]["startlist"][$route['id']] = $db->getAll("SELECT 	users.id,
+															CONCAT(fname, ' ', lname) as fio,
+															horses.nick as horse,
+															horses.id as horse_id,
+															horses.owner,
+															clubs.name as club,
+															clubs.id as club_id,
+															(SELECT CONCAT(fname, ' ', lname) as fio FROM users WHERE id = horses.o_uid) as ownerName,
+															comp_riders.id as ride_id,
+															comp_riders.ordering
+													FROM comp_riders, users, horses, clubs
+													WHERE
+													comp_riders.uid = users.id AND horses.id = comp_riders.hid AND clubs.id = users.cid AND comp_riders.rid = ?i ORDER BY ordering
+													", $route['id']);
 	}
 	if (empty($assigned_vars["comp"]["results"])) {
 		$temp = $db->getAll("SELECT routes.id,

@@ -28,15 +28,52 @@
                 slide: function( event, ui ) {
                     var CustomAmount =  "От " + ui.values[ 0 ] + " до " + ui.values[ 1 ] + " см.";
                     document.getElementById('adv-height-amount').innerHTML = CustomAmount;
+                    $('#height_from').val(ui.values[ 0 ]);
+                    $('#height_to').val(ui.values[ 1 ]);
                 }
             });
+            $('#height_from').val($( "#adv-height" ).slider( "values", 0 ));
+            $('#height_to').val($( "#adv-height" ).slider( "values", 1 ));
             var startAmount =   "От " + $( "#adv-height" ).slider( "values", 0 ) + " до " + $( "#adv-height" ).slider( "values", 1 ) + " см.";
             document.getElementById('adv-height-amount').innerHTML = startAmount;
         });
-
+        search('#find_events');
     });
 </script>
+{literal}
+    <script>
+        function search(form){
+            api_query({
+                qmethod: "POST",
+                amethod: "find_events",
+                params:  $(form).serialize(),
+                success: function (data) {
+                    if(data == ''){
+                        $('#search-results').html('<tr>\
+                                <th>Дата</th>\
+                                <th>Соревнование</th>\
+                                <th>Вид</th>\
+                                <th>Местоположение</th>\
+                                <th>Клуб</th>\
+                                <th>Статус</th>\
+                        </tr><tr><td colspan="6"><div class="text-center"><strong>Ничего не найдено</strong></div></td></tr>');
+                    }else{
+                        $('#search-results').html('<tr>\
+                                <th>Дата</th>\
+                                <th>Соревнование</th>\
+                                <th>Вид</th>\
+                                <th>Местоположение</th>\
+                                <th>Клуб</th>\
+                                <th>Статус</th>\
+                        </tr>'+data);
+                    }
 
+                },
+                fail:    "standart"
+            })
+        }
+    </script>
+{/literal}
 <div class="container main-blocks-area events-page">
     <div class="row">
         <div class="span12 lthr-bgborder filter-block block">
@@ -44,25 +81,25 @@
 
 
             <div class="row">
-                <form class="search-filter">
+                <form class="search-filter" id="find_events">
 
                     <table class="search-filter-block">
                         <tr>
                             <td colspan="2">
                                 <label>Поиск по названию соревнования</label>
-                                <input type="text" class="span6">
+                                <input type="text" name="name" class="span6">
                             </td>
                             <td>
                                 <label>Вид соревнования</label>
-                                <select  class="span3">
-                                    <option>Любой</option>
-                                    <option>Конкур</option>
-                                    <option>Гонка</option>
-                                    <option>Выездка</option>
+                                <select name="type" class="span3">
+                                    <option value="">Любой</option>
+                                    {foreach $const_types as $type}
+                                        <option>{$type}</option>
+                                    {/foreach}
                                 </select>
                             </td>
                             <td rowspan="4">
-                                <input type="submit" value="Найти" class="span3 btn btn-warning btn-large">
+                                <input type="submit" value="Найти" class="span3 btn btn-warning btn-large" onclick="search('#find_events'); return false;">
                                 <p class="text-center"><a href="#">Сбросить фильтр</a></p>
                                 <hr/>
                                 <p class="block-descr">Создавать мероприятие может только предстватель одного из <a href="clubs.php">клубов</a>.</p>
@@ -74,54 +111,59 @@
                         <tr>
                             <td>
                                 <label>Дата начала</label>
-                                <input type="text" class="span3">
+                                <input type="text" name="bdate" class="span3">
                             </td>
                             <td>
                                 <label>Дата окончания</label>
-                                <input type="text" class="span3">
+                                <input type="text" name="edate" class="span3">
                             </td>
                             <td>
                                 <label>Статус</label>
-                                <select  class="span3">
-                                    <option>Любой</option>
+                                <select name="status" class="span3">
+                                    <option value="">Любой</option>
                                     <option>Всероссийский</option>
                                     <option>Международный</option>
+                                    <option>Местный</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <label>Страна</label>
-                                <input type="text" class="span3">
+                                <input type="text" name="country" class="span3">
                             </td>
                             <td>
                                 <label>Город</label>
-                                <input type="text" class="span3">
+                                <input type="text" name="city" class="span3">
                             </td>
                             <td>
                                 <label>Вид</label>
-                                <select  class="span3">
-                                    <option>Все</option>
-                                    <option><span class="label label-warning nth-routes"><abbr title="Количество маршрутов">4: Д, Ю, В</abbr></span> Дети -  12-14 лет</option>
-                                    <option>[Л] Любители 18-30</option>
-                                    <option>Профессионалы 31-131</option>
+                                <select name="exam" class="span3">
+                                    <option value="">Все</option>
+                                    <option>Дети 12-14 лет</option>
+                                    <option>Любители 18-30 лет</option>
+                                    <option>Любители 31 год и старше</option>
+                                    <option>Юноши 14-18 лет</option>
+                                    <option>Взрослые спортсмены</option>
+                                    <option>Взрослые спортсмены на молодых лошадях 4-5 лет</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="rowspan2">
                                 <label>Клубы</label>
-                                <select id="event-clubs" multiple="multiple" class="span6 chosen-select">
-                                    <option><span class="label label-warning nth-routes"><abbr title="Количество маршрутов">4: Д, Ю, В</abbr></span> Конноспортивный комплекс "Битца"</option>
-                                    <option>Комплекс "Кобитца"</option>
-                                    <option>Клуб "Мой первый клуб, он трудный самый"</option>
-                                    <option>Пельменная "Mediamara"</option>
+                                <select id="event-clubs" multiple="multiple" name="club[]" class="span6 chosen-select">
+                                    {foreach $clubs as $club}
+                                        <option>{$club.name}</option>
+                                    {/foreach}
                                 </select>
                             </td>
                             <td>
                                 <label>Высота</label>
                                 <div id="adv-height"></div>
                                 <div id="adv-height-amount" class="range-amount"></div>
+                                <input type="hidden" name="height_from" id="height_from" value="40">
+                                <input type="hidden" name="height_to" id="height_to" value="220">
                             </td>
                         </tr>
 
@@ -137,7 +179,7 @@
             <h3 class="inner-bg">Результаты поиска</h3>
             <div class="row">
                 <table class="table table-striped competitions-table clubs-results">
-                    <tbody><tr>
+                    <tbody id="search-results"><tr>
                         <th>Дата</th>
                         <th>Соревнование</th>
                         <th>Вид</th>
@@ -145,14 +187,7 @@
                         <th>Клуб</th>
                         <th>Статус</th>
                     </tr>
-                    <tr>
-                        <td>21.12.2012</td>
-                        <td><a href="events-event.php">CSI2*-W/ CSIYH1* - RIGA (ЛАТВИЯ) [М3, 115 СМ, ЛЮБИТЕЛИ (Н)]</a></td>
-                        <td>Бега</td>
-                        <td><img src="images/flag-ru.jpg" class="country-flag" title="Россия">Москва</td>
-                        <td><small><a href="club-sample.php">Конноспортивный комплекс "Битца"</a></small></td>
-                        <td><small>Всероссийский</small></td>
-                    </tr>
+
                     </tbody>
                 </table>
             </div>

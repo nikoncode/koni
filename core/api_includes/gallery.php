@@ -7,7 +7,7 @@ include_once (CORE_DIR . "core_includes/templates.php");
 
 function api_gallery_photo_info() {
 	/* validate data */
-	validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+	validate_fields($fields, $_POST, array("video"), array("id"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -15,23 +15,43 @@ function api_gallery_photo_info() {
 
 	/* Getting photo info */
 	$db = new db;
-	$info = $db->getRow("SELECT id,
+
+    if(isset($fields['video']) && $fields['video'] > 0) {
+        $comment_key = 'vid';
+        $info = $db->getRow("SELECT id,
+								video,
+								time,
+								album_club_id,
+								`desc`,
+								o_uid as user_id,
+								(SELECT name FROM albums_clubs WHERE id =  gallery_video.album_club_id) as album_club_name,
+								(SELECT CONCAT(fname, ' ', lname) FROM users WHERE id = o_uid) as user_name,
+								(SELECT COUNT(id) FROM comments WHERE vid = gallery_video.id) as comments_cnt,
+								(SELECT avatar FROM users WHERE id = ?i) as user_avatar
+						FROM gallery_video WHERE id = ?i", $_SESSION["user_id"], $fields["id"]);
+    }else{
+        $info = $db->getRow("SELECT id,
 								full,
 								time,
 								album_id,
+								album_club_id,
 								`desc`,
 								o_uid as user_id,
 								(SELECT name FROM albums WHERE id =  album_id) as album_name,
+								(SELECT name FROM albums_clubs WHERE id =  album_club_id) as album_club_name,
 								(SELECT CONCAT(fname, ' ', lname) FROM users WHERE id = o_uid) as user_name,
 								(SELECT COUNT(id) FROM comments WHERE pid = gallery_photos.id) as comments_cnt,
 								(SELECT avatar FROM users WHERE id = ?i) as user_avatar
 						FROM gallery_photos WHERE id = ?i", $_SESSION["user_id"], $fields["id"]);
+        $comment_key = 'pid';
+    }
+
 
 	if ($info === NULL) {
 		aerr(array("Такой фотографии больше не существует."));
 	} else {
 		$info["own"] = ($_SESSION["user_id"] == $info["user_id"]);
-
+        if($info['album_club_id'] > 0) $info['album_name'] = $info['album_club_name'];
 		/* Getting comments to photo */
 		$comments = $db->getAll("SELECT c.*,
 										concat(fname,' ',lname) as fio,
@@ -39,7 +59,7 @@ function api_gallery_photo_info() {
 										(SELECT COUNT(id) FROM likes WHERE cid = c.id) as likes_cnt,
 										(SELECT COUNT(id) FROM likes WHERE cid = c.id AND o_uid = ?i) as is_liked 
 								FROM (
-									SELECT * FROM comments WHERE pid = ?i ORDER BY time DESC LIMIT 3
+									SELECT * FROM comments WHERE ".$comment_key." = ?i ORDER BY time DESC LIMIT 3
 								) c, users
 								WHERE o_uid = users.id
 								ORDER BY time ASC", $_SESSION["user_id"], $info["id"]);
@@ -49,7 +69,7 @@ function api_gallery_photo_info() {
 			"comments" => $comments, 
 			"comments_cnt" => $info["comments_cnt"],
 			"user_avatar" => $info["user_avatar"],
-			"c_key" => "pid",
+			"c_key" => $comment_key,
 			"c_value" => $info["id"],
 			"user" => array("id" => $_SESSION["user_id"])
 		), "iterations/comments_block.tpl");
@@ -104,7 +124,7 @@ function api_adv_photo_delete() {
 
 function api_gallery_create_album() {
 	/* Validate data */
-	validate_fields($fields, $_POST, array("desc", "att"), array("name"), array(), $errors);
+	validate_fields($fields, $_POST, array("desc", "att", "club_id","type_album"), array("name"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -112,28 +132,74 @@ function api_gallery_create_album() {
 
 	/* Create album */
 	$db = new db;
-	$fields["o_uid"] = $_SESSION["user_id"];	
-	$db->query("INSERT INTO albums (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
-	$id = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
-	aok(array($id), "/gallery.php");
+
+    if(isset($fields['club_id']) && $fields['club_id'] > 0){
+        $fields["c_uid"] = $fields['club_id'];
+        unset($fields['club_id']);
+        $db->query("INSERT INTO albums_clubs (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
+        $id = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
+        aok(array($id), "/club.php?id=".$fields["c_uid"]);
+    }else{
+        $fields["o_uid"] = $_SESSION["user_id"];
+        unset($fields['club_id']);
+        $db->query("INSERT INTO albums (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
+        $id = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
+        aok(array($id), "/gallery.php");
+    }
+
+
+}
+
+function api_gallery_add_video() {
+	/* Validate data */
+	validate_fields($fields, $_POST, array("desc"), array("video","club_id","album_club_id",), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* Create album */
+	$db = new db;
+    $YoutubeCode = $fields['video'];
+    preg_match('#(\.be/|/embed/|/v/|/watch\?v=)([A-Za-z0-9_-]{5,11})#', $YoutubeCode, $matches);
+    if(isset($matches[2]) && $matches[2] != ''){
+        $fields['video'] = $matches[2];
+    }else{
+        aerr(array("Мы не смогли обработать вашу ссылку"));
+    }
+    $club_id = $fields['club_id'];
+    unset($fields['club_id']);
+    $fields['o_uid'] = $_SESSION['user_id'];
+    $fields['time'] = date('Y-m-d H:i:s');
+    $db->query("INSERT INTO gallery_video (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
+        $id = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
+        aok(array($id), "/club.php?id=".$club_id."&album=".$fields['album_club_id']);
+
+
 }
 
 function api_gallery_upload_photo() {
 	/* Validate data */
-	validate_fields($fields, $_GET, array("album_id"), array(), array(), $errors);
+	validate_fields($fields, $_GET, array("album_id","club_id"), array(), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
 	}
 
 	$db = new db;
+    $type_album = 'album_id';
 	if(!isset($fields["album_id"])){ //if not set create new
 		$db->query("INSERT INTO albums (`name`,`att`,`o_uid`) VALUES (?s,?i,?i);", "Без альбома", 1, $_SESSION['user_id']);
         $fields["album_id"] = $db->insertId();
     } else { //if set check access
-    	$id = $db->getOne("SELECT id FROM albums WHERE o_uid = ?i AND id = ?i", $_SESSION["user_id"], $fields["album_id"]);
+        if(isset($fields["club_id"])){
+            $id = $db->getOne("SELECT id FROM albums_clubs WHERE c_uid = ?i AND id = ?i", $fields["club_id"], $fields["album_id"]);
+            $type_album = 'album_club_id';
+        }else{
+            $id = $db->getOne("SELECT id FROM albums WHERE o_uid = ?i AND id = ?i", $_SESSION["user_id"], $fields["album_id"]);
+        }
     	if ($id == NULL) {
-    		aerr(array("Вы не можете загрузить фото в этот альбом, пожалуй	ста обновите страницу и попробуйте еще."));
+    		aerr(array("Вы не можете загрузить фото в этот альбом, пожалуйста обновите страницу и попробуйте еще."));
     	}
     }
 
@@ -151,7 +217,7 @@ function api_gallery_upload_photo() {
 
 	/* Insert to db */
 	if ($result === true) {
-		$db->query("INSERT INTO gallery_photos (full, preview, album_id, o_uid) VALUES (?s, ?s, ?i, ?i);", 
+		$db->query("INSERT INTO gallery_photos (full, preview, ".$type_album.", o_uid) VALUES (?s, ?s, ?i, ?i);",
 			"/uploads/" . $full_img, 
 			"/uploads/" . $preview_img, 
 			$fields["album_id"], 
@@ -229,7 +295,7 @@ function api_gallery_update_description() { //TO-DO: optimize
 
 function api_gallery_album_info() {//GUEST MAY VIEW ALBUM INFO
 	/* validate data*/
-	validate_fields($fields, $_POST, array(), array("id"), array(), $errors, false);
+	validate_fields($fields, $_POST, array("club_id"), array("id"), array(), $errors, false);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -237,7 +303,9 @@ function api_gallery_album_info() {//GUEST MAY VIEW ALBUM INFO
 
 	/* Getting and returning info*/
 	$db = new db;
-	$info = $db->getRow("SELECT id, name, `desc` FROM albums WHERE id = ?i;", $fields["id"]);
+    $table = (isset($fields['club_id']) && $fields['club_id'] > 0)?'albums_clubs':'albums';
+    unset($fields["club_id"]);
+	$info = $db->getRow("SELECT id, name, `desc` FROM ".$table." WHERE id = ?i;", $fields["id"]);
 	if ($info == NULL) {
 		aerr(array("Запрашиваемый альбом не найден."));
 	} else {
@@ -247,7 +315,7 @@ function api_gallery_album_info() {//GUEST MAY VIEW ALBUM INFO
 
 function api_gallery_album_update() {
 	/* validate data*/
-	validate_fields($fields, $_POST, array("desc"), array("id", "name"), array(), $errors);
+	validate_fields($fields, $_POST, array("desc","club_id"), array("id", "name"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -257,7 +325,9 @@ function api_gallery_album_update() {
 	$db = new db;
 	$id = $fields["id"];
 	unset($fields["id"]);
-	$db->query("UPDATE albums SET ?u WHERE id = ?i AND o_uid = ?i;", $fields, $id, $_SESSION["user_id"]);
+	unset($fields["club_id"]);
+    $table = (isset($fields['club_id']) && $fields['club_id'] > 0)?'albums_clubs':'albums';
+	$db->query("UPDATE ".$table." SET ?u WHERE id = ?i AND o_uid = ?i;", $fields, $id, $_SESSION["user_id"]);
 	aok(array("Информация обновлена успешно."), "/gallery-album.php?id=" . $id);	
 }
 
@@ -339,7 +409,7 @@ function api_gallery_upload_avatar_crop() {
 
 function api_gallery_change_photo_album() {
 	/* validate data */
-	validate_fields($fields, $_POST, array(), array("album","photo_id"), array(), $errors);
+	validate_fields($fields, $_POST, array("club_id"), array("album","photo_id"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -347,9 +417,11 @@ function api_gallery_change_photo_album() {
 
 	/* delete album with all photos */
 	$db = new db;
+    $table = (isset($fields['club_id']) && $fields['club_id'] > 0)?'album_club_id':'album_id';
     $photo_id = $db->getOne("SELECT id FROM gallery_photos WHERE o_uid = ?i AND id = ?i;", $_SESSION["user_id"], $fields['photo_id']);
-    if($photo_id) $db->query("UPDATE gallery_photos SET album_id = ".intval($fields['album'])." WHERE o_uid = ?i AND id = ?i;", $_SESSION["user_id"], $fields['photo_id']);
-	aok(array("Альбом успешно изменен."), "/gallery.php");
+    if($photo_id) $db->query("UPDATE gallery_photos SET ".$table." = ".intval($fields['album'])." WHERE o_uid = ?i AND id = ?i;", $_SESSION["user_id"], $fields['photo_id']);
+
+    aok(array("Альбом успешно изменен."), "/gallery.php");
 }
 
 function api_gallery_club_upload_avatar() {

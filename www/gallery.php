@@ -33,7 +33,7 @@ if (!session_check()) {
 
 	$assigned_vars["photos"] = $db->getAll("SELECT 	id,
 													preview
-										 	FROM gallery_photos WHERE o_uid = ?i ORDER BY time DESC", $user_id);
+										 	FROM gallery_photos WHERE album_club_id=0 AND o_uid = ?i ORDER BY time DESC", $user_id);
 
 	/* Making id's array for gallery */
 	$ids = array();

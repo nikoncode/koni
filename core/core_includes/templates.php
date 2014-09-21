@@ -43,7 +43,13 @@ function template_get_user_info($id) {
 									AND friends.uid = ?i LIMIT 6", $id);
 
 	$user["horses_bar"] = $db->getAll("SELECT * FROM horses WHERE o_uid = ?i LIMIT 2", $id); //BOOM
-	$user["competitions"] = $db->getAll("SELECT id, 
+	$user["notice"] = $db->getAll("SELECT n.*, u.avatar, c.avatar as avatarClub, CONCAT(u.fname, ' ', u.lname) as fio, c.name as clubName, u.id as user_id, c.id as club_id
+	                                FROM notice as n
+	                                LEFT JOIN users as u ON (u.id = n.sender_id)
+	                                LEFT JOIN clubs as c ON (c.id = n.sender_id)
+	                                WHERE n.o_uid = ?i AND n.status = 0", $id);
+    $user["notice_count"] = count($user["notice"]);
+	$user["competitions"] = $db->getAll("SELECT id,
 										       name, 
 										       bdate, 
 										       Datediff(bdate, Now()) AS diff 

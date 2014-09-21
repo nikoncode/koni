@@ -31,11 +31,18 @@ function api_comp_add() {
 	}
 
 	$db->query("INSERT INTO comp SET ?u", $fields);
-	aok($db->insertId());
+    $insert_id = $db->insertId();
+    $users = $db->getAll("SELECT id FROM users WHERE cid = ?i",$fields["o_cid"]);
+    foreach($users as $row){
+        $message = 'Добавлено новое соревнование';
+        api_add_notice($row['id'],$fields["o_cid"],$message,'club');
+    }
+
+	aok($insert_id);
 }
 
 function api_comp_edit() {
-	validate_fields($fields, $_POST, array(), array(
+	validate_fields($fields, $_POST, array("dennik"), array(
 		"name",
 		"type",
 		"country",
@@ -56,6 +63,7 @@ function api_comp_edit() {
     if (isset($fields["type"])) {
         $fields["type"] = implode(",", $fields["type"]);
     }
+    if(!isset($fields['dennik'])) $fields['dennik'] = 0;
 	$db = new db;
 	$perm = $db->getOne("SELECT o_uid FROM clubs, comp WHERE comp.id = ?i AND comp.o_cid = clubs.id", $fields["id"]);
 
@@ -64,6 +72,22 @@ function api_comp_edit() {
 	}
 	
 	$db->query("UPDATE comp SET ?u WHERE id = ?i", $fields, $fields["id"]);
+    $o_cid = $db->getOne("SELECT o_cid FROM clubs, comp WHERE comp.id = ?i AND comp.o_cid = clubs.id", $fields["id"]);
+    $users = $db->getAll("SELECT id FROM users WHERE cid = ?i",$o_cid);
+    foreach($users as $row){
+        $message = 'Изменено соревнование';
+        api_add_notice($row['id'],$o_cid,$message,'club');
+    }
+	aok(array("Данные изменены успешно."));
+}
+
+function api_change_riders_ordering() {
+	$db = new db;
+    foreach($_POST['ordering'] as $ride_id => $routes){
+        foreach($routes as $route_id => $order){
+            $db->query("UPDATE comp_riders SET rid = ?i, ordering = ?i WHERE id = ?i", $route_id, $order, $ride_id);
+        }
+    }
 	aok(array("Данные изменены успешно."));
 }
 
@@ -111,7 +135,7 @@ function api_comp_fan_member() {
 }
 
 function api_comp_rider() {
-	validate_fields($fields, $_POST, array("act"), array("id", "hid"), array(), $errors); //act==0 remove
+	validate_fields($fields, $_POST, array("act","dennik"), array("id", "hid"), array(), $errors); //act==0 remove
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -119,9 +143,26 @@ function api_comp_rider() {
 
 	$db = new db;
 	$db->query("DELETE FROM comp_riders WHERE uid = ?i AND rid = ?i", $_SESSION["user_id"], $fields["id"]);
-	if ($fields["act"]) {
-		$db->query("INSERT INTO comp_riders (uid, rid, hid) VALUES (?i, ?i, ?i)", $_SESSION["user_id"], $fields["id"], $fields["hid"]);
+	if ($fields["act"] && $fields['hid'] != '') {
+        $fields['hid'] = explode('-',trim($fields['hid'],'-'));
+        foreach($fields['hid'] as $hid){
+            $db->query("INSERT INTO comp_riders (uid, rid, hid, dennik) VALUES (?i, ?i, ?i, ?i)", $_SESSION["user_id"], $fields["id"], $hid, intval($fields['dennik']));
+        }
+
 	}
+	aok(array(isset($fields["act"])));
+}
+
+function api_delete_rider() {
+	validate_fields($fields, $_POST, array(), array("rid"), array(), $errors); //act==0 remove
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	$db = new db;
+	$db->query("DELETE FROM comp_riders WHERE id = ?i", $fields["rid"]);
+
 	aok(array(isset($fields["act"])));
 }
 
@@ -248,6 +289,13 @@ function api_comp_route_edit() {
 	unset($fields["date"]);
 	unset($fields["time"]);
 	$db->query("UPDATE routes SET ?u WHERE id = ?i", $fields, $fields["id"]);
+
+    $o_cid = $db->getOne("SELECT comp.o_cid FROM routes, comp WHERE routes.cid = comp.id AND routes.id = ?i", $fields["id"]);
+    $users = $db->getAll("SELECT uid FROM comp_riders WHERE rid = ?i",$fields["id"]);
+    foreach($users as $row){
+        $message = 'Изменился маршрут, в котором вы учавствуете.';
+        api_add_notice($row['uid'],$o_cid,$message,'club');
+    }
 	aok(array("WELL DONE"));
 }
 
@@ -416,4 +464,67 @@ function api_comp_review_useless() {
 	$votes = $db->getRow("SELECT (SELECT COUNT(id) FROM club_reviews_useless WHERE review_id = ?i AND type = 1) as plus,
 									(SELECT COUNT(id) FROM club_reviews_useless WHERE review_id = ?i AND type = 2) as minus", $fields["review_id"], $fields["review_id"]);
 	aok($votes);
+}
+
+function api_find_events() {
+    /* validate data */
+    validate_fields($fields, $_POST, array("name","type","bdate","edate", "status", "city","country", "exam","club","height_from",
+            "height_to",
+        ),
+        array(), array(), $errors);
+    $db = new db;
+    $add_sql = '';
+    if($fields['name'] != ''){
+        $add_sql .= ' AND r.name LIKE "%'.mysql_escape_string($fields['name']).'%"';
+    }
+    if($fields['type'] != ''){
+        $add_sql .= ' AND r.type = "'.mysql_escape_string($fields['type']).'"';
+    }
+    if($fields['bdate'] != ''){
+        $add_sql .= ' AND r.bdate = "'.mysql_escape_string($fields['bdate']).'"';
+    }
+    if($fields['edate'] != ''){
+        $add_sql .= ' AND r.edate = "'.mysql_escape_string($fields['edate']).'"';
+    }
+    if($fields['status'] != ''){
+        $add_sql .= ' AND r.status = "'.mysql_escape_string($fields['status']).'"';
+    }
+    if($fields['city'] != ''){
+        $add_sql .= ' AND c.city = "'.mysql_escape_string($fields['city']).'"';
+    }
+    if($fields['exam'] != ''){
+        $add_sql .= ' AND r.exam = "'.mysql_escape_string($fields['exam']).'"';
+    }
+    if($fields['country'] != ''){
+        $add_sql .= ' AND c.country = "'.mysql_escape_string($fields['country']).'"';
+    }
+    if(count($fields['club']) > 0){
+        $clubs = '';
+        foreach($fields['club'] as $club) $clubs .= "'".$club."',";
+        $add_sql .= ' AND club.name IN ('.trim($clubs,',').')';
+    }
+
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    $horses = $db->getAll("SELECT r.*, club.name as club, club.id as club_id,c.country,c.city
+							FROM routes as r
+							INNER JOIN comp as c ON (c.id = r.cid)
+							INNER JOIN clubs as club ON (c.o_cid = club.id)
+							WHERE
+							height >= ?i AND height <= ?i ".$add_sql."
+							ORDER BY r.bdate",
+        $fields['height_from'], $fields["height_to"]);
+    $tmpl_name = 'iterations/events_search.tpl';
+
+    /* render it */
+    $tmpl = new templater;
+    $tmpl->assign("user", array("id" => $_SESSION["user_id"]));
+
+    foreach($horses as &$horse) {
+        $tmpl->assign("event", $horse);
+        $horse = $tmpl->fetch($tmpl_name);
+    }
+    aok($horses);
 }

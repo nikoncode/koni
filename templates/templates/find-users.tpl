@@ -27,6 +27,10 @@ function user_search(form) {
 		fail: "standart"
 	})
 }
+$(document).ready(function() {
+    var search = $('#form_find_users .search-query').val();
+    if(search != '') user_search('#form_find_users');
+});
 </script>
 <div class="container news-page main-blocks-area">
 		<div class="row">
@@ -37,10 +41,10 @@ function user_search(form) {
 			<div class="span6 lthr-border block" id="centerBlock" style="background-color: #fff">
 				<h3 class="inner-bg">Искать пользователей</h3>
 				<div class="row">
-						<form class="form-in-messages" onsubmit="user_search(this);return false;">
+						<form class="form-in-messages" id="form_find_users" onsubmit="user_search(this);return false;">
 						<div class="controls controls-row">
-								<input type="text" class="span4 search-query" name="q" placeholder="Начните вводить имя или название">
-								<input type="submit" class="btn btn-warning span2" value="Искать" />
+								<input type="text" class="span4 search-query" name="q" placeholder="Начните вводить имя или название" value="{$search}">
+								<input type="submit" class="btn btn-warning span2" id="start_search" value="Искать" />
 						</div>
 						<!--</form>-->
 					</div>

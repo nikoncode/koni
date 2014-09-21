@@ -137,7 +137,8 @@
                                 <li><strong>Порода:</strong>{$horse.poroda}</li>
                                 <li><strong>Город:</strong>{$horse.city}</li>
                                 <li><strong>Масть:</strong>{$horse.mast}</li>
-                                <li><strong>Специализация:</strong>{$horse.spec}</li>
+                                <li><strong>Специализация:</strong>{$horse.spec}
+                                </li>
                                 <li><strong>Рост:</strong>{$horse.height} см.</li>
                                 <li><strong>Участие в соревнованиях:</strong>Да</li>
                             </ul>
@@ -151,7 +152,7 @@
                 </div>
 
 
-                {$comments_bl}
+                <div class="span12">{$comments_bl}</div>
             </div>
 
         </div> <!-- /row -->

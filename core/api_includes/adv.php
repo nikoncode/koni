@@ -79,18 +79,97 @@ function api_add_adv(){
 
 }
 
-function api_find_adv() {
-    /* validate data */
-    validate_fields($fields, $_POST, array("spec","in_chemp","sex","nick", "country", "city","age_from", "poroda","mast"),
+function api_add_sell_car_adv(){
+    validate_fields($fields, $_POST,
+        array("dop", "photo", "farkop","mest",
+            "stoil",
+            "trap",
+            "otsek"),
         array(
             "usage",
             "type",
-            "age_to",
+            "age",
+            "marka",
+            "type_car",
+            "sost",
+            "oborud",
+
+            "price",
+            "curr",
+            "country",
+            "city",
+            "descr",
+        ), array(), $errors,true);
+    $db = new db;
+    if (intval($fields["price"]) < 1) {
+        $errors[] = "Введите цену";
+    }
+    if (intval($fields["age"]) < 1900 || intval($fields["age"]) > date('Y')) {
+        $errors[] = "Введите год производства в формате ГГГГ (Например: 2003)";
+    }
+    if ($fields["city"] == '') {
+        $errors[] = "Выберите город";
+    }
+
+    $spec = '';
+    if($fields['oborud']){
+        foreach($fields['oborud'] as $row){
+            $spec .= $row.',';
+        }
+    }
+    $fields['dop_params'] = json_encode($fields['dop']);
+    unset($fields['dop']);
+    $fields['oborud'] = trim($spec,',');
+    $country = $db->getRow("SELECT country_name_ru FROM country_ WHERE id=?i", $fields["country"]);
+    $city = $db->getRow("SELECT city_name_ru FROM city_ WHERE id=?i", $fields["city"]);
+    if(!isset($country['country_name_ru'])){
+        $errors[] = "Не выбрана страна.";
+    }else{
+        $fields['country'] = $country['country_name_ru'];
+    }
+    if(!isset($city['city_name_ru'])){
+        $errors[] = "Не выбран город.";
+    }else{
+        $fields['city'] = $city['city_name_ru'];
+    }
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    $fields['user_id'] = $_SESSION['user_id'];
+    $fields['add_time'] = time();
+    $photos = $fields['photo'];
+    unset($fields['photo']);
+    $db->query("INSERT INTO adv (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
+    $adv_id = $db->getOne("SELECT LAST_INSERT_ID()");
+    if(!empty($photos)){
+        foreach($photos as $row){
+            $db->query("UPDATE adv_photos SET adv_id = ?i WHERE id = ?i AND o_uid = ?i;", $adv_id, $row, $_SESSION["user_id"]);
+        }
+    }
+    aok(array("Объявление успешно добавлено."), "/adv.php#adv-tab3");
+
+}
+
+function api_find_adv() {
+    /* validate data */
+    validate_fields($fields, $_POST, array("spec","in_chemp","sex","nick", "country", "city","age_from", "poroda","mast","age_to",
             "price_from",
             "price_to",
             "height_from",
             "height_to",
-
+            "stoil_from",
+            "stoil_to",
+            "mest_from",
+            "mest_to",
+            "marka",
+            "age",
+            "type_car",
+            "sost",
+        ),
+        array(
+            "usage",
+            "type",
         ), array(), $errors);
     $db = new db;
     $country = $db->getRow("SELECT country_name_ru FROM country_ WHERE id=?i", intval($fields["country"]));
@@ -102,43 +181,69 @@ function api_find_adv() {
     if(isset($city['city_name_ru'])){
         $add_sql .= ' AND city = "'.$city['city_name_ru'].'"';
     }
-    if($fields['nick'] != ''){
-        $add_sql .= ' AND nick LIKE "%'.mysql_escape_string($fields['nick']).'%"';
-    }
-    if($fields['poroda'] != ''){
-        $add_sql .= ' AND poroda = "'.mysql_escape_string($fields['poroda']).'"';
-    }
-    if($fields['mast'] != ''){
-        $add_sql .= ' AND mast = "'.mysql_escape_string($fields['mast']).'"';
-    }
-    if($fields['sex'] != ''){
-        $add_sql .= ' AND sex = "'.mysql_escape_string($fields['sex']).'"';
+    if($fields['usage'] == 1){
+        if($fields['nick'] != ''){
+            $add_sql .= ' AND nick LIKE "%'.mysql_escape_string($fields['nick']).'%"';
+        }
+        if($fields['poroda'] != ''){
+            $add_sql .= ' AND poroda = "'.mysql_escape_string($fields['poroda']).'"';
+        }
+        if($fields['mast'] != ''){
+            $add_sql .= ' AND mast = "'.mysql_escape_string($fields['mast']).'"';
+        }
+        if($fields['sex'] != ''){
+            $add_sql .= ' AND sex = "'.mysql_escape_string($fields['sex']).'"';
+        }
+        if($fields['spec'] != ''){
+            $add_sql .= ' AND spec LIKE "%'.mysql_escape_string($fields["spec"]).'%"';
+        }
+    }else{
+        if($fields['marka'] != ''){
+            $add_sql .= ' AND marka LIKE "%'.mysql_escape_string($fields['marka']).'%"';
+        }
+        if($fields['type_car'] != ''){
+            $add_sql .= ' AND type_car = "'.mysql_escape_string($fields['type_car']).'"';
+        }
+        if($fields['age'] != ''){
+            $add_sql .= ' AND age = "'.mysql_escape_string($fields['age']).'"';
+        }
     }
 
-    if($fields['spec'] != ''){
-        $add_sql .= ' AND spec LIKE "%'.mysql_escape_string($fields["spec"]).'%"';
-    }
 
     if (!empty($errors)) {
         aerr($errors);
     }
-    $age_from = $fields['age_from'];
-    $fields['age_from'] = intval(date('Y')) - $fields['age_to'];
-    $fields['age_to'] = intval(date('Y')) - $age_from;
+    if($fields['usage'] == 1){
+        $age_from = $fields['age_from'];
+        $fields['age_from'] = intval(date('Y')) - $fields['age_to'];
+        $fields['age_to'] = intval(date('Y')) - $age_from;
 
-    $horses = $db->getAll("SELECT *, (SELECT preview FROM adv_photos WHERE adv_id = adv.id LIMIT 1) as preview
+        $horses = $db->getAll("SELECT *, (SELECT preview FROM adv_photos WHERE adv_id = adv.id LIMIT 1) as preview
 							FROM adv
 							WHERE
 							`usage` = ?i AND `type` = ?i AND age >= ?i AND age <= ?i AND price >= ?i AND price <= ?i AND height >= ?i AND height <= ?i ".$add_sql."
 							ORDER BY add_time",
-        $fields['usage'], $fields["type"], $fields["age_from"], $fields["age_to"],
-        $fields["price_from"], $fields["price_to"], $fields["height_from"], $fields["height_to"]);
+            $fields['usage'], $fields["type"], $fields["age_from"], $fields["age_to"],
+            $fields["price_from"], $fields["price_to"], $fields["height_from"], $fields["height_to"]);
+        $tmpl_name = 'iterations/adv_horse.tpl';
+    }else{
+        $horses = $db->getAll("SELECT *, (SELECT preview FROM adv_photos WHERE adv_id = adv.id LIMIT 1) as preview
+							FROM adv
+							WHERE
+							`usage` = ?i AND `type` = ?i AND price >= ?i AND price <= ?i AND mest >= ?i AND mest <= ?i AND stoil >= ?i AND stoil <= ?i AND sost = ?s ".$add_sql."
+							ORDER BY add_time",
+            $fields['usage'], $fields["type"],
+            $fields["price_from"], $fields["price_to"], intval($fields["mest_from"]), intval($fields["mest_to"]), intval($fields["stoil_from"]), intval($fields["stoil_to"]), $fields["sost"]);
+        $tmpl_name = 'iterations/adv_car.tpl';
+    }
+
     /* render it */
     $tmpl = new templater;
     $tmpl->assign("user", array("id" => $_SESSION["user_id"]));
+
     foreach($horses as &$horse) {
         $tmpl->assign("horse", $horse);
-        $horse = $tmpl->fetch("iterations/adv_horse.tpl");
+        $horse = $tmpl->fetch($tmpl_name);
     }
     aok($horses);
 }
