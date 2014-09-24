@@ -49,6 +49,11 @@ function template_get_user_info($id) {
 	                                LEFT JOIN clubs as c ON (c.id = n.sender_id)
 	                                WHERE n.o_uid = ?i AND n.status = 0", $id);
     $user["notice_count"] = count($user["notice"]);
+    $user["messages"] = $db->getAll("SELECT m.*, u.avatar, CONCAT(u.fname, ' ', u.lname) as fio, u.id as user_id
+	                                FROM messages as m
+	                                INNER JOIN users as u ON (u.id = m.uid)
+	                                WHERE m.fid = ?i AND m.status = 0 GROUP BY m.uid ORDER BY m.time DESC ", $id);
+    $user["messages_count"] = count($user["messages"]);
 	$user["competitions"] = $db->getAll("SELECT id,
 										       name, 
 										       bdate, 

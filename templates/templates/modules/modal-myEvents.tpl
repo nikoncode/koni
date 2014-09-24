@@ -15,6 +15,48 @@
     {/literal}
 
 </script>
+<div id="modal-myMessages" class="modal modal800 bg-white hide head-menu-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header ">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Мои сообщения<span class="pull-right">{$user.messages_count} непрочитанных</span></h3>
+    </div>
+    <div class="modal-body">
+        <div class="span10">
+
+            <div class="row">
+                <form class="form-in-messages">
+                    <div class="controls controls-row">
+                        <input type="text" class="span2 search-query" placeholder="Введите имя друга">
+                        <input type="submit" class="btn btn-warning span3" value="Написать сообщение">
+                    </div>
+                </form>
+            </div>
+
+            <div class="row ">
+                <div class="msg-last-dialog span10">
+                    {if $user.messages}
+
+                        {foreach $user.messages as $mes}
+                            <div class="row">
+                                <div class="msg-user-info span2">
+                                    <a href="user-sample.php"><img src="{$mes.avatar}" class="avatar"></a>
+                                    <p class="user-name"><a href="user.php?id={$mes.uid}">{$mes.fio}</a></p>
+                                    <p class="date">{$mes.time}</p>
+                                </div>
+                                <div class="span8 msg-last-message">
+                                    <p class="last-message not-readed"><a href="chat.php?id={$mes.uid}">{$mes.text}</a></p>
+                                </div>
+                            </div>
+                        {/foreach}
+
+                    {else}
+                    <p>Нет непрочитанных сообщений.</p>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- modal-myMessages -->
 <div id="modal-myEvents" class="modal modal800 bg-white hide head-menu-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header ">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
