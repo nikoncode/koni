@@ -108,6 +108,85 @@ function api_auth_register() {
 	aok(array("Пользователь успешно зарегистрирован. На вашу почту отправлено письмо, код с которого нужно будет указать далее."), "/sms.php?login={$fields["login"]}");
 }
 
+function api_auth_register_admin() {
+    /* Validate data */
+    validate_fields($fields, $_POST, array(
+            "mname",
+            "work"
+        ), array(
+            "fname|Имя",
+            "lname|Фамилия",
+            "cid|Клуб",
+            "bday|День рождения",
+            "bmounth|Месяц рождения",
+            "byear|Год рождения",
+            "country|Страна",
+            "city|Город",
+            "phone|Телефон",
+        ), array(
+        ),
+        $errors, false);
+
+    /* Checking uniqueness Login & password pair */
+    $db = new db;
+
+    $country = $db->getRow("SELECT country_name_ru FROM country_ WHERE id=?i", $fields["country"]);
+    $city = $db->getRow("SELECT city_name_ru FROM city_ WHERE id=?i", $fields["city"]);
+    if(!isset($country['country_name_ru'])){
+        $errors[] = "Не выбрана страна.";
+    }else{
+        $fields['country'] = $country['country_name_ru'];
+    }
+    if(!isset($city['city_name_ru'])){
+        $errors[] = "Не выбран город.";
+    }else{
+        $fields['city'] = $city['city_name_ru'];
+    }
+    $fields['login'] = time();
+    $fields['mail'] = $fields['login'].'@odnokonniki.ru';
+    $fields["passwd1"] = '1111111q';
+    $check_uniq = $db->getOne("SELECT id FROM users WHERE mail=?s OR login=?s", $fields["mail"], $fields["login"]);
+    if ($check_uniq !== false) {
+        $errors[] = "Пользователь с таким логином или почтой уже зарегистрирован.";
+    }
+
+    /* Checking user birthdate */
+    if (!checkdate($fields["bmounth"], $fields["bday"], $fields["byear"])) {
+        $errors[] = "Дата рождения неверна.";
+    }
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+
+    unset($fields["accept"]);
+
+    /* Hashing password */
+    $fields["password"] = password_hash($fields["passwd1"], PASSWORD_DEFAULT);
+    unset($fields["passwd1"]);
+    unset($fields["passwd2"]);
+
+    /* Making MYSQL dbate */
+    $fields["bdate"] = (int)$fields["byear"] . "-" . (int)$fields["bmounth"] . "-" . (int)$fields["bday"];
+    unset($fields["byear"]);
+    unset($fields["bmounth"]);
+    unset($fields["bday"]);
+
+    /* Making MYSQL work set */
+    if (isset($fields["work"])){
+        $fields["work"] = implode(",", $fields["work"]);
+    }
+
+    /* Making verify code */
+    $fields["hash"] = others_generate_code(5);
+    $fields["hand"] = 1;
+
+    /* Insert to db */
+    $db->query("INSERT INTO users (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
+
+    aok($db->insertId());
+}
+
 function api_auth_get_city(){
     validate_fields($fields, $_POST, array("city"), array(
         "country_id",

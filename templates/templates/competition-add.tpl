@@ -2,6 +2,10 @@
 {include "modules/header.tpl"}
 <script src="js/chosen.jquery.min.js"></script>
 <link  href="css/chosen.css" rel="stylesheet">
+<!-- implement fileupload -->
+<script src="js/upload/jquery.ui.widget.js"></script>
+<script src="js/upload/jquery.iframe-transport.js"></script>
+<script src="js/upload/jquery.fileupload.js"></script>
 <script>
 	function add_comp(form) {
 		api_query({
@@ -16,6 +20,18 @@
 	}
     $(function(){
         {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true, placeholder_text_multiple: "Выберите виды"});{/literal}
+        $("#fileupload").fileupload({
+            url: '/api/api.php?m=file_club_upload&id={$cid}',
+            dataType: 'json',
+            done: function (e, data) {
+                resp = data.result;
+                if (resp.type=="success") {
+                    $('.comp-added-files').append('<li class="'+resp.response.ext+'-file">'+resp.response.filename+'<button type="button" class="close">&times;</button></li>');
+                } else {
+                    alert(resp.response[0]);
+                }
+            }
+        });
     });
 </script>
 
@@ -71,27 +87,22 @@
 												<input type="text" class="span3" name="city">
 											   <label class="span6">Адрес проведения соревнования</label>
 												<input type="text" class="span6" name="address">
-												<label class="span6">Вид соревнований</label>
+												<div class="span6"></div>
+                                                <label class="span6">Вид соревнований</label>
 												<select class="span6 chosen-select" name="type[]" multiple>
 													{foreach $const_types as $type}
 														<option>{$type}</option>
 													{/foreach}
 											   </select>
+
 											</div>
 											</div>
 										</div>
 									
-									<div class="span6">
+									<div class="span5">
 										<div class="controls controls-row">
-											<label class="span6">Описание соревнования</label>
-											<textarea class="span6" rows="5" name="desc"></textarea>
-											{*<label class="span3">Документы  (pdf, word, excel):</label>
-											<a href="#" class="btn span3">Добавить файл</a>
-											<ul class="unstyled span6 comp-added-files">
-												<li class="pdf-file">Положение-1.pdf<button type="button" class="close">&times;</button></li>
-												<li class="pdf-file">Положение-2.pdf<button type="button" class="close">&times;</button></li>
-												<li class="pdf-file">Положение-c-длинным-описанием.pdf<button type="button" class="close">&times;</button></li>
-											</ul>*}
+											<label class="span5">Описание соревнования</label>
+											<textarea class="span5" rows="5" name="desc"></textarea>
 										</div>
 									</div>
 						</div>

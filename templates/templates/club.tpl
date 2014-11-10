@@ -590,10 +590,11 @@ function useless(review_id, type, el) {
                                                                 {else}
                                                                     <img src="{$album.cover}">
                                                                 {/if}</a>
-
+                                                            {if $club.o_uid == $user.id}<a href="javascript:void(0)" onclick="view_update_album_form({$album.id},{$club.id})" class="icon-edit"></a>{/if}
                                                             <a href="/club.php?id={$club.id}&album={$album.id}#gallery-club">
                                                                 <p>{$album.name}</p>
                                                             </a>
+
                                                             <p>{$album.desc}</p>
                                                         </li>
                                                     {/foreach}
@@ -602,24 +603,19 @@ function useless(review_id, type, el) {
                                                 <p style="text-align: center;">Нет альбомов</p>
                                             {/if}
                                         </div>
+                                        {if $users_photos}
+                                            <div class="span12">
+                                                <h5 class="title-hr">Фотографии пользователей</h5>
+                                                <div class="row users-albums">
+                                                    <ul class="inline unstyled">
+                                                        {foreach $users_photos as $photo}
+                                                            <li><a href="user.php?id={$photo.user_id}"><img src="{$photo.avatar}" class="avatar"> {$photo.fio}</a> ({$photo.count_photo} фото)</li>
+                                                        {/foreach}
+                                                    </ul>
 
-                                        <div class="span12">
-                                            <h5 class="title-hr">Фотографии пользователей</h5>
-                                            <div class="row users-albums">
-                                                <ul class="inline unstyled">
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-4.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Александр Гетманский</a> (123 фото)</li>
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Елена Урановая</a> (123 фото)</li>
-                                                    <li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Наталья Валюженич</a> (123 фото)</li>
-                                                </ul>
-
+                                                </div>
                                             </div>
-                                        </div>
+                                        {/if}
 
                                     </div>
 
@@ -646,7 +642,7 @@ function useless(review_id, type, el) {
                                                                 {else}
                                                                     <img src="http://img.youtube.com/vi/{$album.cover}/1.jpg">
                                                                 {/if}</a>
-
+                                                            {if $club.o_uid == $user.id}<a href="javascript:void(0)" onclick="view_update_album_form({$album.id},{$club.id})" class="icon-edit"></a>{/if}
                                                             <a href="/club.php?id={$club.id}&album={$album.id}#gallery-club">
                                                                 <p>{$album.name}</p>
                                                             </a>

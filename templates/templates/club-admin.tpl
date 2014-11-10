@@ -7,15 +7,37 @@
 <script src="js/upload/jquery.fileupload.js"></script>
 <script src="js/chosen.jquery.min.js"></script>
 <link  href="css/chosen.css" rel="stylesheet">
+<!-- implement jcrop -->
+<script src="js/upload/jquery.Jcrop.min.js"></script>
+<link rel="stylesheet" href="js/upload/jquery.Jcrop.min.css" type="text/css" />
 <!-- yandex map -->
 <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
 <script>
 window.addition_id = 0;
+
 function add_phone() {
 	$("<input type='text' class='span3' name='p_desc[]' placeholder='описание телефона' > \
 	  <input type='text' class='span3' name='phones[]' placeholder='номер' >").appendTo("#phones");
 }
+function update_photo_coords(c) {
+    $('.step3 input[name=x1]').val(c.x);
+    $('.step3 input[name=y1]').val(c.y);
+    $('.step3 input[name=x2]').val(c.x2);
+    $('.step3 input[name=y2]').val(c.y2);
+}
 
+function crop(el) {
+    api_query({
+        qmethod: "POST",
+        amethod: "club_upload_avatar_crop",
+        params:  $(el).serialize(),
+        success: function (data) {
+            $("#club_avatar").attr("src", data.avatar);
+            $("#modal-change-avatar").modal("hide");
+        },
+        fail:    "standart"
+    })
+}
 $(function () {
 	$("#fileupload").fileupload({
 		url: '/api/api.php?m=gallery_club_upload_avatar&id={$club.id}',
@@ -25,6 +47,20 @@ $(function () {
 			if (resp.type=="success") {
 				console.log(resp.response.avatar);
 				$("#club_avatar").attr("src", resp.response.avatar);
+                $(".step3 input[name=avatar]").val(resp.response.avatar);
+                $('#modal-change-avatar').modal('show');
+                $(".step3").css("display", "");
+                $("#future-avatar").Jcrop({
+                    aspectRatio: 1,
+                    onChange: update_photo_coords,
+                    onSelect: update_photo_coords
+                }, function () {
+                    jcrop_api = this;
+                    jcrop_api.setImage(resp.response.avatar, function () {
+                        jcrop_api.setSelect([10,10,210,210]);
+                    });
+
+                });
 			} else {
 				alert(resp.response[0]);
 			}
@@ -43,11 +79,11 @@ $(function () {
 
 });
 
-function step_one(form) {
+function step_one() {
 	api_query({
 		qmethod: "POST",
 		amethod: "club_edit1",
-		params: $(form).serialize(),
+		params: $('#main-admin form').serialize(),
 		success: function (data) {
 			alert(data[0]);
 		},
@@ -55,18 +91,25 @@ function step_one(form) {
 	})
 }
 
-function step_two(form) {
+function step_two() {
 	api_query({
 		qmethod: "POST",
 		amethod: "club_edit2",
-		params: $(form).serialize(),
+		params: $('#about-admin form').serialize(),
 		success: function (data) {
 			alert(data[0]);
 		},
 		fail: "standart"
 	})
 }
+
+function save_steps(){
+    step_one();
+    step_two();
+}
+
 {literal}
+
 function change_country(select) {
     var country = $('select.country option:selected').attr('country_id') || 0;
     var city = $('#club_city').val();
@@ -281,7 +324,7 @@ function user_permission(qid, qtype, qdesc, show_mail, show_phone) {
 				<div id="clubTabContent" class="tab-content bg-white">
 				
 				<div class="tab-pane in active" id="main-admin">
-				<form onsubmit="step_one(this); return false;">
+				<form onsubmit="save_steps(); return false;">
 					<input type="hidden" name="id" value="{$club.id}" />
 					<div class="row option-row">
 
@@ -431,7 +474,7 @@ function user_permission(qid, qtype, qdesc, show_mail, show_phone) {
 				</div> <!-- //news-club -->
 				
 				<div class="tab-pane" id="about-admin">
-						<form onsubmit="step_two(this); return false;">
+						<form onsubmit="save_steps(); return false;">
 							<input type="hidden" name = "id" value = "{$club.id}" >
 							<div class="row option-row">
 							<h5 class="title-hr">О клубе</h5>
@@ -810,6 +853,30 @@ function adv_update(form) {
 			</div>
 
 		</div> <!-- /row -->
+</div>
+<div id="modal-change-avatar" class="modal hide modal700" tabindex="-1" role="dialog">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 >Изменить аватар</h3>
+    </div>
+    <div class="modal-body step3" style="display: none;">
+        <form class="form-horizontal" action="#" onsubmit="crop(this);return false;">
+            <p>Выбранная область будет показываться на Вашей странице.</p>
+            <center>
+                <img src="http://placehold.it/1x1" id="future-avatar" />
+                <div class="change-avatar-buttons">
+                    <input type="hidden" name="x1" value="10" />
+                    <input type="hidden" name="y1" value="10" />
+                    <input type="hidden" name="x2" value="210" />
+                    <input type="hidden" name="y2" value="210" />
+                    <input type="hidden" name="avatar" value="" />
+                    <input type="hidden" name="id" value="{$club.id}" />
+                    <button type="submit" class="btn btn-warning">Сохранить</button>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
+                </div>
+            </center>
+        </form>
+    </div>
 </div>
 
 {include "modules/footer.tpl"}

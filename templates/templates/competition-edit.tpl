@@ -1,7 +1,12 @@
 {* Smarty *}
 {include "modules/header.tpl"}
+{include "modules/modal-add-user.tpl"}
 <script src="js/chosen.jquery.min.js"></script>
 <script src="js/jquery-sortable.js"></script>
+<!-- implement fileupload -->
+<script src="js/upload/jquery.ui.widget.js"></script>
+<script src="js/upload/jquery.iframe-transport.js"></script>
+<script src="js/upload/jquery.fileupload.js"></script>
 <script>
     $(function(){
         $('#startlist_table').sortable({
@@ -52,7 +57,68 @@
             });
         });
         {/literal}
+
+        $("#fileupload_file").fileupload({
+            url: '/api/api.php?m=file_club_upload&id={$comp.id}',
+            dataType: 'json',
+            done: function (e, data) {
+                resp = data.result;
+                if (resp.type=="success") {
+                    $('.comp-added-files').append('<li class="'+resp.response.ext+'-file">'+resp.response.filename+'<button type="button" class="close">&times;</button></li>');
+                } else {
+                    alert(resp.response[0]);
+                }
+            }
+        });
     })
+    {literal}
+    $(document).ready(function(){
+        $('.compt-results').on('change','.user_id',function()
+        {
+            var user_id = $('option:selected',this).val();
+            var $this = $(this).closest('tr');
+            api_query({
+                qmethod: "POST",
+                amethod: "user_horses",
+                params:  {id:user_id},
+                success: function (data) {
+                    $this.find('select.horse').html(data);
+                },
+                fail:    "standart"
+            });
+
+            api_query({
+                qmethod: "POST",
+                amethod: "get_user_club",
+                params:  {id:user_id},
+                success: function (data) {
+                    $this.find('.club_id').val(data.club_id);
+                    if(data.club_name == null) data.club_name = 'Частный владелец';
+                    $this.find('.team span').html(data.club_name);
+                },
+                fail:    "standart"
+            });
+        });
+        $('.compt-results').on('click','.add_horse',function(){
+            var user_id = $(this).closest('tr').find('.user_id option:selected').val();
+            $('#modal_add_horse .o_uid').val(user_id);
+            $('#modal_add_horse').modal("show");
+
+        });
+        $('#addRoute .type').change(function(){
+            $('#addRoute input.sub_type').prop('checked',false);
+            var select = $('option:selected',this).val();
+            $('#addRoute input.sub_type').each(function(){
+                var type = $(this).attr('alt');
+                if(type == select){
+                    $(this).closest('label').css('display','');
+                }else{
+                    $(this).closest('label').css('display','none');
+                }
+            });
+        });
+    });
+    {/literal}
 </script>
 <link  href="css/chosen.css" rel="stylesheet">
 <script>
@@ -78,7 +144,7 @@
         });
     }
     $(function(){
-        {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true, placeholder_text_multiple: "Выберите виды"});{/literal}
+        {literal}$(".clubs-page .chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true, placeholder_text_multiple: "Выберите виды"});{/literal}
     });
 </script>
 
@@ -147,15 +213,19 @@
 									
 									<div class="span6">
 										<div class="controls controls-row">
-											<label class="span6">Описание соревнования
+											<label class="span6">Описание соревнования</label>
 											<textarea class="span6" rows="5" name="desc">{$comp.desc}</textarea>
-											{*<label class="span3">Документы  (pdf, word, excel):</label>
-											<a href="#" class="btn span3">Добавить файл</a>
-											<ul class="unstyled span6 comp-added-files">
-												<li class="pdf-file">Положение-1.pdf<button type="button" class="close">&times;</button></li>
-												<li class="pdf-file">Положение-2.pdf<button type="button" class="close">&times;</button></li>
-												<li class="pdf-file">Положение-c-длинным-описанием.pdf<button type="button" class="close">&times;</button></li>
-											</ul>*}
+                                            <label class="span25">Документы  (pdf, word, excel):</label>
+                                            <div class="fileupload span25" id="fileupload_file">
+                                                <input type="file" name="avatar">
+                                                <button class="btn btn-add-file">Добавить файл</button>
+                                            </div>
+                                            <ul class="unstyled span6 comp-added-files">
+                                                {foreach $files as $file}
+
+                                                    <li class="{$file.ext}-file">{$file.file}<button type="button" class="close">&times;</button></li>
+                                                {/foreach}
+                                            </ul>
                                             <label class="span6">Количество денников в наличии</label>
                                             <input type="number" name="dennik" class="span1" value="{$comp.dennik}">
 										</div>
@@ -255,10 +325,7 @@
 								</ul>
 					</div> 
               </div> <!-- compt-members -->*}
-<!-- implement fileupload -->
-<script src="js/upload/jquery.ui.widget.js"></script>
-<script src="js/upload/jquery.iframe-transport.js"></script>
-<script src="js/upload/jquery.fileupload.js"></script>
+
 <style>
 .compt-results input[type=text] {
 	width: 90px;
@@ -287,6 +354,11 @@ function pre_add(el) {
 	var element = $(el).closest("tr");
 	var new_tr = element.clone();
 	new_tr.find("input[type=text]").val("");
+	new_tr.find("span").html("");
+    new_tr.find("select option[value=0]").prop("selected",true);
+    new_tr.find('.chosen-container').remove();
+    {literal}new_tr.find('select.user_id').chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true, placeholder_text_multiple: "Выберите виды"});{/literal}
+    new_tr.find('.chosen-container').css('width','134px');
 	new_tr.insertBefore(element);
 }
 
@@ -294,6 +366,11 @@ function aft_add(el) {
 	var element = $(el).closest("tr");
 	var new_tr = element.clone();
 	new_tr.find("input[type=text]").val("");
+    new_tr.find("span").html("");
+	new_tr.find("select option[value=0]").prop("selected",true);
+    new_tr.find('.chosen-container').remove();
+    {literal}new_tr.find('select.user_id').chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true, placeholder_text_multiple: "Выберите виды"});{/literal}
+    new_tr.find('.chosen-container').css('width','134px');
 	new_tr.insertAfter(element);
 }
 
@@ -301,9 +378,15 @@ function rem(el) {
 	$(el).closest("tr").remove();
 }
 
+function cancel_disq(el) {
+	$(el).closest("tr").removeClass("disq")
+	.find("[name*=disq]").val("0");
+    $(el).closest("tr").find("[name*=pos]").css("display","");
+}
 function disq(el) {
 	$(el).closest("tr").addClass("disq")
 	.find("[name*=disq]").val("1");
+    $(el).closest("tr").find("[name*=pos]").css("display","none");
 }
 $(function () {
 	$('#fileupload').fileupload({
@@ -335,42 +418,97 @@ $(function () {
 							Загрузить файл
 							<input type="file" name="xls">
 						</div></li>
-						<li><button class="btn btn-warning">Заполнить результаты вручную</button></li>
-						<li><a href="/api/generate_xls.php?id={$comp.id}" target="_blank" class="btn btn-warning">Загрузка XLS-файла для заполнения</a></li>
+						<li><a href="/api/generate_xls.php?id={$comp.id}" target="_blank" class="btn btn-warning">Скачать результаты</a></li>
+                        <li><button class="btn btn-warning">Сохранить</button></li>
+						<li><a href="#modal-add-user" data-toggle="modal" class="btn btn-warning">Добавить всадника</a></li>
 					</ul>
 				</div>
-                <table class="table table-striped competitions-table compt-results admin-compts">
-						<tbody><tr>
+
+						{if $comp.routes}
+							{foreach $comp.routes as $route}
+                    <table class="table table-striped competitions-table compt-results admin-compts">
+                        <tbody>
+                        {if $route.sub_type == 'на чистоту и трезвость'}
+                        <tr>
+                            <th rowspan="2">№</th>
+                            <th rowspan="2">Всадник</th>
+                            <th rowspan="2">Разряд</th>
+                            <th rowspan="2">Лошадь</th>
+                            <th rowspan="2">Команда</th>
+                            <th colspan="2"><center>Маршрут</center></th>
+                            <th rowspan="2"> </th>
+                        </tr>
+                        <tr>
+                            <th>Ш.О.</th>
+                            <th>Время</th>
+                        </tr>
+                        {elseif $route.sub_type == 'с перепрыжкой'}
+
+                            <tr>
+                                <th rowspan="2">№</th>
+                                <th rowspan="2">Всадник</th>
+                                <th rowspan="2">Разряд</th>
+                                <th rowspan="2">Лошадь</th>
+                                <th rowspan="2">Команда</th>
+                                <th colspan="2"><center>Маршрут</center></th>
+                                <th colspan="2"><center>Перепрыжка</center></th>
+                                <th rowspan="2"> </th>
+                            </tr>
+                            <tr>
+                                <th>Ш.О.</th>
+                                <th>Время</th>
+                                <th>Ш.О.</th>
+                                <th>Время</th>
+                            </tr>
+                        {elseif $route.sub_type == ''}
+                        <tr>
                             <th>№</th>
                             <th>Всадник</th>
                             <th>Разряд</th>
                             <th>Лошадь</th>
                             <th>Команда</th>
-                            <th>Штраф. очки маршрут</th>
-                            <th>Время маршрут</th>
-                            <th>Штраф. очки</th>
+                            <th>Ш.О.</th>
+                            <th>Время </th>
+                            <th>Ш.О.</th>
                             <th>Пере- прыжка</th>
                             <th>Норма</th>
                             <th> </th>
                         </tr>
-						{if $comp.routes}
-							{foreach $comp.routes as $route}
+                        {/if}
 								<tr><td colspan="11" class="table-caption">{$route.name}</td></tr> 
 								{foreach $comp.results.{$route.id} as $res}
 									<tr {if $res.disq}class="disq"{/if} data-disq={$res.disq}>
-										<td class="n total">
-											<input type="text" name="pos[{$route.id}][]" value="{$res.pos}">
+										<td class="n total standarts">
+											<input type="text" name="pos[{$route.id}][]" value="{$res.rank}" {if $res.disq}style="display: none"{/if}>
 											<input type="hidden" name="disq[{$route.id}][]" value="{$res.disq}">
 										</td>
-										<td class="name"><input type="text" value="{$res.fio}" name="fio[{$route.id}][]"></td>
-										<td class="discharge standarts"><input type="text" name="degree[{$route.id}][]" value="{$res.degree}"></td>
-										<td class="horse"><input type="text" name="horse[{$route.id}][]" value="{$res.horse}"></td>
-										<td class="team"><input type="text" name="team[{$route.id}][]" value="{$res.team}"></td>
-										<td class="standarts"><input type="text" name="opt1[{$route.id}][]" value="{$res.opt1}"></td>
-										<td class="standarts"><input type="text" name="opt2[{$route.id}][]" value="{$res.opt2}"></td>
-										<td class="standarts"><input type="text" name="opt3[{$route.id}][]" value="{$res.opt3}"></td>
-										<td class="standarts"><input type="text" name="opt4[{$route.id}][]" value="{$res.opt4}"></td>
-										<td class="standarts"><input type="text" name="opt5[{$route.id}][]" value="{$res.opt5}"></td>
+										<td class="name">
+                                            <select name="fio[{$route.id}][]" style="width: 140px" class="chosen-select user_id">
+                                                <option value="0">Выбрать всадника</option>
+                                                {foreach $users as $usr}
+                                                    <option value="{$usr.id}" {if $usr.id == $res.user_id}selected="selected"{/if}>{$usr.lname} {$usr.fname}, {$usr.bdate}, {$usr.city}</option>
+                                                {/foreach}
+                                            </select>
+                                        </td>
+										<td class="discharge standarts"><input type="text" name="degree[{$route.id}][]" value="{$res.razryad}"></td>
+										<td class="horse" alt="{$res.horse}">
+
+                                            <select name="horse[{$route.id}][]" class="horse" style="width: 80px">
+                                                {foreach $res.horses as $horse}
+                                                    <option value="{$horse.id}" {if $horse.id == $res.horse}selected="selected"{/if}>{$horse.nick}</option>
+                                                {/foreach}
+                                            </select>
+                                            <center><a href="javascript:void(0)" class="add_horse">+</a></center>
+                                        </td>
+										<td class="team">
+                                            <span>{$res.club}{if $res.club == '' && $res.user_id}Частный владелец{/if}</span>
+                                            <input type="hidden" name="club_id[{$route.id}][]" class="club_id" value="{$res.club_id}">
+                                        </td>
+										<td class="standarts"><input type="text" name="shtraf_route[{$route.id}][]" value="{$res.shtraf_route}"></td>
+										<td class="standarts"><input type="text" name="time[{$route.id}][]" value="{$res.time}"></td>
+										<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость'}style="display: none"{/if}><input type="text" name="shtraf[{$route.id}][]" value="{$res.shtraf}"></td>
+										<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость'}style="display: none"{/if}><input type="text" name="reroute[{$route.id}][]" value="{$res.rerun}"></td>
+										<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость' || $route.sub_type == 'с перепрыжкой'}style="display: none"{/if}><input type="text" name="norma[{$route.id}][]" value="{$res.norma}"></td>
 										<td class="closebtn"><div class="dropdown button">
 												<button type="button" class="close dropdown-toggle" role="button" data-toggle="dropdown">&equiv;</button>
 													<ul id="menu1" class="dropdown-menu" role="menu">
@@ -378,19 +516,37 @@ $(function () {
 														<li><a tabindex="-1" href="#" onclick="aft_add(this); return false;"><i class="icon-chevron-down"></i> Добавить ряд ниже</a></li>
 														<li class="divider"></li>
 														<li><a tabindex="-1" href="#" onclick="disq(this); return false;"><i class="icon-remove-sign"></i> Исключить</a></li>
+														<li><a tabindex="-1" href="#" onclick="cancel_disq(this); return false;"><i class="icon-remove-sign"></i> Отменить исключение</a></li>
 														<li><a tabindex="-1" href="#" onclick="rem(this); return false;"><i class="icon-minus-sign"></i> Удалить всадника</a></li>
 													</ul>
 												</div></td>
-									</tr> 
+									</tr>
 								{/foreach}
+                        </tbody>
+                    </table>
 							{/foreach}
 						{else}
+                            <table class="table table-striped competitions-table compt-results admin-compts">
+                                <tbody><tr>
+                                    <th>№</th>
+                                    <th>Всадник</th>
+                                    <th>Разряд</th>
+                                    <th>Лошадь</th>
+                                    <th>Команда</th>
+                                    <th>Штраф. очки маршрут</th>
+                                    <th>Время маршрут</th>
+                                    <th>Штраф. очки</th>
+                                    <th>Пере- прыжка</th>
+                                    <th>Норма</th>
+                                    <th> </th>
+                                </tr>
 							<tr>
 								<td colspan="11" style="text-align: center;">Для редактирования результатов добавьте маршрут.</td>
 							</tr>
+                            </tbody>
+                            </table>
 						{/if}
-					</tbody>
-					</table>
+
               	</form>
               </div><!-- compt-results -->
               <div class="tab-pane" id="startlist">
@@ -656,11 +812,16 @@ function prepare_to_add() {
             	<input type="hidden" name="id" value="">
                 <div class="controls controls-row">
                     <label class="span6">Вид соревнования<span class="req-field">*</span></label>
-                    <select class="span3" name="type">
+                    <select class="span3 type" name="type">
 						{foreach $const_types as $type}
 							<option>{$type}</option>
 						{/foreach}
-                    </select>
+                    </select><br/>
+                    <div class="span6">
+                        <label class="sub_type" style="display: none"><input type="radio" name="sub_type" class="sub_type" alt="Конкур" value="на чистоту и трезвость"> на чистоту и трезвость</label><br/>
+                        <label class="sub_type" style="display: none"><input type="radio" name="sub_type" class="sub_type" alt="Конкур" value="с перепрыжкой"> с перепрыжкой</label>
+                    </div>
+
                     <div class="span6"><hr></div>
                 </div>
                 
@@ -706,6 +867,82 @@ function prepare_to_add() {
                          <button class="btn span3" data-dismiss="modal" aria-hidden="true">Отмена</button>
                  </div>
             </form> 
+    </div>
+</div>
+<script>
+    function save_horse(form) {
+        api_query({
+            qmethod: "POST",
+            amethod: "horses_add_admin",
+            params: $(form).serialize(),
+            success: function (id) {
+                var name = $(form).find('input[name="nick"]').val();
+                var o_uid = $(form).find('.o_uid').val();
+                $('#compt-results select.user_id').each(function(){
+                    var tmp_selected = $('option:selected',this).val();
+                    if(tmp_selected == o_uid){
+                        $(this).closest('tr').find('select.horse').append('<option value="'+id+'">'+name+'</option>');
+                    }
+                });
+                $('#modal_add_horse input[type="text"]').val("");
+                $('#modal_add_horse select option:first-child').prop("selected",true);
+                $('#modal_add_horse').modal("hide");
+            },
+            fail: function (err) { //our modal not working
+                console.log(err);
+                var errs = "";
+                for (i=0;i<err.length;++i)
+                    errs += err[i] + "\n";
+                alert(errs);
+            }
+        })
+    }
+</script>
+<div id="modal_add_horse" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 >Добавление лошади</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" action="#" onsubmit="save_horse(this); return false;">
+            <div class="controls controls-row">
+                <label class="span3">Кличка лошади:</label><label class="span3">Пол лошади:</label>
+                <input type="text" class="span3" name="nick">
+                <select class="span3 offset1" name="sex">
+                    {foreach $const_horses_sex as $sex}
+                        <option>{$sex}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="controls controls-row">
+                <label class="span3">Рост лошади:</label><label class="span3">Порода:</label>
+                <input type="text" class="span3" name="rost">
+                <select class="span3 offset1" name="poroda">
+                    {foreach $const_horses_poroda as $poroda}
+                        <option>{$poroda}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="controls controls-row">
+                <label class="span3">Масть:</label><label class="span3">Паспорт:</label>
+                <select class="span3 offset1" name="mast">
+                    {foreach $const_horses_mast as $mast}
+                        <option>{$mast}</option>
+                    {/foreach}
+                </select>
+                <input type="text" class="span3" name="pasport">
+            </div>
+            <div class="controls controls-row">
+                <label class="span3">Год рождения:</label><label class="span3">Место рождения:</label>
+                <input type="text" class="span3" name="byear">
+                <input type="text" class="span3" placeholder="Пример, клуб 'СССР'" name="bplace">
+            </div>
+            <div class="controls controls-row">
+                <input type="hidden" class="o_uid" name="o_uid" value="">
+                <button type="submit" class="btn btn-warning span3">Добавить</button>
+                <button class="btn span3" data-dismiss="modal" aria-hidden="true">Отмена</button>
+            </div>
+        </form>
     </div>
 </div>
 

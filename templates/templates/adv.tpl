@@ -364,6 +364,14 @@
 
 
                             <div class="span3 search-filter-block">
+                                <label>Оборудование</label>
+                                <select id="car-options" multiple="multiple" name="oborud[]" class="span6">
+                                    <option>Ванная</option>
+                                    <option>Кондиционер</option>
+                                    <option>Кровать</option>
+                                    <option>Стол</option>
+                                    <option>Холодильник</option>
+                                </select>
                                 <label>Спальные места</label>
                                 <div id="sleep-place"></div>
                                 <div id="sleep-place-amount" class="range-amount"></div>
@@ -374,14 +382,7 @@
                                 <div id="n-stail-amount" class="range-amount"></div>
                                 <input type="hidden" name="stoil_from" id="stoil_car_from">
                                 <input type="hidden" name="stoil_to" id="stoil_car_to">
-                                <label>Оборудование</label>
-                                <select id="car-options" multiple="multiple" name="oborud[]" class="span6">
-                                    <option>Ванная</option>
-                                    <option>Кондиционер</option>
-                                    <option>Кровать</option>
-                                    <option>Стол</option>
-                                    <option>Холодильник</option>
-                                </select>
+
                             </div>
 
 

@@ -24,6 +24,14 @@ function view_update_album_form(album_id) {
 			mdl.find("[name=name]").val(resp.name);
 			mdl.find("[name=desc]").val(resp.desc);
 			mdl.find("[name=id]").val(resp.id);
+            if(resp.event > 0){
+                mdl.find("[name=event] option[value="+resp.event+"]").prop('selected',true);
+                $('.events_block').css('display','');
+                $('.is_event').prop('checked',true);
+            }else{
+                $('.events_block').css('display','none');
+                $('.is_event').prop('checked',false);
+            }
 			mdl.find("form").attr("onsubmit", "update_album();return false;")
 			mdl.modal("show");
 		},
@@ -43,6 +51,13 @@ function update_album() {
 		fail: "standart"
 	});	
 }
+    $(function(){
+       $('.is_event').change(function(){
+           var is_checked = $('.is_event:checked').size();
+           if(is_checked > 0) $('.events_block').css('display','');
+           if(is_checked == 0) $('.events_block').css('display','none');
+       });
+    });
 </script>
 <div id="modal-add-edit-album" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true">
 	 <div class="modal-header">
@@ -62,6 +77,20 @@ function update_album() {
 								<label class="span3">Описание альбома</label>
 								<textarea class="span6" name="desc" rows="10"></textarea>
 							</div>
+
+                            <div class="controls controls-row">
+								<label class="span3">Указать соревнование</label>
+								<input type="checkbox" class="is_event" name="is_event" value="1">
+							</div>
+
+                            <div class="controls controls-row events_block" style="display: none">
+                                <label class="span3">Соревнования</label>
+                                <select name="event">
+                                    {foreach $events as $event}
+                                        <option value="{$event.id}">{$event.date} - {$event.name}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
 
 							<input type="hidden" name="id" value="" />
 							

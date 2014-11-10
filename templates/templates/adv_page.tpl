@@ -117,9 +117,13 @@
                     <div class="row">
                         <div class="span3">
                             <ul class="adv-gallery" data-gallery-list="{$photos_ids_list}">
-                                {foreach $photos as $photo}
-                                    <li><a data-gallery-pid="{$photo.id}" href="#"><img src="{$photo.full}" class="img-polaroid"></a></li>
-                                {/foreach}
+                                {if $photos}
+                                    {foreach $photos as $photo}
+                                        <li><a data-gallery-pid="{$photo.id}" href="#"><img src="{$photo.full}" class="img-polaroid"></a></li>
+                                    {/foreach}
+                                {else}
+                                    <li><img src="/images/bg-block-horse-without.png" class="img-polaroid"></li>
+                                {/if}
                             </ul>
                         </div>
                         <div class="span9">

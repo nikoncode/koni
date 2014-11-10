@@ -79,7 +79,7 @@ function gallery_open_modal(element, pid, video) {
 			/* bind delete */
 			active_parent.attr("data-gallery-pos", position);
 			if (resp.own == 1) {
-				mdl.find("#gallery_delete").attr("onclick",  "gallery_photo_delete(" + pid + "); return false;");
+				mdl.find("#gallery_delete").attr("onclick",  "gallery_photo_delete(" + pid + ", " +video+ "); return false;");
 				mdl.find("#gallery_change_album").attr("onclick",  "gallery_change_album(" + pid + "," + resp.album_id + "," + resp.album_club_id + "); return false;");
 				mdl.find("#gallery_delete").css("display", "block");
 				mdl.find("#gallery_change_album").css("display", "block");
@@ -95,27 +95,36 @@ function gallery_open_modal(element, pid, video) {
             if(video != '' && video > 0){
                 mdl.find("#video_full").attr("src", '//www.youtube.com/embed/'+resp.video);
                 mdl.find("#gallery_full").css("display", 'none');
+                mdl.find("#gallery_delete").html('<i class="icon-trash"></i>Удалить видео');
             }else{
                 mdl.find("#gallery_full").attr("src", resp.full);
                 mdl.find("#video_full").css("display", 'none');
+                mdl.find("#gallery_delete").html('<i class="icon-trash"></i>Удалить фотографию');
             }
 		},
 		fail: "standart"
 	})
 }
 
-function gallery_photo_delete(pid) {
-    if(confirm('Вы уверены, что хотите удалить эту фотографию?')){
+function gallery_photo_delete(pid,video) {
+    var text = 'Вы уверены, что хотите удалить эту фотографию?';
+    if(video > 0) text = 'Вы уверены, что хотите удалить это видео?';
+    if(confirm(text)){
         api_query({
             qmethod: "POST",
             amethod: "gallery_photo_delete",
-            params: {id : pid},
+            params: {id : pid, video:video},
             success: function (resp) {
                 var photo_list = active_parent.attr("data-gallery-list").split(",");
                 photo_list.splice(photo_list.indexOf(String(pid)), 1);
                 active_parent.attr("data-gallery-list", photo_list.join(","));
-                active_parent.find("[data-gallery-pid="+pid+"]").parent().remove();
-                gallery_open_modal(active_parent, photo_list[active_parent.attr("data-gallery-pos")]);
+                if(video > 0){
+                    active_parent.find("[data-video-pid="+pid+"]").parent().remove();
+                }else{
+                    active_parent.find("[data-gallery-pid="+pid+"]").parent().remove();
+                }
+
+                gallery_open_modal(active_parent, photo_list[active_parent.attr("data-gallery-pos")],video);
             },
             fail: "standart"
         });

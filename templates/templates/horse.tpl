@@ -38,11 +38,9 @@
 				</ul>
 				
 			<div id="horseTabContent" class="new-tabs tab-content">
-				
 			<div class="tab-pane in active" id="horse-info">
 				<div class="my-horses">
 					<div class="common-info row">
-
 						<img src="{$horse.avatar}" class="avatar-my-horse-top"/>
 						<h2 class="my-horse-name">{$horse.nick}</h2>
 						<p class="my-horse-info">{$horse.age} лет ({$horse.byear} г. р.)</p>
@@ -73,7 +71,7 @@
 							<p class="title">Родословная:</p>
 							<ul class="horse-pedigree">
 								{if $horse.bplace}
-									<li class="place-birth"><span>Место рождения: </span><a href="/clubs-sample.php">{$horse.bplace}</a></li>
+									<li class="place-birth"><span>Место рождения: </span><a href="#">{$horse.bplace}</a></li>
 								{/if}
 								{foreach $horse.parents as $parent}
 									<li class="pedigree-members"><span>{$parent@key}: </span><a href="#">{$parent}</a></li>

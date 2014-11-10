@@ -20,5 +20,6 @@ if (!session_check()) {
 	$assigned_vars["page_title"] = "Добавить соревнование > Одноконники";
 	$assigned_vars["const_countries"] = $const_countries_old;
 	$assigned_vars["const_types"] = $const_horses_spec;
+	$assigned_vars["files"] = $db->getAll("SELECT * FROM comp_files WHERE cid = ?i", $_GET["id"]);
 	template_render($assigned_vars, "competition-add.tpl");
 }

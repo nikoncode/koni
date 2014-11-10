@@ -35,7 +35,7 @@
             $('#height_from').val($( "#adv-height" ).slider( "values", 0 ));
             $('#height_to').val($( "#adv-height" ).slider( "values", 1 ));
             var startAmount =   "От " + $( "#adv-height" ).slider( "values", 0 ) + " до " + $( "#adv-height" ).slider( "values", 1 ) + " см.";
-            document.getElementById('adv-height-amount').innerHTML = startAmount;
+            $('#adv-height-amount').html(startAmount);
         });
         search('#find_events');
     });
@@ -72,6 +72,16 @@
                 fail:    "standart"
             })
         }
+        function clear_filter(form){
+            $(form).find('input[type="text"]').val('');
+            $(form).find('select option:first-child').prop('selected',true);
+            $(form).find('#event-clubs option').prop('selected',false);
+            $('#event-clubs').multiselect('rebuild');
+            $("#adv-height").slider({values: [ 40, 220 ]});
+            var startAmount =   "От " + $( "#adv-height" ).slider( "values", 0 ) + " до " + $( "#adv-height" ).slider( "values", 1 ) + " см.";
+            $('#adv-height-amount').html(startAmount);
+            search('#find_events');
+        }
     </script>
 {/literal}
 <div class="container main-blocks-area events-page">
@@ -100,7 +110,7 @@
                             </td>
                             <td rowspan="4">
                                 <input type="submit" value="Найти" class="span3 btn btn-warning btn-large" onclick="search('#find_events'); return false;">
-                                <p class="text-center"><a href="#">Сбросить фильтр</a></p>
+                                <p class="text-center"><a href="#" onclick="clear_filter('#find_events');">Сбросить фильтр</a></p>
                                 <hr/>
                                 <p class="block-descr">Создавать мероприятие может только предстватель одного из <a href="clubs.php">клубов</a>.</p>
                                 <!--<div class="banner">

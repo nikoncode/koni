@@ -34,6 +34,14 @@ if (!session_check()) {
 	$assigned_vars["photos"] = $db->getAll("SELECT 	id,
 													preview
 										 	FROM gallery_photos WHERE album_club_id=0 AND o_uid = ?i ORDER BY time DESC", $user_id);
+    $assigned_vars["events"] = $db->getAll("SELECT c.*, DATE_FORMAT(c.bdate,'%d.%m.%Y') as date
+													FROM comp as c
+													INNER JOIN clubs as cl on (cl.id = c.o_cid)
+													LEFT JOIN routes as r on (r.cid = c.id)
+													LEFT JOIN comp_riders as cr on (cr.uid = ?i AND cr.rid = r.id)
+													LEFT JOIN comp_members as cm on (cm.uid = ?i AND cm.cid = c.id)
+													WHERE cm.fan > 0 OR cr.id > 0
+													ORDER BY c.bdate DESC", $_SESSION["user_id"], $_SESSION["user_id"]);
 
 	/* Making id's array for gallery */
 	$ids = array();

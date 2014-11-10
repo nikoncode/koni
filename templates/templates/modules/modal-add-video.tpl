@@ -7,7 +7,7 @@
             amethod: "gallery_add_video",
             params: $("#add-video").serialize(),
             success: function (resp, data) {
-                document.location = data.redirect;
+                location.reload();
             },
             fail: "standart"
         });
@@ -34,6 +34,7 @@
 
                 <input type="hidden" name="id" value="" />
                 <input type="hidden" name="club_id" value="{$club.id}" />
+                <input type="hidden" name="comp_id" value="{$comp.id}" />
                 <input type="hidden" name="album_club_id" value="{$gallery_id}" />
 
             </div>

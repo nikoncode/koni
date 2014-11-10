@@ -817,8 +817,10 @@ ul.uploaded-photos-list li .new-uploaded-img img.img-polaroid {height: 90px; wid
 
 /* gallery-in-post */
 ul.gallery-in-post {margin-left: 0; list-style: none; height: 360px}
-ul.gallery-in-post li a >div{width: 85px !important; height: 85px; padding-bottom: 0px;margin-bottom: 3px !important; margin-left: 360px; background-size: cover !important; background-position: center center; background-repeat: no-repeat;}
-ul.gallery-in-post li:first-child a > div{width: 350px !important; height: 350px; float: left; margin-left: 0}
+ul.gallery-in-post li img {max-width: 85px !important; max-height: 85px; padding-bottom: 0px;margin-bottom: 3px !important; padding-left: 10px; background-size: cover !important; background-position: center center; background-repeat: no-repeat;}
+ul.gallery-in-post li:first-child img {max-width: 350px !important; max-height: 350px; padding-left: 0}
+ul.gallery-in-post li:first-child {float: left;}
+ul.gallery-in-post li {display: block}
 .modal-gallery-post div.comments {margin: 0 10px}
 .modal-gallery-post div.comments ul.comments-lists > li {margin-left: 0}
 div.modal900.modal-gallery-post div.comments ul.comments-lists li.answer-form form.max {background: none}

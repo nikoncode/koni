@@ -52,3 +52,20 @@ div.table-caption {
     clear: both;
 }
 .modal{z-index: 10000 !important;}
+.album-wall li .icon-edit{float: right}
+
+#compt-gallery #gallery-tabs > li {
+    width: 466px;
+}
+#compt-gallery #gallery-tabs, #compt-gallery #gallery-tabs > li > a {
+    background: none repeat scroll 0 0 #6d3512 !important;
+}
+#compt-gallery #gallery-tabs, #compt-gallery #gallery-tabs > li.active > a {
+    background: none repeat scroll 0 0 #fff !important;
+}
+
+table.compt-results td.table-caption {
+    background: none repeat scroll 0 0 #ffeed7 !important;
+}
+
+table.compt-results.admin-compts{ margin-bottom: 0 !important;}

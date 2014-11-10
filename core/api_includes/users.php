@@ -120,3 +120,48 @@ function api_add_notice($o_uid,$sender_id,$message,$type) {
     );
 }
 
+function api_unread_events() {
+    validate_fields($fields, $_POST, array(
+        "q"
+    ), array(), array(), $errors);
+    $db = new db;
+    $notices = $db->getAll("SELECT n.*, u.avatar, c.avatar as avatarClub, CONCAT(u.fname, ' ', u.lname) as fio, c.name as clubName, u.id as user_id, c.id as club_id
+	                                FROM notice as n
+	                                LEFT JOIN users as u ON (u.id = n.sender_id)
+	                                LEFT JOIN clubs as c ON (c.id = n.sender_id)
+	                                WHERE n.o_uid = ?i AND n.status = 0", $_SESSION["user_id"]);
+    /* render it */
+
+    $notice = template_render_to_var(array('notice'=>$notices),"iterations/notice-events.tpl");
+    aok($notice);
+}
+function api_unread_msgs() {
+    validate_fields($fields, $_POST, array(
+        "q"
+    ), array(), array(), $errors);
+    $db = new db;
+    $messages = $db->getAll("SELECT m.*, u.avatar, CONCAT(u.fname, ' ', u.lname) as fio, u.id as user_id
+	                                FROM messages as m
+	                                INNER JOIN users as u ON (u.id = m.uid)
+	                                WHERE m.fid = ?i AND m.status = 0 GROUP BY m.uid ORDER BY m.time DESC ", $_SESSION["user_id"]);
+    /* render it */
+
+    $message = template_render_to_var(array('messages'=>$messages),"iterations/msg-rows.tpl");
+    aok($message);
+}
+
+function api_get_user_club(){
+    validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+
+    $db = new db;
+    $user = $db->GetRow("SELECT
+								cid as club_id,
+								(SELECT name FROM clubs WHERE id = club_id) as club_name
+								 FROM users WHERE id = ?i", $fields['id']);
+    aok($user);
+}
+

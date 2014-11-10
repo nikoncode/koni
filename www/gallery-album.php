@@ -40,6 +40,14 @@ if (!session_check()) {
 					$ids[] = $photo["id"];
 				}
 				$assigned_vars["photos_ids_list"] = implode(",", $ids);
+                $assigned_vars["events"] = $db->getAll("SELECT c.*, DATE_FORMAT(c.bdate,'%d.%m.%Y') as date
+													FROM comp as c
+													INNER JOIN clubs as cl on (cl.id = c.o_cid)
+													LEFT JOIN routes as r on (r.cid = c.id)
+													LEFT JOIN comp_riders as cr on (cr.uid = ?i AND cr.rid = r.id)
+													LEFT JOIN comp_members as cm on (cm.uid = ?i AND cm.cid = c.id)
+													WHERE cm.fan > 0 OR cr.id > 0
+													ORDER BY c.bdate DESC", $_SESSION["user_id"], $_SESSION["user_id"]);
 				$assigned_vars["user_id"] = $user_id;
 				$assigned_vars["page_title"] = "Альбом '" . $assigned_vars["album"]["name"] . "' > Одноконники";
 				template_render($assigned_vars, "gallery-album.tpl");

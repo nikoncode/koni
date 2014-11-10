@@ -16,6 +16,7 @@ function template_get_user_info($id) {
 								DATEDIFF(NOW(), bdate) as age,
 								country,
 								city,
+								hand,
 								(SELECT count(id) FROM `friends` WHERE uid = ?i AND fid = users.id) as is_friends,
 								id FROM users WHERE id = ?i", $_SESSION["user_id"], $id);
 

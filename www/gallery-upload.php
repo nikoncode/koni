@@ -16,6 +16,8 @@ if (!session_check()) {
 		$db = new db;
         if(isset($_GET['club_id'])){
             $album_info = $db->getRow("SELECT id, name FROM albums_clubs WHERE id = ?i AND c_uid = ?i", $_GET["id"], $_GET["club_id"]);
+        }elseif(isset($_GET['comp_id'])){
+            $album_info = $db->getRow("SELECT id, name FROM albums_clubs WHERE id = ?i AND comp_id = ?i", $_GET["id"], $_GET["comp_id"]);
         }else{
             $album_info = $db->getRow("SELECT id, name FROM albums WHERE id = ?i AND o_uid = ?i", $_GET["id"], $_SESSION["user_id"]);
         }
@@ -27,6 +29,7 @@ if (!session_check()) {
 				"page_title" => "Загрузить фото > Одноконники",
 				"album_id"	 => $album_info["id"],
 				"club_id"	 => intval($_GET['club_id']),
+				"comp_id"	 => intval($_GET['comp_id']),
 				"album_name" => $album_info["name"],
 				"user"		 => $user
 			);

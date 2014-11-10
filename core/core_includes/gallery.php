@@ -26,3 +26,26 @@ function gallery_upload_photo($photo, $name, $destname, $w=500, $h=500, $preview
 		return array("Файл не был отправлен.");
 	}
 }
+
+function gallery_upload_file($photo, $name, $destname) { //TO-DO: MAKE CONFIG
+	$avaible_types = array(
+        'doc' => 'application/msword',
+        'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'pdf' => 'application/pdf',
+        'xls' => 'application/vnd.ms-excel',
+        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+	if((!empty($photo[$name])) && ($photo[$name]['error'] == 0)) {
+		$filename = basename($photo[$name]['name']);
+		$temp = explode(".", $filename);
+		$ext = strtolower($temp[count($temp)-1]);
+		if (isset($avaible_types[$ext]) && ($avaible_types[$ext]==strtolower($photo[$name]["type"])) && ($photo[$name]["size"] < 3100000000)) {
+			$newname = UPLOADS_DIR . $destname.'.'.$ext;
+            move_uploaded_file($photo[$name]['tmp_name'],$newname);
+			return array('filename' => $photo[$name]['name'],'file'=>$newname,'ext' => $ext);
+		} else {
+			return array("Для загрузки достуны файлы ТОЛЬКО размером не более 30Mb и расширениями ".implode(", ", array_keys($avaible_types)));
+		}
+	} else {
+		return array("Файл не был отправлен.");
+	}
+}

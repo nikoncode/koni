@@ -169,6 +169,7 @@ function api_delete_rider() {
 function api_comp_route_add() {
 	validate_fields($fields, $_POST, array(
 		"opt_name",
+		"sub_type",
 		"opt"
 	), array(
 		"type", 
@@ -305,14 +306,13 @@ function api_comp_results_update() {
 		"pos",
 		"fio",
 		"degree",
-		"horse",
-		"team",
-		"opt1",
-		"opt2",
-		"opt3",
-		"opt4",
-		"opt5"
-	), array("id"), array(), $errors);
+		"club_id",
+		"shtraf_route",
+		"time",
+		"shtraf",
+		"reroute",
+		"norma"
+	), array("horse","id"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -324,38 +324,48 @@ function api_comp_results_update() {
 		aerr(array("Вы не можете менять результаты этого соревнования."));
 	}
 
-	if (!isset($fields["disq"], $fields["pos"], $fields["fio"], 
-				$fields["degree"], $fields["horse"], $fields["team"], 
-				$fields["opt1"], $fields["opt2"], $fields["opt3"], 
-				$fields["opt4"],$fields["opt5"])) {
-		$results = "";
-	} else {
-		$results = array();
+    $results = array();
 
-		foreach ($fields["pos"] as $route_id => $elements) {
-			$results[$route_id] = array();
-			foreach ($elements as $key => $element) {
-				$results[$route_id][] = array(
-					"pos" => $fields["pos"][$route_id][$key],
-					"disq" => $fields["disq"][$route_id][$key],
-					"fio" => $fields["fio"][$route_id][$key],
-					"degree" => $fields["degree"][$route_id][$key],
-					"horse" => $fields["horse"][$route_id][$key],
-					"team" => $fields["team"][$route_id][$key],
-					"opt1" => $fields["opt1"][$route_id][$key],
-					"opt2" => $fields["opt2"][$route_id][$key],
-					"opt3" => $fields["opt3"][$route_id][$key],
-					"opt4" => $fields["opt4"][$route_id][$key],
-					"opt5" => $fields["opt5"][$route_id][$key]
-				);
-			}
-			usort($results[$route_id], others_results_position_sort);
-		}
-
-		$results = serialize($results);
-	}
-
-	$db->query("UPDATE comp SET results = ?s WHERE id = ?i", $results, $fields["id"]);
+    foreach ($fields["pos"] as $route_id => $elements) {
+        $results[$route_id] = array();
+        foreach ($elements as $key => $element) {
+            if($fields["pos"][$route_id][$key] == '') continue;
+            if(!isset($fields["club_id"][$route_id][$key])) $fields["club_id"][$route_id][$key] = 0;
+            if(!isset($fields["horse"][$route_id][$key]) || $fields["horse"][$route_id][$key] == 0) {
+                $errors[] = "У № ".$fields["pos"][$route_id][$key]." не выбрана лошадь";
+                continue;
+            }
+            $results[$route_id][] = array(
+                "rid" => $route_id,
+                "rank" => $fields["pos"][$route_id][$key],
+                "disq" => $fields["disq"][$route_id][$key],
+                "user_id" => $fields["fio"][$route_id][$key],
+                "razryad" => $fields["degree"][$route_id][$key],
+                "horse" => $fields["horse"][$route_id][$key],
+                "club_id" => $fields["club_id"][$route_id][$key],
+                "shtraf_route" => $fields["shtraf_route"][$route_id][$key],
+                "time" => $fields["time"][$route_id][$key],
+                "shtraf" => $fields["shtraf"][$route_id][$key],
+                "rerun" => $fields["reroute"][$route_id][$key],
+                "norma" => $fields["norma"][$route_id][$key]
+            );
+        }
+        //usort($results[$route_id], others_results_position_sort);
+    }
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    foreach($results as $route_id=>$users){
+        $db->query("DELETE FROM comp_results WHERE rid = ?i", $route_id);
+        foreach($users as $user){
+            $check_event = $db->getOne("SELECT id FROM comp_riders WHERE rid = ?i AND uid = ?i", $user['rid'], $user['user_id']);
+            if($check_event == NULL){
+                $db->query("INSERT INTO comp_riders SET rid = ?i, uid = ?i, hid = ?i", $user['rid'], $user['user_id'], $user['horse']);
+            }
+            $db->query("INSERT INTO comp_results SET ?u", $user);
+        }
+    }
+	//$db->query("UPDATE comp SET results = ?s WHERE id = ?i", $results, $fields["id"]);
 	aok(array("Результаты сохранены"));
 }
 
@@ -508,13 +518,13 @@ function api_find_events() {
     if (!empty($errors)) {
         aerr($errors);
     }
-    $horses = $db->getAll("SELECT r.*, club.name as club, club.id as club_id,c.country,c.city
+    $horses = $db->getAll("SELECT GROUP_CONCAT(r.status) as status, c.*, club.name as club, club.id as club_id,c.country,c.city
 							FROM routes as r
 							INNER JOIN comp as c ON (c.id = r.cid)
 							INNER JOIN clubs as club ON (c.o_cid = club.id)
 							WHERE
 							height >= ?i AND height <= ?i ".$add_sql."
-							ORDER BY r.bdate",
+							GROUP BY c.id ORDER BY r.bdate",
         $fields['height_from'], $fields["height_to"]);
     $tmpl_name = 'iterations/events_search.tpl';
 

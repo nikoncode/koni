@@ -63,7 +63,7 @@
         <h3 >Мои уведомления<span class="pull-right">{$user.notice_count} уведомления</span></h3>
     </div>
     <div class="modal-body">
-        <div class="span10">
+        <div class="span10" id="eventsList">
             {if $user.notice}
                 {foreach $user.notice as $not}
                     <div class="row event-block">

@@ -1,3 +1,6 @@
+<!-- implement jcrop -->
+<script src="js/upload/jquery.Jcrop.min.js"></script>
+<link rel="stylesheet" href="js/upload/jquery.Jcrop.min.css" type="text/css" />
 {* Smarty *}
 <script>
 function add_parents() {
@@ -22,6 +25,26 @@ function new_horse(form) {
 		},
 		fail:    "standart"
 	})
+}
+
+function update_photo_coords(c) {
+    $('#modal-change-horse-avatar .step3 input[name=x1]').val(c.x);
+    $('#modal-change-horse-avatar .step3 input[name=y1]').val(c.y);
+    $('#modal-change-horse-avatar .step3 input[name=x2]').val(c.x2);
+    $('#modal-change-horse-avatar .step3 input[name=y2]').val(c.y2);
+}
+
+function crop_horse(el) {
+    api_query({
+        qmethod: "POST",
+        amethod: "horse_upload_avatar_crop",
+        params:  $(el).serialize(),
+        success: function (data) {
+            $("#modal-add-horse img").attr("src", data.avatar);
+            $("#modal-change-horse-avatar").modal("hide");
+        },
+        fail:    "standart"
+    })
 }
 
 function new_horse_prepare() {
@@ -103,6 +126,20 @@ $(function () {
 				var mdl = $("#modal-add-horse");
 				mdl.find("[name=avatar]").val(resp.response.avatar);
 				mdl.find("img").attr("src", resp.response.avatar);
+                $("#modal-change-horse-avatar .step3 input[name=avatar]").val(resp.response.avatar);
+                $('#modal-change-horse-avatar').modal('show');
+                $("#modal-change-horse-avatar .step3").css("display", "");
+                $("#future-horse-avatar").Jcrop({
+                    aspectRatio: 1,
+                    onChange: update_photo_coords,
+                    onSelect: update_photo_coords
+                }, function () {
+                    jcrop_api = this;
+                    jcrop_api.setImage(resp.response.avatar, function () {
+                        jcrop_api.setSelect([10,10,210,210]);
+                    });
+
+                });
 			} else {
 				alert(resp.response[0]);
 			}
@@ -158,6 +195,12 @@ $(function () {
 								<label class="span3">Год рождения: <span class="req">*</span></label><label class="span3">Место рождения: <span class="req">*</span></label>
 								<input type="text" class="span3" name="byear">
 								<input type="text" class="span3" placeholder="Пример, клуб 'СССР'" name="bplace">
+							</div>
+
+                            <div class="controls controls-row">
+								<label class="span6">Паспорт:</label>
+                                <input type="text" class="span6" name="pasport">
+
 							</div>
 							
 							<hr/>
@@ -230,4 +273,29 @@ $(function () {
 						</div>
 			</form>
 	</div>
+</div>
+
+<div id="modal-change-horse-avatar" class="modal hide modal700" tabindex="-1" role="dialog">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 >Изменить аватар</h3>
+    </div>
+    <div class="modal-body step3" style="display: none;">
+        <form class="form-horizontal" action="#" onsubmit="crop_horse(this);return false;">
+            <p>Выбранная область будет показываться на Вашей странице.</p>
+            <center>
+                <img src="http://placehold.it/1x1" id="future-horse-avatar" />
+                <div class="change-avatar-buttons">
+                    <input type="hidden" name="x1" value="10" />
+                    <input type="hidden" name="y1" value="10" />
+                    <input type="hidden" name="x2" value="210" />
+                    <input type="hidden" name="y2" value="210" />
+                    <input type="hidden" name="avatar" value="" />
+                    <input type="hidden" name="id" value="{$club.id}" />
+                    <button type="submit" class="btn btn-warning">Сохранить</button>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
+                </div>
+            </center>
+        </form>
+    </div>
 </div>

@@ -21,18 +21,7 @@
 		$('.step3 input[name=x2]').val(c.x2);
 		$('.step3 input[name=y2]').val(c.y2);
 	}
-    function check_unread(){
-        api_query({
-            qmethod: "POST",
-            amethod: "chat_unread_count",
-            success: function (resp) {
-                var count = resp.count || 0;
 
-                $('#unread_count').html('('+resp.count+')');
-            },
-            fail: "standart"
-        })
-    }
 	function crop(el) {
 		api_query({
 			qmethod: "POST",
@@ -48,10 +37,6 @@
 	}
 
 	$(function () {
-        check_unread();
-        setInterval(function () {
-            check_unread();
-        },5000);
         $('#fileupload').fileupload({
 			maxNumberOfFiles: 1,
 			dataType: 'json',

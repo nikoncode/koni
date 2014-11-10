@@ -36,6 +36,7 @@ function delete_from_friend_callback(uid) {
 				Не состоит в <a href="clubs.php">клубах</a>
 			{/if}
 		</p>
+        {if $another_user.hand == 0}
 		<ul class="unstyled user-controls">
 			<li><a class="btn btn-warning" href="/chat.php?id={$another_user.id}"><i class="icon-envelope icon-white"></i> Отправить сообщение</a></li>
 			{if $another_user.is_friends}
@@ -44,6 +45,10 @@ function delete_from_friend_callback(uid) {
 				<li><button class="btn" href="#" id="friends-button" onclick="add_to_friend_callback({$another_user.id});return false;">Добавить в друзья</button></li>
 			{/if}
 		</ul>
+
+        {else}
+            Эта страница создана автоматически, если это Вы и хотите получить доступ к управлению своей страницей, то напишите <a href="/support.php">Службу поддержки</a>
+        {/if}
 	</div>
 	
 	{if $another_user.friends}

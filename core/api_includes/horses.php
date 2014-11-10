@@ -2,7 +2,7 @@
 
 function api_horses_add() {
 	/* validate data */
-	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec","name", "lname"),  array("nick",
+	validate_fields($fields, $_POST, array("bplace", "parent", "pname", "about", "rost", "spec","name", "lname","pasport"),  array("nick",
 		"sex",
 		"poroda",
 		"mast",
@@ -33,6 +33,21 @@ function api_horses_add() {
 	$fields["album_id"] = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
 	$db->query("INSERT INTO horses (`" . implode("`, `", array_keys($fields)) . "`) VALUES (?a);", $fields);
 	aok(array("Конь добавлен C:"));
+}
+
+function api_horses_add_admin() {
+    /* validate data */
+    validate_fields($fields, $_POST, array("bplace","byear","rost","pasport"),  array("nick","o_uid","sex",
+        "poroda",
+        "mast"), array(), $errors);
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    /* insert to db */
+    $db = new db;
+    $db->query("INSERT INTO horses (`" . implode("`, `", array_keys($fields)) . "`) VALUES (?a);", $fields);
+    aok($db->insertId());
 }
 
 function api_horse_owner_add() {

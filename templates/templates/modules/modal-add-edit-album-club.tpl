@@ -7,28 +7,42 @@
             amethod: "gallery_create_album",
             params: $("#add-edit-album").serialize(),
             success: function (resp, data) {
-                document.location = data.redirect;
+                location.reload();
             },
             fail: "standart"
         });
     }
 
     {literal}
-    function view_update_album_form(album_id) {
+    function view_update_album_form(album_id,club_id) {
         api_query({
             qmethod: "POST",
             amethod: "gallery_album_info",
-            params: {id : album_id},
+            params: {id : album_id,club_id: club_id},
             success: function (resp, data) {
                 var mdl = $("#modal-add-edit-album");
                 mdl.find("[name=name]").val(resp.name);
                 mdl.find("[name=desc]").val(resp.desc);
                 mdl.find("[name=id]").val(resp.id);
-                mdl.find("form").attr("onsubmit", "update_album();return false;")
+                mdl.find("form").attr("onsubmit", "update_album();return false;");
+                mdl.find(".delete_album").attr("onclick", "delete_album("+album_id+','+club_id+");return false;").css('display','');
                 mdl.modal("show");
             },
             fail: "standart"
         });
+    }
+    function delete_album(album_id,club_id) {
+        if(confirm('Находящиеся фотографии в этом альбоме, будут удалены вместе с этим альбомом. Вы уверены, что хотите удалить альбом?')){
+            api_query({
+                qmethod: "POST",
+                amethod: "gallery_album_delete",
+                params: {id : album_id,club_id: club_id},
+                success: function (resp, data) {
+                    location.reload();
+                },
+                fail: "standart"
+            });
+        }
     }
     {/literal}
 
@@ -38,7 +52,7 @@
             amethod: "gallery_album_update",
             params: $("#add-edit-album").serialize(),
             success: function (resp, data) {
-                document.location = data.redirect;
+                location.reload();
             },
             fail: "standart"
         });
@@ -65,8 +79,10 @@
 
                 <input type="hidden" name="id" value="" />
                 <input type="hidden" name="club_id" value="{$club.id}" />
+                <input type="hidden" name="comp_id" value="{$comp.id}" />
 
             </div>
+            <center><button type="button" class="btn btn-warning delete_album" onclick="" style="display: none">Удалить альбом</button></center>
             <hr/>
             <div class="row">
                 <div class="controls controls-row">

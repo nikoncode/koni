@@ -6,7 +6,7 @@
 
 $(function () {
 	$("#gallery-upl").fileupload({
-		url: "/api/api.php?m=gallery_upload_photo&album_id={$album_id}&club_id={$club_id}",
+		url: "/api/api.php?m=gallery_upload_photo&album_id={$album_id}&club_id={$club_id}&comp_id={$comp_id}",
 		dataType: "json",
 		done: function (e, data) {
 			resp = data.result;
@@ -76,6 +76,8 @@ function update_description(form) {
 			<h3 class="inner-bg">Загрузка фото в "{$album_name}" <span class="pull-right">
                     {if $club_id > 0}
                         <a class="back_album" href="club.php?id={$club_id}&album={$album_id}#gallery-club">назад к альбому</a>
+                    {elseif $comp_id > 0}
+                        <a class="back_album" href="competition.php?id={$comp_id}&album={$album_id}#compt-gallery">назад к альбому</a>
                     {else}
                         <a class="back_album" href="gallery-album.php?id={$album_id}">назад к альбому</a>
                     {/if}
@@ -100,6 +102,7 @@ function update_description(form) {
 						<form onsubmit="update_description(this);return false;">	
 							<input type="hidden" name="album_id" value="{$album_id}" />
 							<input type="hidden" name="club_id" value="{$club_id}" />
+							<input type="hidden" name="comp_id" value="{$comp_id}" />
 							<div class="step1">
 								<div class="progress progress-striped active">
 									<div class="bar" style="width: 0%;"></div>

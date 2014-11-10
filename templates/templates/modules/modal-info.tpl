@@ -1,4 +1,4 @@
-<div id="modal-info" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="modal-info" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true" style="z-index:999999 !important">
 	 <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 			<h3 >Информация</h3>

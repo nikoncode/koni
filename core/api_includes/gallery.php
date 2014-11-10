@@ -80,7 +80,7 @@ function api_gallery_photo_info() {
 
 function api_gallery_photo_delete() { 
 	/* validate data */
-	validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+	validate_fields($fields, $_POST, array("video"), array("id"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -88,16 +88,28 @@ function api_gallery_photo_delete() {
 
 	$db = new db;
 	/* getting all photos */
-	$image = $db->GetRow("SELECT preview, full FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
-	if ($image === NULL) {
-		aerr(array("Фотография не может быть удалена."));
-	} else {
-		/* delete them */
-		$db->query("DELETE FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
-		others_delete_file(WEB_ROOT_DIR . $image["preview"]);
-		others_delete_file(WEB_ROOT_DIR . $image["full"]);
-	}
-	aok(array("Фотография была удалена."));
+	if(isset($fields['video']) && $fields['video'] > 0){
+        $image = $db->GetRow("SELECT video FROM gallery_video WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+        if ($image === NULL) {
+            aerr(array("Видео не может быть удалено."));
+        } else {
+            /* delete them */
+            $db->query("DELETE FROM gallery_video WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+        }
+        aok(array("Видео было удалено."));
+    }else{
+        $image = $db->GetRow("SELECT preview, full FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+        if ($image === NULL) {
+            aerr(array("Фотография не может быть удалена."));
+        } else {
+            /* delete them */
+            $db->query("DELETE FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+            others_delete_file(WEB_ROOT_DIR . $image["preview"]);
+            others_delete_file(WEB_ROOT_DIR . $image["full"]);
+        }
+        aok(array("Фотография была удалена."));
+    }
+
 }
 
 function api_adv_photo_delete() {
@@ -124,7 +136,7 @@ function api_adv_photo_delete() {
 
 function api_gallery_create_album() {
 	/* Validate data */
-	validate_fields($fields, $_POST, array("desc", "att", "club_id","type_album"), array("name"), array(), $errors);
+	validate_fields($fields, $_POST, array("desc", "att", "club_id","comp_id","type_album","is_event","event"), array("name"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -133,15 +145,21 @@ function api_gallery_create_album() {
 	/* Create album */
 	$db = new db;
 
-    if(isset($fields['club_id']) && $fields['club_id'] > 0){
+    if(isset($fields['club_id']) && $fields['club_id'] > 0 || isset($fields['comp_id']) && $fields['comp_id'] > 0){
         $fields["c_uid"] = $fields['club_id'];
         unset($fields['club_id']);
+        if(isset($fields['comp_id']) && $fields['comp_id'] > 0) unset($fields["c_uid"]);
         $db->query("INSERT INTO albums_clubs (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
         $id = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
         aok(array($id), "/club.php?id=".$fields["c_uid"]);
     }else{
         $fields["o_uid"] = $_SESSION["user_id"];
         unset($fields['club_id']);
+        if(!isset($fields['is_event'])){
+            unset($fields['event']);
+        }else{
+            unset($fields['is_event']);
+        }
         $db->query("INSERT INTO albums (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
         $id = $db->getOne("SELECT LAST_INSERT_ID() FROM albums");
         aok(array($id), "/gallery.php");
@@ -152,7 +170,7 @@ function api_gallery_create_album() {
 
 function api_gallery_add_video() {
 	/* Validate data */
-	validate_fields($fields, $_POST, array("desc"), array("video","club_id","album_club_id",), array(), $errors);
+	validate_fields($fields, $_POST, array("desc"), array("video","club_id","album_club_id"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -180,7 +198,7 @@ function api_gallery_add_video() {
 
 function api_gallery_upload_photo() {
 	/* Validate data */
-	validate_fields($fields, $_GET, array("album_id","club_id"), array(), array(), $errors);
+	validate_fields($fields, $_GET, array("album_id","club_id","comp_id"), array(), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -194,6 +212,9 @@ function api_gallery_upload_photo() {
     } else { //if set check access
         if(isset($fields["club_id"])){
             $id = $db->getOne("SELECT id FROM albums_clubs WHERE c_uid = ?i AND id = ?i", $fields["club_id"], $fields["album_id"]);
+            $type_album = 'album_club_id';
+        }elseif(isset($fields["comp_id"])){
+            $id = $db->getOne("SELECT id FROM albums_clubs WHERE comp_id = ?i AND id = ?i", $fields["comp_id"], $fields["album_id"]);
             $type_album = 'album_club_id';
         }else{
             $id = $db->getOne("SELECT id FROM albums WHERE o_uid = ?i AND id = ?i", $_SESSION["user_id"], $fields["album_id"]);
@@ -305,7 +326,7 @@ function api_gallery_album_info() {//GUEST MAY VIEW ALBUM INFO
 	$db = new db;
     $table = (isset($fields['club_id']) && $fields['club_id'] > 0)?'albums_clubs':'albums';
     unset($fields["club_id"]);
-	$info = $db->getRow("SELECT id, name, `desc` FROM ".$table." WHERE id = ?i;", $fields["id"]);
+	$info = $db->getRow("SELECT * FROM ".$table." WHERE id = ?i;", $fields["id"]);
 	if ($info == NULL) {
 		aerr(array("Запрашиваемый альбом не найден."));
 	} else {
@@ -315,7 +336,7 @@ function api_gallery_album_info() {//GUEST MAY VIEW ALBUM INFO
 
 function api_gallery_album_update() {
 	/* validate data*/
-	validate_fields($fields, $_POST, array("desc","club_id"), array("id", "name"), array(), $errors);
+	validate_fields($fields, $_POST, array("desc","club_id","is_event","event","comp_id"), array("id", "name"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -325,15 +346,30 @@ function api_gallery_album_update() {
 	$db = new db;
 	$id = $fields["id"];
 	unset($fields["id"]);
-	unset($fields["club_id"]);
-    $table = (isset($fields['club_id']) && $fields['club_id'] > 0)?'albums_clubs':'albums';
-	$db->query("UPDATE ".$table." SET ?u WHERE id = ?i AND o_uid = ?i;", $fields, $id, $_SESSION["user_id"]);
+    if(isset($fields['club_id']) && $fields['club_id'] > 0){
+        $club_id = $fields['club_id'];
+        unset($fields['club_id']);
+        $db->query("UPDATE albums_clubs SET ?u WHERE id = ?i AND c_uid = ?i;", $fields, $id, $club_id);
+    }elseif(isset($fields['comp_id']) && $fields['comp_id'] > 0){
+        $comp_id = $fields['comp_id'];
+        unset($fields['club_id']);
+        unset($fields['comp_id']);
+        $db->query("UPDATE albums_clubs SET ?u WHERE id = ?i AND comp_id = ?i;", $fields, $id, $comp_id);
+    }else{
+        if(!isset($fields['is_event'])){
+            unset($fields['event']);
+        }else{
+            unset($fields['is_event']);
+        }
+        $db->query("UPDATE albums SET ?u WHERE id = ?i AND o_uid = ?i;", $fields, $id, $_SESSION["user_id"]);
+    }
+
 	aok(array("Информация обновлена успешно."), "/gallery-album.php?id=" . $id);	
 }
 
 function api_gallery_album_delete() {
 	/* validate data */
-	validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+	validate_fields($fields, $_POST, array("club_id"), array("id"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -341,15 +377,25 @@ function api_gallery_album_delete() {
 
 	/* delete album with all photos */
 	$db = new db;
-	$photos = $db->getAll("SELECT preview, full FROM gallery_photos WHERE o_uid = ?i AND album_id = ?i;", $_SESSION["user_id"], $fields["id"]);
+    $type = (isset($fields['club_id']) && $fields['club_id'] > 0)?'album_club_id':'album_id';
+	$photos = $db->getAll("SELECT preview, full FROM gallery_photos WHERE o_uid = ?i AND ".$type." = ?i;", $_SESSION["user_id"], $fields["id"]);
 	if (!empty($photos)) {
 		foreach ($photos as $photo) {
 			others_delete_file(WEB_ROOT_DIR . $photo["preview"]);
 			others_delete_file(WEB_ROOT_DIR . $photo["full"]);
 		}
-		$db->query("DELETE FROM gallery_photos WHERE o_uid = ?i AND album_id = ?i;", $_SESSION["user_id"], $fields["id"]);
+		$db->query("DELETE FROM gallery_photos WHERE o_uid = ?i AND ".$type." = ?i;", $_SESSION["user_id"], $fields["id"]);
 	}
-    $db->query("DELETE FROM albums WHERE id = ?i AND o_uid = ?i;", $fields["id"], $_SESSION["user_id"]);
+    if(isset($fields['club_id']) && $fields['club_id'] > 0){
+        $db->query("DELETE FROM albums_clubs WHERE id = ?i AND c_uid = ?i;", $fields["id"], $fields['club_id']);
+        $db->query("DELETE FROM gallery_video WHERE album_club_id = ?i;", $fields["id"]);
+    }elseif(isset($fields['comp_id']) && $fields['comp_id'] > 0){
+        $db->query("DELETE FROM albums_clubs WHERE id = ?i AND comp_id = ?i;", $fields["id"], $fields['comp_id']);
+        $db->query("DELETE FROM gallery_video WHERE album_club_id = ?i;", $fields["id"]);
+    }else{
+        $db->query("DELETE FROM albums WHERE id = ?i AND o_uid = ?i;", $fields["id"], $_SESSION["user_id"]);
+    }
+
 	aok(array("Альбом успешно удален."), "/gallery.php");
 }	
 
@@ -407,6 +453,60 @@ function api_gallery_upload_avatar_crop() {
     ));
 }
 
+function api_club_upload_avatar_crop() {
+	/* validate fields */
+	validate_fields($fields, $_POST, array(  //x1, y1 not required but 0 is empty
+		"x1",
+		"y1"
+	), array(
+		"x2",
+		"y2",
+		"id",
+		"avatar"
+	), array(), $errors);
+    /* Crop & resize image */
+    $img = new \abeautifulsite\SimpleImage(WEB_ROOT_DIR . $fields["avatar"]);
+    $img->crop(
+        abs((int)$fields["x1"]),
+        abs((int)$fields["y1"]),
+        abs((int)$fields["x2"]),
+        abs((int)$fields["y2"])
+    )->resize(200,200)->save(WEB_ROOT_DIR . $fields["avatar"]);
+
+    /* update in db */
+    $db = new db;
+    $db->query("UPDATE clubs SET avatar = ?s WHERE o_uid = ?i AND id = ?i", $fields["avatar"], $_SESSION["user_id"],$fields['id']);
+
+    aok(array(
+        "avatar" => $fields["avatar"] . "?nocache=" . time()
+    ));
+}
+
+function api_horse_upload_avatar_crop() {
+    /* validate fields */
+    validate_fields($fields, $_POST, array(  //x1, y1 not required but 0 is empty
+        "x1",
+        "y1"
+    ), array(
+        "x2",
+        "y2",
+        "id",
+        "avatar"
+    ), array(), $errors);
+    /* Crop & resize image */
+    $img = new \abeautifulsite\SimpleImage(WEB_ROOT_DIR . $fields["avatar"]);
+    $img->crop(
+        abs((int)$fields["x1"]),
+        abs((int)$fields["y1"]),
+        abs((int)$fields["x2"]),
+        abs((int)$fields["y2"])
+    )->resize(200,200)->save(WEB_ROOT_DIR . $fields["avatar"]);
+
+    aok(array(
+        "avatar" => $fields["avatar"] . "?nocache=" . time()
+    ));
+}
+
 function api_gallery_change_photo_album() {
 	/* validate data */
 	validate_fields($fields, $_POST, array("club_id"), array("album","photo_id"), array(), $errors);
@@ -452,6 +552,40 @@ function api_gallery_club_upload_avatar() {
 	} else {
 		aerr($result);
 	} 
+}
+
+function api_file_club_upload() {
+	validate_fields($fields, $_GET, array(), array("id"), array(), $fields);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	/* Checking path */
+	$path = $fields["id"] . "_cl/files/";
+	$filename = md5(md5(time()) . rand());
+
+	if (!file_exists(UPLOADS_DIR . $path))
+		mkdir(UPLOADS_DIR . $path, 0777, true);
+
+	/* Generating name and upload photo */
+	$full_img = $path . $filename;
+	$result = gallery_upload_file($_FILES, "avatar", $full_img);
+
+	/* Insert to db */
+	if (isset($result['filename'])) {
+		$db = new db;
+        $db->query("INSERT INTO comp_files (`cid`,`file`,`ext`,`path`) VALUES (?i,?s,?s,?s);", $fields['id'], $result['filename'], $result['ext'],$full_img);
+        $file_id = $db->insertId();
+		aok(array(
+				"file" => "/uploads/" . $full_img.'.'.$result['ext'],
+				"file_id" => $file_id,
+				"filename" => $result['filename'],
+				"ext" => $result['ext'],
+		));
+	} else {
+		aerr($result);
+	}
 }
 
 function api_gallery_club_upload_adv() {

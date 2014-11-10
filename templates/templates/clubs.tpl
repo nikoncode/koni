@@ -7,6 +7,7 @@
 <script src="js/chosen.jquery.min.js"></script>
 <link  href="css/chosen.css" rel="stylesheet">
 <script type="text/javascript">
+
 	function club_search(form) {
 		api_query({
 			qmethod: "POST",
@@ -51,11 +52,12 @@
                 $('select.city').html(values);
                 $('select.city option').each(function(){
                     if($(this).html() != "Все города") $(this).val($(this).html());
+                    if($(this).html() == "Москва") $(this).prop('selected',true);
                 })
                 $('select.city').trigger("chosen:updated");
             },
             fail:    "standart"
-        })
+        });
         country = $(select).val();
     }
     function change_city(select){
@@ -66,12 +68,32 @@
             $('.metro').css('display','none');
         }
     }
+    function start_load(){
+        var country = $('.country option:selected').attr('country_id');
+        api_query({
+            qmethod: "POST",
+            amethod: "auth_get_city",
+            params:  {country_id:country},
+            success: function (response, data) {
+                var values = '<option value="0">Все города</option>'+response;
+                $('select.city').html(values);
+                $('select.city option').each(function(){
+                    if($(this).html() != "Все города") $(this).val($(this).html());
+                    if($(this).html() == "Москва") $(this).prop('selected',true);
+                })
+                $('select.city').trigger("chosen:updated");
+                club_search($('.search-clubs-filter'));
+            },
+            fail:    "standart"
+        });
+    }
     {/literal}
+
 	function del_ability(el) {
 		$(el).closest("div.opt").remove();
 	}
     $(function(){
-        club_search($('.search-clubs-filter'));
+        start_load();
         {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true});{/literal}
     })
 </script>
@@ -95,7 +117,7 @@
 								<select  class="span3 country chosen-select" name="country" onchange="change_country(this);">
 									<option selected="" value="">Не важно</option>
 									{foreach $countries as $country}
-                                        <option country_id="{$country.id}" value="{$country.country_name_ru}">{$country.country_name_ru}</option>
+                                        <option country_id="{$country.id}" value="{$country.country_name_ru}" {if $country.country_name_ru == 'Россия'}selected="selected"{/if}>{$country.country_name_ru}</option>
 									{/foreach}
 								</select>
 							</div>
@@ -197,7 +219,7 @@
 						function init () {
 							myMap = new ymaps.Map('map', {
 								center:[55.76, 37.64], 
-								zoom: 13
+								zoom: 7
 							});
 							myMap.controls.add('zoomControl');
 						}

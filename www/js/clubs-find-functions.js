@@ -2,8 +2,8 @@
     $( "#city-dist" ).slider({
       range: true,
       min: 0,
-      max: 500,
-      values: [ 0, 500 ],
+      max: 100,
+      values: [ 0, 100 ],
       slide: function( event, ui ) {
 		var CustomAmount =  "От " + ui.values[ 0 ] + " км. до " + ui.values[ 1 ] + " км.";
         document.getElementById('city-dist-amount').innerHTML = CustomAmount;

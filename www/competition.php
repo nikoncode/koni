@@ -32,9 +32,6 @@ if (!session_check()) {
 	$assigned_vars["comp"]["is_photographer"] = (bool)$temp[1];
 	$assigned_vars["comp"]["is_fan"] = (bool)$temp[2];
 
-	if (!empty($assigned_vars["comp"]["results"])) {
-		$assigned_vars["comp"]["results"] = unserialize($assigned_vars["comp"]["results"]);
-	}
 
 	$assigned_vars["comp"]["routes"] = $db->getAll("SELECT *,
 															(SELECT COUNT(id) 
@@ -42,7 +39,7 @@ if (!session_check()) {
 															WHERE uid = ?i 
 															AND rid = routes.id) as is_rider 
 													FROM routes WHERE cid = ?i", $_SESSION["user_id"], $_GET["id"]);
-
+    $assigned_vars["comp"]["results"] = array();
 	foreach ($assigned_vars["comp"]["routes"] as &$route) {
 		$route["options"] = unserialize($route["options"]);
         $assigned_vars["comp"]["startlist"][$route['id']] = $db->getAll("SELECT 	users.id,
@@ -57,6 +54,18 @@ if (!session_check()) {
 													FROM comp_riders, users, horses, clubs
 													WHERE
 													comp_riders.uid = users.id AND horses.id = comp_riders.hid AND clubs.id = users.cid AND comp_riders.rid = ?i ORDER BY ordering
+													", $route['id']);
+        $assigned_vars["comp"]["results"][$route['id']] = $db->getAll("SELECT 	users.id,
+															CONCAT(fname, ' ', lname) as fio,
+															CONCAT(horses.nick,'-',horses.byear,', ',horses.sex,', ',horses.poroda,', ',horses.mast,', ',horses.bplace) as horseName,
+															horses.id as horse_id,
+															horses.owner,
+															(SELECT `name` FROM clubs WHERE comp_results.club_id=id) as club,
+															(SELECT CONCAT(fname, ' ', lname) as fio FROM users WHERE id = horses.o_uid) as ownerName,
+															comp_results.*
+													FROM users, horses, comp_results
+													WHERE comp_results.rid = ?i AND comp_results.user_id = users.id AND
+													horses.id = comp_results.horse ORDER BY disq,rank
 													", $route['id']);
 	}
 
@@ -77,7 +86,7 @@ if (!session_check()) {
 													FROM comp_riders, users, horses, clubs
 													WHERE comp_riders.rid IN 
 														(SELECT id FROM routes WHERE cid = ?i)
-													AND comp_riders.uid = users.id AND horses.id = comp_riders.hid AND clubs.id = users.cid
+													AND comp_riders.uid = users.id AND horses.id = comp_riders.hid
 													GROUP BY id", $assigned_vars["comp"]["id"]);
 
 	$assigned_vars["comp"]["viewers"] = 
@@ -101,6 +110,49 @@ if (!session_check()) {
 			$assigned_vars["comp"]["fans"][] = $temp;
 		} 
 	}
+    if(isset($_GET['album'])){
+        $ids = array();
+        $assigned_vars["gallery"] = $db->getRow("SELECT * FROM albums_clubs WHERE id = ?i AND comp_id = ?i", $_GET['album'], $_GET['id']);
+
+        if($assigned_vars["gallery"]["type_album"] == 0) {
+            $assigned_vars["photos"] = $db->getAll("SELECT preview, id FROM gallery_photos WHERE album_club_id = ?i ORDER BY time DESC", $_GET['album']);
+            foreach($assigned_vars["photos"] as $photo) {
+                $ids[] = $photo["id"];
+            }
+
+        }
+        if($assigned_vars["gallery"]["type_album"] == 1) {
+            $assigned_vars["videos"] = $db->getAll("SELECT video, id FROM gallery_video WHERE album_club_id = ?i ORDER BY time DESC", $_GET['album']);
+            foreach($assigned_vars["videos"] as $photo) {
+                $ids[] = $photo["id"];
+            }
+        }
+        $assigned_vars["albums"] = $db->getAll("SELECT * FROM albums_clubs WHERE comp_id = ?i AND type_album = ?i",$_GET['id'], $assigned_vars["gallery"]["type_album"]);
+        $assigned_vars["gallery_id"] = $_GET['album'];
+
+
+        $assigned_vars["photos_ids_list"] = implode(",", $ids);
+    }else{
+        $assigned_vars["comp"]["albums"] = $db->getAll("SELECT 	id,
+													name,
+													`desc`,
+													linked_event,
+													(SELECT name FROM comp WHERE id = linked_event) as linked_event_name,
+													(SELECT preview FROM gallery_photos where album_club_id=albums_clubs.id LIMIT 1) as cover
+											FROM albums_clubs WHERE type_album = 0 AND comp_id = ?i AND att = 0", $assigned_vars["comp"]["id"]);
+        $assigned_vars["comp"]["albums_video"] = $db->getAll("SELECT 	id,
+													name,
+													`desc`,
+													linked_event,
+													(SELECT name FROM comp WHERE id = linked_event) as linked_event_name,
+													(SELECT video FROM gallery_video where album_club_id=albums_clubs.id LIMIT 1) as cover
+											FROM albums_clubs WHERE type_album = 1 AND comp_id = ?i AND att = 0", $assigned_vars["comp"]["id"]);
+        $assigned_vars["users_photos"] = $db->getAll("SELECT u.avatar, CONCAT(u.fname,' ',u.lname) as fio, u.id as user_id, COUNT(gp.id) as count_photo, a.id FROM albums as a
+                                                                    INNER JOIN users as u on (u.id = a.o_uid)
+                                                                    INNER JOIN gallery_photos as gp on (gp.album_id = a.id)
+                                                                    WHERE a.event = ?i GROUP BY a.event",$assigned_vars["comp"]["id"]);
+    }
+
     $comments = $db->getAll("SELECT c.*,
 										concat(fname,' ',lname) as fio,
 										users.avatar,
@@ -113,6 +165,8 @@ if (!session_check()) {
 								ORDER BY time ASC", $_SESSION["user_id"], $assigned_vars["comp"]["id"]);
     $comments_count = $db->getOne("SELECT COUNT(id) as comments_cnt FROM comments WHERE cid = ?i", $assigned_vars["comp"]["id"]);
     /* Render comments to var */
+    $assigned_vars["sportsman"] = (array_search('Спортсмен',$assigned_vars["user"]["profs"]) == NULL)?0:1;
+    //$assigned_vars["files"] = $db->getAll("SELECT * FROM comp_files WHERE cid = ?i", $assigned_vars["comp"]["id"]);
     $comments_bl = template_render_to_var(array(
         "comments" => $comments,
         "comments_cnt" => $comments_count,

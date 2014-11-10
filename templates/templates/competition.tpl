@@ -3,6 +3,9 @@
 {include "modules/modal-be-member.tpl"}
 <script type="text/javascript" src="js/likes.js"></script>
 <script type="text/javascript" src="js/comments.js"></script>
+<script type="text/javascript" src="js/gallery.js"></script>
+<script type="text/javascript" src="js/news.js"></script>
+<script type="text/javascript" src="js/autoload.js"></script>
 <script type="text/javascript">
 	$(function(){
 
@@ -147,6 +150,7 @@ function query_to_ride(rid, hid, act, dennik, callback) {
 function rider(rid, act) {
 	if (act == 1) {
 		part_prepare(rid);
+
 	} else {
 		query_to_ride(rid, 1, 0, 0);
 	}
@@ -154,6 +158,16 @@ function rider(rid, act) {
 
 
 </script>
+<style>
+    .disq td {
+        background-color: red !important;
+    }
+</style>
+{include "modules/modal-add-edit-album-club.tpl"}
+{include "modules/modal-add-edit-album-video.tpl"}
+{include "modules/modal-add-video.tpl"}
+{include "modules/modal-gallery-lightbox.tpl"}
+{include "modules/modal-gallery-change-album.tpl"}
 <div class="container clubs-page main-blocks-area club-block img.club-avatar">
 		<div class="row">
 		
@@ -246,7 +260,7 @@ function rider(rid, act) {
 											<div class="curr-compt-for span2">{$route.exam}</div>
 											<div class="curr-compt-status span2">{$route.status}</div>
 											<div class="curr-compt-go">
-												<a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}" onclick="rider({$route.id}, '{!$route.is_rider}', this); return false;" data-rider-rid="{$route.id}">
+												<a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}"onclick=" {if $sportsman == 0}alert('Только спортсмены могут участвовать в соревновании. Если вы спортсмен, то поставьте галочку в настройках личной страницы');{else}rider({$route.id}, '{!$route.is_rider}', this);{/if} return false;" data-rider-rid="{$route.id}">
                                                     {if $route.is_rider}Участвую{else}Участвовать{/if} <i class="icon-play icon-white"></i>
 												</a>
 											</div>
@@ -379,17 +393,17 @@ function rider(rid, act) {
 									{foreach $comp.results.{$route.id} as $res}
 										<tr {if $res.disq}class="disq"{/if} data-disq={$res.disq}>
 											<td class="">
-												{$res.pos}
+                                                {if !$res.disq}{$res.rank}{/if}
 											</td>
-											<td>{$res.fio}</td>
-											<td>{$res.degree}</td>
-											<td>{$res.horse}</td>
-											<td>{$res.team}</td>
-											<td>{$res.opt1}</td>
-											<td>{$res.opt2}</td>
-											<td>{$res.opt3}</td>
-											<td>{$res.opt4}</td>
-											<td>{$res.opt5}</td>
+											<td><a href="/user.php?id={$res.user_id}">{$res.fio}</a></td>
+											<td>{$res.razryad}</td>
+											<td>{$res.horseName}</td>
+											<td>{if $res.club == ''}Частный владелец{else}<a href="/club.php?id={$res.club_id}">{$res.club}</a>{/if}</td>
+											<td>{$res.shtraf_route}</td>
+											<td>{$res.time}</td>
+											<td>{$res.shtraf}</td>
+											<td>{$res.rerun}</td>
+											<td>{$res.norma}</td>
 										</tr>
 									{/foreach}
 								{else}
@@ -406,38 +420,164 @@ function rider(rid, act) {
 					</tbody>
 					</table>
               </div><!-- compt-results -->
-			  <div class="tab-pane" id="compt-gallery">
-                <div class="photos">
-					<ul class="photo-wall">
-						<li><img src="i/sample-img-1.jpg"></li>
-						<li><img src="i/sample-img-2.jpg"></li>
-						<li><img src="i/sample-img-3.jpg"></li>
-						<li><img src="i/sample-img-4.jpg"></li>
-						<li><img src="i/sample-img-5.jpg"></li>
-						<li><img src="i/sample-img-1.jpg"></li>
-						<li><img src="i/sample-img-2.jpg"></li>
-						<li><img src="i/sample-img-3.jpg"></li>
-						<li><img src="i/sample-img-4.jpg"></li>
-						<li><img src="i/sample-img-5.jpg"></li>
-						<li><img src="i/sample-img-1.jpg"></li>
-						<li><img src="i/sample-img-2.jpg"></li>
-						<li><img src="i/sample-img-3.jpg"></li>
-						<li><img src="i/sample-img-4.jpg"></li>
-						<li><img src="i/sample-img-5.jpg"></li>
-						<li><img src="i/sample-img-1.jpg"></li>
-						<li><img src="i/sample-img-2.jpg"></li>
-						<li><img src="i/sample-img-3.jpg"></li>
-						<li><img src="i/sample-img-4.jpg"></li>
-						<li><img src="i/sample-img-5.jpg"></li>
-						<li><img src="i/sample-img-1.jpg"></li>
-						<li><img src="i/sample-img-2.jpg"></li>
-						<li><img src="i/sample-img-3.jpg"></li>
-						<li><img src="i/sample-img-4.jpg"></li>
-						<li><img src="i/sample-img-5.jpg"></li>
-						<li><img src="i/sample-img-2.jpg"></li>
-					</ul>
-				</div>
-              </div><!-- compt-gallery -->
+              <div class="tab-pane" id="compt-gallery">
+                  {if $gallery_id}
+                      <div class="row">
+                          <div class="albums">
+                              <h3 class="inner-bg">{$gallery.name}<span class="pull-right"><a href="/competition.php?id={$comp.id}#compt-gallery">назад в галерею</a></span></h3>
+                              <div class="row">
+                                  <div class="photos">
+                                      <p class="album-descr">{$gallery.desc}</p>
+                                      {if $club.o_uid == $user.id}
+                                          {if $gallery.type_album == 0}<a href="/gallery-upload.php?id={$gallery_id}&comp_id={$comp.id}" class="pull-right btn btn-warning">Добавить фото</a>{/if}
+                                          {if $gallery.type_album == 1}<a href="#modal-add-video" role="button" data-toggle="modal" class="pull-right btn btn-warning">Добавить видео</a>{/if}
+                                      {/if}
+                                      <div class="photos" data-gallery-list="{$photos_ids_list}">
+                                          {if $gallery.type_album == 0}
+                                              {if $photos}
+                                                  <ul class="photo-wall">
+                                                      {foreach $photos as $photo}
+                                                          <li><a href="#" data-gallery-pid="{$photo.id}"><img src="{$photo.preview}" /></a></li>
+                                                      {/foreach}
+                                                  </ul>
+                                              {else}
+                                                  <p style="text-align: center;">Нет фотографий</p>
+                                              {/if}
+                                          {/if}
+                                          {if $gallery.type_album == 1}
+                                              {if $videos}
+                                                  <ul class="photo-wall">
+                                                      {foreach $videos as $photo}
+                                                          <li><a href="#" data-video-pid="{$photo.id}"><img src="http://img.youtube.com/vi/{$photo.video}/1.jpg" /></a></li>
+                                                      {/foreach}
+                                                  </ul>
+                                              {else}
+                                                  <p style="text-align: center;">Нет видео</p>
+                                              {/if}
+                                          {/if}
+                                      </div>
+                                  </div>
+                              </div>
+
+                          </div>
+                      </div>
+                  {else}
+                      <div class="row">
+
+                          <ul id="gallery-tabs" class="nav nav-tabs new-tabs tabs2">
+                              <li class="active"><a href="#gal-foto" data-toggle="tab">Фото</a></li>
+                              <li><a href="#gal-video" data-toggle="tab">Видео</a></li>
+                          </ul>
+                          <div id="GalTabContent" class="tab-content">
+                              <div class="tab-pane in active" id="gal-foto"> <!-- tab-photo-->
+
+                                  <div class="albums">
+                                      <div class="span12">
+                                          {if $club.o_uid == $user.id}
+                                              <a href="#modal-add-edit-album" role="button" data-toggle="modal" class="pull-right btn btn-default btn-create-album" >Создать альбом</a>
+
+                                          {/if}
+                                          <h5 class="title-hr">Альбомы</h5>
+                                      </div>
+
+                                      <div class="span12">
+                                          {if $comp.albums}
+                                              <ul class="album-wall">
+                                                  {foreach $comp.albums as $album}
+                                                      <li>
+                                                          <a href="/competition.php?id={$comp.id}&album={$album.id}#compt-gallery">
+                                                              {if !$album.cover}
+                                                                  <img src="http://placehold.it/190x130">
+                                                              {else}
+                                                                  <img src="{$album.cover}">
+                                                              {/if}</a>
+                                                          {if $club.o_uid == $user.id}<a href="javascript:void(0)" onclick="view_update_album_form({$album.id},{$club.id})" class="icon-edit"></a>{/if}
+                                                          <a href="/competition.php?id={$comp.id}&album={$album.id}#compt-gallery">
+                                                              <p>{$album.name}</p>
+                                                          </a>
+
+                                                          <p>{$album.desc}</p>
+                                                      </li>
+                                                  {/foreach}
+                                              </ul>
+                                          {else}
+                                              <p style="text-align: center;">Нет альбомов</p>
+                                          {/if}
+                                      </div>
+                                      {if $users_photos}
+                                          <div class="span12">
+                                              <h5 class="title-hr">Фотографии пользователей</h5>
+                                              <div class="row users-albums">
+                                                  <ul class="inline unstyled">
+                                                      {foreach $users_photos as $photo}
+                                                          <li><a href="gallery-album.php?id={$photo.id}"><img src="{$photo.avatar}" class="avatar"> {$photo.fio}</a> ({$photo.count_photo} фото)</li>
+                                                      {/foreach}
+                                                  </ul>
+
+                                              </div>
+                                          </div>
+                                      {/if}
+
+                                  </div>
+
+                              </div> <!-- /tab-photo-->
+
+                              <div class="tab-pane" id="gal-video"> <!-- tab-video-->
+
+                                  <div class="albums">
+                                      <div class="span12">
+                                          {if $club.o_uid == $user.id}
+                                              <a href="#modal-add-edit-album-video" role="button" data-toggle="modal" class="pull-right btn btn-default btn-create-album">Создать альбом</a>
+                                          {/if}
+                                          <h5 class="title-hr">Альбомы</h5>
+                                      </div>
+
+                                      <div class="span12">
+                                          {if $comp.albums_video}
+                                              <ul class="album-wall">
+                                                  {foreach $comp.albums_video as $album}
+                                                      <li>
+                                                          <a href="/competition.php?id={$comp.id}&album={$album.id}#compt-gallery">
+                                                              {if !$album.cover}
+                                                                  <img src="http://placehold.it/190x130">
+                                                              {else}
+                                                                  <img src="http://img.youtube.com/vi/{$album.cover}/1.jpg">
+                                                              {/if}</a>
+                                                          {if $club.o_uid == $user.id}<a href="javascript:void(0)" onclick="view_update_album_form({$album.id},{$club.id})" class="icon-edit"></a>{/if}
+                                                          <a href="/competition.php?id={$comp.id}&album={$album.id}#compt-gallery">
+                                                              <p>{$album.name}</p>
+                                                          </a>
+                                                          <p>{$album.desc}</p>
+                                                      </li>
+                                                  {/foreach}
+                                              </ul>
+                                          {else}
+                                              <p style="text-align: center;">Нет альбомов</p>
+                                          {/if}
+                                      </div>
+
+                                      <div class="span12">
+                                          <h5 class="title-hr">Видео пользователей</h5>
+                                          <div class="row users-albums">
+                                              <ul class="inline unstyled">
+                                                  <li><a href="user-sample.php"><img src="i/sample-ava-1.jpg" class="avatar"> Александр Гетманский</a> (123 видео)</li>
+                                                  <li><a href="user-sample.php"><img src="i/sample-ava-2.jpg" class="avatar"> Елена Урановая</a> (123 видео)</li>
+                                                  <li><a href="user-sample.php"><img src="i/sample-ava-3.jpg" class="avatar"> Наталья Валюженич</a> (123 видео)</li>
+                                                  <li><a href="user-sample.php"><img src="i/sample-ava-4.jpg" class="avatar"> Александр Гетманский</a> (123 видео)</li>
+                                                  <li><a href="user-sample.php"><img src="i/sample-ava-5.jpg" class="avatar"> Елена Урановая</a> (123 видео)</li>
+                                              </ul>
+
+                                          </div>
+                                      </div>
+
+                                  </div>
+
+                              </div> <!-- /tab-video-->
+                          </div>
+
+                      </div>
+                  {/if}
+              </div> <!-- //gallery-club -->
 			
 			<div class="tab-pane" id="compt-disqus">
 					<ul class="my-news-wall">

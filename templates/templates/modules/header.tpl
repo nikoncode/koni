@@ -40,6 +40,54 @@
 				fail: "standart"
 			});
 		}
+        function check_unread(){
+            api_query({
+                qmethod: "POST",
+                amethod: "chat_unread_count",
+                success: function (resp) {
+                    var count = resp.count || 0;
+                    var events_count = resp.events_count || 0;
+                    $('#unread_count').html('('+count+')');
+                    $('#msg-count').html(count);
+                    $('#events-count').html(events_count);
+                },
+                fail: "standart"
+            })
+        }
+        function load_notices(){
+
+
+            $("#modal-myMessages").modal("hide");
+            api_query({
+                qmethod: "POST",
+                amethod: "unread_events",
+                success: function (resp) {
+                    $('#eventsList').html(resp);
+                    var mdl = $("#modal-myEvents");
+                    mdl.modal("show");
+                },
+                fail: "standart"
+            })
+        }
+        function load_msgs(){
+            $("#modal-myEvents").modal("hide");
+            api_query({
+                qmethod: "POST",
+                amethod: "unread_msgs",
+                success: function (resp) {
+                    $('#modal-myMessages .msg-last-dialog').html(resp);
+                    var mdl = $("#modal-myMessages");
+                    mdl.modal("show");
+                },
+                fail: "standart"
+            })
+        }
+        $(function () {
+            check_unread();
+            setInterval(function () {
+                check_unread();
+            },7000);
+        });
 		</script>
 		<div class="my-header-block">
 			<div class="container">
@@ -67,8 +115,8 @@
 											<li><a href="index.php" onclick="logout();return false;">Выйти</a></li>
 										</ul>
 									</li>
-									<li class="my-messages"><a href="#modal-myMessages" role="button" data-toggle="modal">Сообщения</a></li>
-									<li class="my-info"><a href="#modal-myEvents" role="button" data-toggle="modal">Уведомления</a></li>
+									<li class="my-messages"><a href="#" role="button" onclick="load_msgs()">Сообщения (<span id="msg-count">{$user.messages_count}</span>)</a></li>
+									<li class="my-info"><a href="#" role="button" onclick="load_notices()">Уведомления (<span id="events-count">{$user.notice_count}</span>)</a></li>
 								</ul>
 							<form class="form-search pull-right" method="post" action="find-users.php">
 								<div class="input-append">
