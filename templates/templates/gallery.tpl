@@ -5,6 +5,8 @@
 <script src="js/comments.js"></script>
 <div class="container gallery-page main-blocks-area">
 		<div class="row">
+			<div class="brackets" id="bra-2"></div>
+			<div class="brackets" id="bra-3"></div>
 			{include "modules/sidebar-my-left.tpl"}
 			{include "modules/modal-gallery-lightbox.tpl"}
 			{include "modules/modal-gallery-change-album.tpl"}

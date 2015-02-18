@@ -15,6 +15,20 @@ $const_mounth = array(
 	11 => "ноябрь",
 	12 => "декабрь"
 );
+$const_rank = array(
+	0 => "б/р",
+	1 => "1",
+	2 => "2",
+	3 => "3",
+	4 => "КМС",
+	5 => "МС",
+	6 => "МСМК",
+	7 => "ЗМС"
+);
+global $const_rank;
+function get_ranks(){
+    return $GLOBALS['const_rank'];
+}
 $db = new db;
 $const_countries = $db->getAll("SELECT id,country_name_ru
                                                 FROM country_
@@ -32,7 +46,7 @@ $const_metro = $db->getCol("SELECT metro
 $const_work = array(
 	"Тренер",
 	"Владелец лошади",
-	"Любитель",
+	"Любитель лошадей",
 	"Берейтор",
 	"Спортсмен",
 	"Ветеринар",
@@ -324,12 +338,10 @@ $const_horses_spec = array(
 );
 
 $const_ability = array(
-	"Занятия конкуром",
 	"Раздевалка",
 	"Прогулки в лес/поле",
 	"Троеборные препятствия",
 	"Туалет",
-	"Аренда денников",
 	"Обучение",
 	"Участие в соревнованиях",
 );

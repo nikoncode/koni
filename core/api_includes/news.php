@@ -186,7 +186,7 @@ function api_news_edit() {
 
 function api_news_extra() {
 	/* validate data */
-	validate_fields($fields, $_POST, array(), array("id", "loaded", "type"), array(), $errors);
+	validate_fields($fields, $_POST, array(), array("id", "loaded", "type"), array(), $errors,false);
 
 	if (!empty($errors)) {
 		aerr($errors);

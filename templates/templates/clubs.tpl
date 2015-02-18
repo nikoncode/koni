@@ -127,7 +127,7 @@
                                  <select name="city" class="span3 city chosen-select" onchange="change_city(this);">
                                      <option value="">Все города</option>
                                  </select>
-								<ul class="inline unstyled">
+								<ul class="inline unstyled" style="display: none">
 									<li><label class="radio"><input type="radio" name="area" value="metro"> Метро</label></li>
 									<li><label class="radio"><input type="radio" name="area" value="district"> Округ</label></li>
 								</ul>
@@ -286,11 +286,10 @@
 				<div class="row">
 					<table class="table table-striped competitions-table clubs-results">
 									<tbody id="results"><tr>
-									  <th>Название</th>
+									  <th class="club_name">Название</th>
 									  <th>Местонахождение</th>
 									  <th>Участники</th>
-									  <th>Цена за час</th>
-									  <th>Рейтинг/отзывы</th>
+									  <th>Количество отзывов</th>
 									</tr>
 									<tr class="result">
 										<td colspan="5" style="text-align: center;">Начните поиск чтобы увидеть результаты</td>

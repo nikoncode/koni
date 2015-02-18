@@ -25,6 +25,14 @@
             $(this).removeClass('btn').removeClass('btn-warning').removeClass('btn-small').removeClass('unfan_btn');
             $(this).addClass('fan_btn');
         });
+        $('.get_results').click(function(){
+                $('li a.compt-results').click();
+            }
+        );
+		$('.get_startlist').click(function(){
+                $('li a.compt-startlist').click();
+            }
+        )
     });
 function membership(cid, role, val, element) {
 	api_query({
@@ -41,6 +49,7 @@ function membership(cid, role, val, element) {
 			var el = $(element);
 			if (data[0] == "1") {
 				el.removeClass("btn-warning").addClass("btn-success");
+
 				$(selector).append("<li class='me'><a href='/user.php?id={$user.id}'><img src='{$user.avatar}'><p>{$user.fio}</p></a></li>");
                 if(role == 'viewer') el.html('Приду!');
                 if(role == 'photographer') el.html('Фотографирую!');
@@ -116,14 +125,16 @@ function i_fan(cid){
         })
         return false;
     }
-function query_to_ride(rid, hid, act, dennik, callback) {
+function query_to_ride(rid, hid, act, dennik, razvyazki,rhid, callback) {
 	api_query({
 		amethod: "comp_rider",
 		qmethod: "POST",
 		params: {
 			id: rid,
+			rid: rhid,
 			hid: hid,
             dennik: dennik,
+			razvyazki: razvyazki,
 			act : act
 		},
 		success: function (data) {
@@ -152,15 +163,18 @@ function rider(rid, act) {
 		part_prepare(rid);
 
 	} else {
-		query_to_ride(rid, 1, 0, 0);
+		query_to_ride(rid, 1, 0, 0,0);
 	}
 }
 
 
 </script>
 <style>
-    .disq td {
+    .disq1 td {
         background-color: red !important;
+    }
+    .disq2 td {
+        background-color: #0044cc !important;
     }
 </style>
 {include "modules/modal-add-edit-album-club.tpl"}
@@ -182,7 +196,7 @@ function rider(rid, act) {
 					<li><a href="/club.php?id={$club.id}#news-club">Новости/отзывы</a></li>
 					<li><a href="/club.php?id={$club.id}#about-club">О клубе</a></li>
 					<li class="active"><a href="/club.php?id={$club.id}#competitions-club">Соревнования</a></li>
-					<li><a href="/club.php?id={$club.id}#rating-club">Рейтинги (156,16)</a></li>
+					<li style="display: none"><a href="/club.php?id={$club.id}#rating-club">Рейтинги (156,16)</a></li>
 					<li><a href="/club.php?id={$club.id}#gallery-club">Галерея</a></li>
 					<li><a href="/club.php?id={$club.id}#contact-club">Контакты</a></li>
 				</ul>
@@ -207,6 +221,14 @@ function rider(rid, act) {
 								<dd>{$comp.address}</dd>
 								<dt>Вид:</dt>
 								<dd>{$comp.type}</dd>
+								<dt>Страна:</dt>
+								<dd>{$comp.country}</dd>
+								<dt>Город:</dt>
+								<dd>{$comp.city}</dd>
+								<dt>Денников:</dt>
+								<dd>{$comp.dennik} ({$comp.dennik_res} свободно)</dd>
+								<dt>Развязок:</dt>
+								<dd>{$comp.razvyazki} ({$comp.razvyazki_res} свободно)</dd>
 							</dl>
 						</div>
 						<div class="span6 compt-descr">
@@ -228,11 +250,15 @@ function rider(rid, act) {
 								</div>
 								<div class="span6 descr-title"><p>{$comp.desc}</p></div>
 								<div class="span6">
-									<!--<ul class="unstyled span6 comp-added-files">
-										<li class="pdf-file">Положение-1.pdf<button type="button" class="close">&times;</button></li>
-										<li class="pdf-file">Положение-2.pdf<button type="button" class="close">&times;</button></li>
-										<li class="pdf-file">Положение-c-длинным-описанием.pdf<button type="button" class="close">&times;</button></li>
-									</ul>-->
+									<ul class="unstyled span6 comp-added-files">
+										{foreach $comp.files as $file}
+											<li class="{$file.ext}-file"><a href="/uploads/{$file.path}.{$file.ext}" target="_blank">{$file.file}</a></li>
+										{/foreach}
+									</ul>
+									<div class="span3">Размер боевого поля</div>
+									<div class="span3">{if $comp.combat_field == ''}Нет данных{else}{$comp.combat_field}{/if}</div>
+									<div class="span3">Размер тренировочного поля</div>
+									<div class="span3">{if $comp.training_field == ''}Нет данных{else}{$comp.training_field}{/if}</div>
 								</div>
 								</div>
 							</div>
@@ -255,14 +281,20 @@ function rider(rid, act) {
 								<td colspan="6" class="td-complex">
 										<div class="row">
 											<div class="curr-compt-date span2">{$route.bdate}</div>
-											<div class="curr-compt-path span2">{$route.name}</div>
+											<div class="curr-compt-path span2"><a href="#startlist{$route.id}" class="get_startlist">{$route.name}</a></div>
 											<div class="curr-compt-height span2">{$route.height}</div>
 											<div class="curr-compt-for span2">{$route.exam}</div>
 											<div class="curr-compt-status span2">{$route.status}</div>
 											<div class="curr-compt-go">
-												<a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}"onclick=" {if $sportsman == 0}alert('Только спортсмены могут участвовать в соревновании. Если вы спортсмен, то поставьте галочку в настройках личной страницы');{else}rider({$route.id}, '{!$route.is_rider}', this);{/if} return false;" data-rider-rid="{$route.id}">
-                                                    {if $route.is_rider}Участвую{else}Участвовать{/if} <i class="icon-play icon-white"></i>
-												</a>
+                                                {if $route.complete}
+                                                    <a href="#result{$route.id}" class="btn btn-warning get_results">
+                                                        К результатам
+                                                    </a>
+                                                {else}
+                                                    <a href="#" class="btn btn-{if $route.is_rider}success{else}warning{/if}"onclick=" {if $sportsman == 0}alert('Только спортсмены могут участвовать в соревновании. Если вы спортсмен, то поставьте галочку в настройках личной страницы');{else}rider({$route.id}, '{!$route.is_rider}', this);{/if} return false;" data-rider-rid="{$route.id}">
+                                                        {if $route.is_rider}Участвую{else}Участвовать{/if} <i class="icon-play icon-white"></i>
+                                                    </a>
+                                                {/if}
 											</div>
 											<div class="row curr-compt-more">
 												<ul class="unstyled span12">
@@ -288,8 +320,8 @@ function rider(rid, act) {
 	<div class="span12">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#compt-members" data-toggle="tab">Участники</a></li>
-              <li><a href="#start-list" data-toggle="tab">Стартовый лист</a></li>
-              <li><a href="#compt-results" data-toggle="tab">Результаты</a></li>
+              <li><a href="#start-list" class="compt-startlist" data-toggle="tab">Стартовый лист</a></li>
+              <li><a href="#compt-results" class="compt-results" data-toggle="tab">Результаты</a></li>
               <li><a href="#compt-gallery" data-toggle="tab">Галерея</a></li>
               <li><a href="#compt-disqus" data-toggle="tab">Обсуждения</a></li>
             </ul>
@@ -338,31 +370,42 @@ function rider(rid, act) {
                             <th>Всадник</th>
                             <th>Разряд</th>
                             <th>Лошадь</th>
-                            <th>Владелец лошади</th>
+                            <th style="display: none">Владелец лошади</th>
                             <th>Клуб</th>
                         </tr>
 						{if $comp.routes}
-							{foreach $comp.routes as $route}
-								<tr><td colspan="6" class="table-caption">{$route.name}</td></tr>
-								{if $comp.startlist.{$route.id}}
-									{foreach $comp.startlist.{$route.id} as $res}
-										<tr>
-											<td class="">
-												{$res.ordering}
-											</td>
-											<td>{$res.fio}</td>
-											<td>-</td>
-											<td>{$res.horse}</td>
-											<td>{if $res.owner}{$res.owner}{else}{$res.ownerName}{/if}</td>
-											<td>{$res.club}</td>
-										</tr> 
+							{if $comp.publish}
+								<tr><td colspan="6"><a href="/api/generate_startlist.php?id={$comp.id}" target="_blank" class="btn btn-warning">Скачать стартовый лист</a></td></tr>
+								{foreach $comp.routes as $route}
+									<tr id="startlist{$route.id}"><td colspan="6" class="table-caption">{$route.name}</td></tr>
+									{foreach $comp.heights.{$route.id} as $height}
+										<tr><td colspan="6" class="height-caption">{$height.height},{$height.exam}</td></tr>
+										{if $comp.startlist.{$height.id}}
+											{foreach $comp.startlist.{$height.id} as $res}
+												<tr>
+													<td class="">
+														{$res.ordering}
+													</td>
+													<td>{$res.fname}<br/>{$res.lname}</td>
+													<td>-</td>
+													<td>{$res.horse}</td>
+													<td style="display: none">{if $res.owner}{$res.owner}{else}{$res.ownerName}{/if}</td>
+													<td>{$res.club}</td>
+												</tr>
+											{/foreach}
+										{else}
+											<tr>
+												<td colspan="6" style="text-align: center;">Администратор мероприятия пока не установил турнирную таблицу. Попробуйте позже.</td>
+											</tr>
+										{/if}
 									{/foreach}
-								{else}
-									<tr>
-										<td colspan="6" style="text-align: center;">Администратор мероприятия пока не установил турнирную таблицу. Попробуйте позже.</td>
-									</tr>
-								{/if}
-							{/foreach}
+								{/foreach}
+							{else}
+								<tr>
+									<td colspan="6" style="text-align: center;">Стартовый лист еще не опубликован.</td>
+								</tr>
+							{/if}
+
 						{else}
 							<tr>
 								<td colspan="6" style="text-align: center;">Нет маршрутов.</td>
@@ -372,53 +415,141 @@ function rider(rid, act) {
 					</table>
               </div><!-- compt-startlist -->
                 <div class="tab-pane" id="compt-results">
-				<table class="table table-striped competitions-table compt-results admin-compts">
-						<tbody><tr>
-                            <th>№</th>
-                            <th>Всадник</th>
-                            <th>Разряд</th>
-                            <th>Лошадь</th>
-                            <th>Команда</th>
-                            <th>Штраф. очки маршрут</th>
-                            <th>Время маршрут</th>
-                            <th>Штраф. очки</th>
-                            <th>Пере- прыжка</th>
-                            <th>Норма</th>
-                            <th> </th>
-                        </tr>
-						{if $comp.routes}
+
+                    {if $comp.routes}
+						{if $comp.publish_results}
 							{foreach $comp.routes as $route}
-								<tr><td colspan="10" class="table-caption">{$route.name}</td></tr>
-								{if $comp.results.{$route.id}}
-									{foreach $comp.results.{$route.id} as $res}
-										<tr {if $res.disq}class="disq"{/if} data-disq={$res.disq}>
-											<td class="">
-                                                {if !$res.disq}{$res.rank}{/if}
-											</td>
-											<td><a href="/user.php?id={$res.user_id}">{$res.fio}</a></td>
-											<td>{$res.razryad}</td>
-											<td>{$res.horseName}</td>
-											<td>{if $res.club == ''}Частный владелец{else}<a href="/club.php?id={$res.club_id}">{$res.club}</a>{/if}</td>
-											<td>{$res.shtraf_route}</td>
-											<td>{$res.time}</td>
-											<td>{$res.shtraf}</td>
-											<td>{$res.rerun}</td>
-											<td>{$res.norma}</td>
+								<table class="table table-striped competitions-table compt-results admin-compts" id="result{$route.id}">
+									<tbody>
+									{if $route.sub_type == 'на чистоту и трезвость'}
+										<tr>
+											<th rowspan="2" class="mesto">М<br/>е<br/>с<br/>т<br/>о</th>
+											<th rowspan="2">Всадник</th>
+											<th rowspan="2">Разряд</th>
+											<th rowspan="2">Лошадь</th>
+											<th rowspan="2">Команда</th>
+											<th colspan="2"><center>Маршрут</center></th>
+											<th rowspan="2"><center>Выйгрыш</center></th>
 										</tr>
+										<tr>
+											<th>Ш.О.</th>
+											<th>Время</th>
+										</tr>
+									{elseif $route.sub_type == '269'}
+
+										<tr>
+											<th rowspan="2" class="mesto">М<br/>е<br/>с<br/>т<br/>о</th>
+											<th rowspan="2">Всадник</th>
+											<th rowspan="2">Разряд</th>
+											<th rowspan="2">Лошадь</th>
+											<th rowspan="2">Команда</th>
+											<th colspan="2"><center>Результат</center></th>
+											<th rowspan="2"><center>Выйгрыш</center></th>
+										</tr>
+										<tr>
+											<th>Балл</th>
+											<th>Время</th>
+										</tr>
+									{elseif $route.sub_type == 'с перепрыжкой'}
+
+										<tr>
+											<th rowspan="2" class="mesto">М<br/>е<br/>с<br/>т<br/>о</th>
+											<th rowspan="2">Всадник</th>
+											<th rowspan="2">Разряд</th>
+											<th rowspan="2">Лошадь</th>
+											<th rowspan="2">Команда</th>
+											<th colspan="2"><center>Маршрут</center></th>
+											<th colspan="2"><center>Перепрыжка</center></th>
+											<th rowspan="2"><center>Выйгрыш</center></th>
+										</tr>
+										<tr>
+											<th>Ш.О.</th>
+											<th>Время</th>
+											<th>Ш.О.</th>
+											<th>Время</th>
+										</tr>
+									{elseif $route.sub_type == ''}
+										<tr>
+											<th class="mesto">М<br/>е<br/>с<br/>т<br/>о</th>
+											<th>Всадник</th>
+											<th>Разряд</th>
+											<th>Лошадь</th>
+											<th>Команда</th>
+											<th>Ш.О.</th>
+											<th>Время </th>
+											<th>Ш.О.</th>
+											<th>Пере- прыжка</th>
+											<th>Норма</th>
+											<th><center>Выйгрыш</center></th>
+										</tr>
+									{/if}
+									<tr><td colspan="11" class="table-caption">{$route.name}</td></tr>
+							{foreach $comp.heights.{$route.id} as $height}
+								<tr><td colspan="11" class="height-caption">{$height.height},{$height.exam}</td></tr>
+										{foreach $comp.results.{$height.id} as $res}
+											<tr {if $res.disq}class="disq{$res.disq}"{/if} data-disq={$res.disq}>
+												<td class="">
+													{if !$res.disq}{$res.rank}{/if}
+												</td>
+												<td><a href="/user.php?id={$res.user_id}">{$res.fname}<br/>{$res.lname}</a></td>
+												<td>{$res.razryad}</td>
+												<td><a href="/horse.php?id={$res.horse}">{$res.horseName}</a> - {$res.horseInfo}</td>
+												<td>{if $res.club == ''}Частный владелец{else}<a href="/club.php?id={$res.club_id}">{$res.club}</a>{/if}</td>
+												<td class="standarts" {if $route.sub_type == '269'}style="display: none"{/if}>{$res.shtraf_route}</td>
+												<td class="standarts" {if $route.sub_type != '269'}style="display: none"{/if}>{$res.ball}</td>
+												<td class="standarts">{$res.time}</td>
+												<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость' || $route.sub_type == '269'}style="display: none"{/if}>{$res.shtraf}</td>
+												<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость' || $route.sub_type == '269'}style="display: none"{/if}>{$res.rerun}</td>
+												<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость' || $route.sub_type == 'с перепрыжкой' || $route.sub_type == '269'}style="display: none"{/if}>{$res.norma}</td>
+												<td class="standarts">{$res.money} {$res.currency}</td>
+											</tr>
+										{/foreach}
 									{/foreach}
-								{else}
-									<tr>
-										<td colspan="10" style="text-align: center;">Администратор мероприятия пока не установил турнирную таблицу. Попробуйте позже.</td>
-									</tr>
-								{/if}
+									</tbody>
+								</table>
 							{/foreach}
 						{else}
-							<tr>
-								<td colspan="10" style="text-align: center;">Нет маршрутов.</td>
-							</tr>
+							<table class="table table-striped competitions-table compt-results admin-compts">
+								<tbody><tr>
+									<th class="mesto">М<br/>е<br/>с<br/>т<br/>о</th>
+									<th>Всадник</th>
+									<th>Разряд</th>
+									<th>Лошадь</th>
+									<th>Команда</th>
+									<th>Штраф. очки маршрут</th>
+									<th>Время маршрут</th>
+									<th>Штраф. очки</th>
+									<th>Пере- прыжка</th>
+									<th>Норма</th>
+									<th> </th>
+								</tr>
+								<tr>
+									<td colspan="11" style="text-align: center;">Результаты еще не опубликованы</td>
+								</tr>
+								</tbody>
+							</table>
 						{/if}
-					</tbody>
-					</table>
+                    {else}
+                        <table class="table table-striped competitions-table compt-results admin-compts">
+                            <tbody><tr>
+                                <th class="mesto">М<br/>е<br/>с<br/>т<br/>о</th>
+                                <th>Всадник</th>
+                                <th>Разряд</th>
+                                <th>Лошадь</th>
+                                <th>Команда</th>
+                                <th>Штраф. очки маршрут</th>
+                                <th>Время маршрут</th>
+                                <th>Штраф. очки</th>
+                                <th>Пере- прыжка</th>
+                                <th>Норма</th>
+                                <th> </th>
+                            </tr>
+                            <tr>
+                                <td colspan="11" style="text-align: center;">Для редактирования результатов добавьте маршрут.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    {/if}
               </div><!-- compt-results -->
               <div class="tab-pane" id="compt-gallery">
                   {if $gallery_id}

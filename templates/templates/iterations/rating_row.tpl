@@ -4,7 +4,7 @@
 {foreach $clubs as $club}
     <tr class="rating_row">
         <td class="rt-n">{$i++}</td>
-        <td class="rt-club"><a href="club.php?id={$club.cid}"><img src="{$club.avatar}">{$club.name}</a></td>
+        <td class="rt-club"><a href="/club.php?id={$club.cid}"><div class="club_logo"><img src="{$club.avatar}"></div>{$club.name}</a></td>
         <td class="rt-city">{$club.address}</td>
         <td class="rt-members">{$club.members}  чел.</td>
         <td class="rt-points">{$club.rating|round:2}</td>

@@ -12,7 +12,7 @@
 		$(".my-news-wall").autoload({
 			id: {$another_user.id},
 			type: "user"
-		})
+		});
 	})
 </script>
 {include "modules/modal-gallery-lightbox.tpl"}

@@ -12,14 +12,15 @@ if (!session_check()) {
 } else {
 	$assigned_vars["cid"] = $_GET["id"];
 	$db = new db;
-	$permission = $db->getOne("SELECT o_uid FROM clubs WHERE id = ?i", $_GET["id"]);
-	if ($permission == NULL || $permission != $_SESSION["user_id"]) {
+	$permission = $db->getRow("SELECT * FROM clubs WHERE id = ?i", $_GET["id"]);
+	if ($permission['o_uid'] == NULL || $permission['o_uid'] != $_SESSION["user_id"]) {
 		template_render_error("Вы не можете добавить соревнования в этот клуб. Мы сожалеем.");	
 	}
 	$assigned_vars["user"] = template_get_short_user_info($_SESSION["user_id"]);
 	$assigned_vars["page_title"] = "Добавить соревнование > Одноконники";
 	$assigned_vars["const_countries"] = $const_countries_old;
 	$assigned_vars["const_types"] = $const_horses_spec;
+	$assigned_vars["club"] = $permission;
 	$assigned_vars["files"] = $db->getAll("SELECT * FROM comp_files WHERE cid = ?i", $_GET["id"]);
 	template_render($assigned_vars, "competition-add.tpl");
 }

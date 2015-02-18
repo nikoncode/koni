@@ -21,6 +21,7 @@ if (!session_check()) {
 	$assigned_vars["u"]["bday"] = $temp[2];
 	$assigned_vars["mounths"] = $const_mounth;
 	$assigned_vars["countries"] = $const_countries;
+	$assigned_vars["const_rank"] = $const_rank;
 	$temp = array_flip($const_work);
 	$works = explode(",", $assigned_vars["u"]["work"]);
 	unset($assigned_vars["u"]["work"]);

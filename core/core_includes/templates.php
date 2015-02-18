@@ -5,6 +5,7 @@
 include_once (LIBRARIES_DIR . "safe_mysql/safemysql.php");
 include_once (LIBRARIES_DIR . "smarty/smarty.php");
 include_once (CORE_DIR . "core_includes/others.php");
+include_once (CORE_DIR . "constant.php");
 
 function template_get_user_info($id) {
 	$db = new db;
@@ -18,6 +19,7 @@ function template_get_user_info($id) {
 								city,
 								hand,
 								(SELECT count(id) FROM `friends` WHERE uid = ?i AND fid = users.id) as is_friends,
+								rank,
 								id FROM users WHERE id = ?i", $_SESSION["user_id"], $id);
 
 	if ($user === NULL) 
@@ -43,7 +45,7 @@ function template_get_user_info($id) {
 									WHERE users.id = friends.fid 
 									AND friends.uid = ?i LIMIT 6", $id);
 
-	$user["horses_bar"] = $db->getAll("SELECT * FROM horses WHERE o_uid = ?i LIMIT 2", $id); //BOOM
+	$user["horses_bar"] = $db->getAll("SELECT * FROM horses WHERE o_uid = ?i LIMIT 7", $id); //BOOM
 	$user["notice"] = $db->getAll("SELECT n.*, u.avatar, c.avatar as avatarClub, CONCAT(u.fname, ' ', u.lname) as fio, c.name as clubName, u.id as user_id, c.id as club_id
 	                                FROM notice as n
 	                                LEFT JOIN users as u ON (u.id = n.sender_id)
@@ -63,9 +65,10 @@ function template_get_user_info($id) {
 										WHERE  id IN (SELECT cid 
 										              FROM   ((SELECT cid 
 										                       FROM   comp_riders, 
-										                              routes 
-										                       WHERE  comp_riders.uid = ?i 
-										                              AND comp_riders.rid = routes.id) 
+										                              routes,
+										                              routes_heights
+										                       WHERE  comp_riders.uid = ?i
+										                              AND comp_riders.rid = routes_heights.id AND routes.id = routes_heights.route_id)
 										                      UNION 
 										                      (SELECT cid 
 										                       FROM   comp_members 
@@ -78,6 +81,9 @@ function template_get_user_info($id) {
 			$comp["date"] = explode(".", $comp["bdate"]);
 		}
 	}
+    $ranks = get_ranks();
+
+    $user['rank'] = ($user['rank'] > 0)?$ranks[$user['rank']]:0;
 
 	return $user;
 }

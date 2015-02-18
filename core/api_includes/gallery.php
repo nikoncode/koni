@@ -7,7 +7,7 @@ include_once (CORE_DIR . "core_includes/templates.php");
 
 function api_gallery_photo_info() {
 	/* validate data */
-	validate_fields($fields, $_POST, array("video"), array("id"), array(), $errors);
+	validate_fields($fields, $_POST, array("video"), array("id"), array(), $errors,false);
 
 	if (!empty($errors)) {
 		aerr($errors);

@@ -11,7 +11,7 @@ if (!session_check()) {
     template_render_error("К сожалению у вас пока нет персональной страницы, или мы вас не опознали. Пожалуйста <a href='/login.php'>войдите</a> или <a href='/reg.php'>зарегистрируйтесь</a>.");
 } else {
     $assigned_vars = array(
-        "page_title" 		=> "Рейтинг > Одноконники",
+        "page_title" 		=> "Статистика > Одноконники",
     );
     $assigned_vars["clubs"] = $db->getAll("SELECT c.avatar, cr.cid,SUM(cr.rating)/COUNT(cr.cid) as rating, c.name, CONCAT(c.country,', ',c.city) as address,
                                             (SELECT COUNT(id) as members FROM users WHERE cid = cr.cid) as members

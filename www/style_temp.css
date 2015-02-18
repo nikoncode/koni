@@ -14,7 +14,7 @@
 .ratings-page .btn-group label {font-weight: normal}
 #modal-gallery-post .image-info {width: 100%}
 .my-compts .i-fan a, .my-compts .my-fans a{color:#fff}
-.dennik_count {width: 35px}
+input.dennik_count,input.razvyazki_count {width: 35px}
 ul.gallery-in-post {height: auto !important;}
 
 .dragabble, .dragabble * {
@@ -69,3 +69,9 @@ table.compt-results td.table-caption {
 }
 
 table.compt-results.admin-compts{ margin-bottom: 0 !important;}
+.c-results-btns ul li {float: none !important;margin-bottom: 5px}
+.club_desc{text-align: justify;}
+.clubs-results .club_logo, .rating_row .club_logo, .rating_user_row .club_logo {height: 40px;float: left; width: 40px}
+.clubs-results .club_name {width: 40%}
+th.mesto {line-height: 12px}
+#startlist-table .dragabble, .dragabble * {margin:0}

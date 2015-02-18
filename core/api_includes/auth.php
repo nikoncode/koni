@@ -9,6 +9,7 @@ function api_auth_register() {
 	validate_fields($fields, $_POST, array(
 			"site",
             "mname",
+            "rank",
 			"work"
 		), array(
 			"login|Ваш логин",
@@ -112,16 +113,22 @@ function api_auth_register_admin() {
     /* Validate data */
     validate_fields($fields, $_POST, array(
             "mname",
-            "work"
+            "cid",
+            "rank",
+            "city",
+            "work",
+		"h_bplace","h_byear","h_rost","h_pasport","h_nick","h_sex",
+		"h_poroda",
+		"h_mast"
         ), array(
             "fname|Имя",
             "lname|Фамилия",
-            "cid|Клуб",
+
             "bday|День рождения",
             "bmounth|Месяц рождения",
             "byear|Год рождения",
             "country|Страна",
-            "city|Город",
+
             "phone|Телефон",
         ), array(
         ),
@@ -131,17 +138,21 @@ function api_auth_register_admin() {
     $db = new db;
 
     $country = $db->getRow("SELECT country_name_ru FROM country_ WHERE id=?i", $fields["country"]);
-    $city = $db->getRow("SELECT city_name_ru FROM city_ WHERE id=?i", $fields["city"]);
+
     if(!isset($country['country_name_ru'])){
         $errors[] = "Не выбрана страна.";
     }else{
         $fields['country'] = $country['country_name_ru'];
     }
-    if(!isset($city['city_name_ru'])){
-        $errors[] = "Не выбран город.";
-    }else{
-        $fields['city'] = $city['city_name_ru'];
+    if(isset($fields["city"])){
+        $city = $db->getRow("SELECT city_name_ru FROM city_ WHERE id=?i", $fields["city"]);
+        if(!isset($city['city_name_ru'])){
+            //$errors[] = "Не выбран город.";
+        }else{
+            $fields['city'] = $city['city_name_ru'];
+        }
     }
+
     $fields['login'] = time();
     $fields['mail'] = $fields['login'].'@odnokonniki.ru';
     $fields["passwd1"] = '1111111q';
@@ -180,11 +191,31 @@ function api_auth_register_admin() {
     /* Making verify code */
     $fields["hash"] = others_generate_code(5);
     $fields["hand"] = 1;
-
+	$fields_horse = $fields;
+	foreach($fields as $key=>$val){
+		if(substr_count($key,'h_')) unset($fields[$key]);
+	}
     /* Insert to db */
     $db->query("INSERT INTO users (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
+	$insert_id = $db->insertId();
+	if(isset($fields_horse['h_nick'])){
+		foreach($fields_horse['h_nick'] as $key=>$val){
+			$ins = array(
+				"o_uid" => $insert_id,
+				"nick" => $val,
+				"bplace" => $fields_horse["h_bplace"][$key],
+				"byear" => $fields_horse["h_byear"][$key],
+				"rost" => $fields_horse["h_rost"][$key],
+				"pasport" => $fields_horse["h_pasport"][$key],
+				"sex" => $fields_horse["h_sex"][$key],
+				"poroda" => $fields_horse["h_poroda"][$key],
+				"mast" => $fields_horse["h_mast"][$key]
+			);
+			$db->query("INSERT INTO horses (`" . implode("`, `", array_keys($ins)) . "`) VALUES (?a);", $ins);
+		}
 
-    aok($db->insertId());
+	}
+    aok($insert_id);
 }
 
 function api_auth_get_city(){
@@ -192,10 +223,18 @@ function api_auth_get_city(){
         "country_id",
     ), array(), $errors, false);
     $db = new db;
-    $cities = $db->getAll("SELECT id,city_name_ru
+	if(intval($fields['country_id']) > 0){
+		$cities = $db->getAll("SELECT id,city_name_ru
                                                 FROM city_
                                                 WHERE id_country = ?i
                                                 ORDER BY oid",$fields['country_id']);
+	}else{
+		$cities = $db->getAll("SELECT city_.id,city_.city_name_ru
+                                                FROM city_, country_
+                                                WHERE city_.id_country = country_.id AND country_.country_name_ru = ?s
+                                                ORDER BY city_.oid",$fields['country_id']);
+	}
+
     $city = '';
     foreach($cities as $row){
         $selected = (isset($fields['city']) && $row['city_name_ru'] == $fields['city'])?'selected="selected"':'';
@@ -333,6 +372,7 @@ function api_auth_user_change() {
             "mname",
             "work",
             "passwd1",
+            "rank",
             "passwd2"
         ), array(
             "fname|Имя",
@@ -400,6 +440,7 @@ function api_auth_user_change() {
     if (!empty($errors)) {
         aerr($errors);
     }
+    if(!isset($fields['rank'])) $fields['rank'] = 0;
 	$db->query("UPDATE users SET ?u WHERE id = ?i", $fields, $_SESSION["user_id"]);
 
 	/* Mail client details to user */

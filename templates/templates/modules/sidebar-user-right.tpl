@@ -16,6 +16,7 @@ function delete_from_friend_callback(uid) {
 	});
 }
 </script>
+{include "modules/modal-support.tpl"}
 <div class="span3 lthr-bgborder block" id="sidebarRight">
 	
 	<div class="user-info">
@@ -29,6 +30,12 @@ function delete_from_friend_callback(uid) {
 				{/foreach}
 			</ul>
 		{/if}
+
+        {if $another_user.rank}
+            <p class="user-info">
+                Звание/разряд: {$another_user.rank}
+            </p>
+        {/if}
 		<p class="user-club">
 			{if $another_user.club_name}
 				Состоит в клубе "<a href="club.php?id={$another_user.club_id}">{$another_user.club_name}</a>"
@@ -47,7 +54,7 @@ function delete_from_friend_callback(uid) {
 		</ul>
 
         {else}
-            Эта страница создана автоматически, если это Вы и хотите получить доступ к управлению своей страницей, то напишите <a href="/support.php">Службу поддержки</a>
+            Эта страница создана автоматически, если это Вы и хотите получить доступ к управлению своей страницей, то напишите <a href="#support" role="button" data-toggle="modal">Службу поддержки</a>
         {/if}
 	</div>
 	

@@ -62,7 +62,7 @@
                         <a href="/" class="brand span2 logo"><center><img src="images/logo.png" /></center></a>
                         <ul class="nav span5 main-nav-2">
                             <li><a href="find-users.php">Люди</a></li>
-                            <li><a href="ratings.php">Рейтинги</a></li>
+                            <li><a href="ratings.php">Статистика</a></li>
                             <li><a href="adv.php">Объявления</a></li>
                         </ul>
                     </div>

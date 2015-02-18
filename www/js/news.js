@@ -2,6 +2,7 @@
 console.info("news.js loaded");
 
 function news_add(element) {
+	tinyMCE.triggerSave();
 	api_query({
 		qmethod: "POST",
 		amethod: "news_add",
@@ -16,10 +17,11 @@ function news_add(element) {
 			/* init galleries in added posts */
 			$("[data-gallery-list]").each(function () { //TO-DO: performance (fix reinit existing)
 				gallery_initialize(this);
-			});	
+			});
+			tinyMCE.activeEditor.setContent('');
 		},
 		fail:    "standart"
-	})	
+	})
 }
 
 function remove_comment(cid, element) {

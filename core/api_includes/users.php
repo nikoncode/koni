@@ -9,12 +9,12 @@ function api_user_find() {
 		"city",
 		"club",
 		"work"
-	), array(), array(), $errors);
+	), array(), array(), $errors,false);
 
 	if (!empty($errors)) {
 		aerr($errors);
 	}
-
+    session_check();
 	$db = new sphinx;
 	$conditions = "";
 	if (isset($fields["q"])) {
@@ -60,9 +60,49 @@ function api_user_find() {
 						FROM users
 						WHERE id IN (?a)", $_SESSION["user_id"], $ids);
 	$rendered = template_render_to_var(array(
-		"finded_users" => $users
+		"finded_users" => $users,
+        "show_right" => 1,
 	), "iterations/users_find_results.tpl");
 	aok($rendered);
+}
+
+function api_user_find_reg() {
+    validate_fields($fields, $_POST, array(
+        "q",
+        "city",
+    ), array(), array(), $errors,false);
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+
+    $db = new sphinx;
+    $conditions = "";
+    if (isset($fields["q"])) {
+        $conditions .= "@fio \"" . $db->parse("?w", $fields["q"]) . "\" ";
+    }
+
+    if (isset($fields["city"])) {
+        $conditions .= "@city \"" . $db->parse("?w", $fields["city"]) . "\" ";
+    }
+
+
+    $ids = $db->getCol("SELECT id FROM users_index WHERE MATCH('?p')", $conditions);
+    $db = new db;
+    $users = $db->getAll("SELECT 	CONCAT(fname,' ',lname) as fio,
+									id,
+									avatar,
+									country,
+									city,
+									(SELECT name FROM clubs WHERE id = users.cid) as club,
+									cid
+						FROM users
+						WHERE id IN (?a) AND hand = 1",  $ids);
+    $rendered = template_render_to_var(array(
+        "finded_users" => $users,
+        "show_right" => 0,
+    ), "iterations/users_find_results.tpl");
+    aok($rendered);
 }
 
 function api_user_horse_find() {
@@ -160,8 +200,53 @@ function api_get_user_club(){
     $db = new db;
     $user = $db->GetRow("SELECT
 								cid as club_id,
-								(SELECT name FROM clubs WHERE id = club_id) as club_name
+								(SELECT name FROM clubs WHERE id = club_id) as club_name,
+								rank
 								 FROM users WHERE id = ?i", $fields['id']);
     aok($user);
+}
+
+function api_send_support(){
+	validate_fields($fields, $_POST, array(
+		"phone",
+		"name",
+		"lname",
+		"url",
+	), array("email|E-mail","message|Текст сообщения"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+	$headers  = 'Content-type: text/plain; charset=utf-8';
+	mail("nostrag@gmail.com", "Запрос в службу поддержки", "
+	    	Имя:".$fields['name']."
+	    	Фамилия:".$fields['lname']."
+	    	Телефон:".$fields['phone']."
+	    	E-Mail:".$fields['email']."
+	    	Текст сообщения:".$fields['message']."
+	    	Сраница, с которой был отправлен запрос:".$_SERVER['SERVER_NAME'].$fields['url']."
+	    	IP отправителя:".$_SERVER['REMOTE_ADDR']."
+		",$headers);
+	aok(array("Сообщение отправлено"));
+}
+
+function api_find_users(){
+	validate_fields($fields, $_POST, array(), array("q"), array(), $errors);
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+	$db = new db;
+	$q = explode(" ",$fields['q']);
+	if(count($q) > 1){
+		$users = $db->getAll("SELECT id, CONCAT(fname,' ',lname,', ', city,', ',DATE_FORMAT(bdate,'%d.%m.%Y')) as fio FROM users WHERE (fname = '".$q[0]."' AND lname LIKE '".$q[1]."%') OR (lname = '".$q[0]."' AND fname LIKE '".$q[1]."%')");
+	}else{
+		$users = $db->getAll("SELECT id, CONCAT(fname,' ',lname,', ', city,', ',DATE_FORMAT(bdate,'%d.%m.%Y')) as fio FROM users WHERE lname LIKE '".$q[0]."%' OR fname LIKE '".$q[0]."%'");
+	}
+
+	$results = array();
+	foreach($users as $user){
+		$results[] = array('id' => $user['id'], 'text' => $user['fio']);
+	}
+	echo json_encode(array('q' => $fields['q'], 'results' => $results));
 }
 

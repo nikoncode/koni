@@ -21,6 +21,8 @@ function sign_up(form) {
 	})
 }
 
+
+
 /* Autocomplete phone numbers */
 function change_country(select) {
     var country = $('.chosen-country option:selected').val();
@@ -31,6 +33,7 @@ function change_country(select) {
         success: function (response, data) {
             $('select.chosen-city').html(response);
             $(".chosen-city").trigger("chosen:updated");
+            $(".chosen-city").change();
         },
         fail:    "standart"
     })
@@ -69,6 +72,49 @@ $(document).ready(function()
             fail:    "standart"
         })
     });
+    $('.fname').blur(function(){
+        $('.chosen-city').change();
+    });
+    $('.lname').blur(function(){
+        $('.chosen-city').change();
+    });
+
+    $('.chosen-city').change(function(){
+        var fname = $('.fname').val();
+        var lname = $('.lname').val();
+        var city = $('.chosen-city option:selected').html() || '';
+        if(fname != '' && lname != '' && city != ''){
+            var q = fname+' '+lname;
+            api_query({
+                qmethod: "POST",
+                amethod: "user_find_reg",
+                params:  {
+                    q:q,
+                    city:city
+                },
+                success: function (response, data) {
+                    if(response != null && response != ''){
+                        var mdl = $("#modal-info-users");
+                        mdl.find('#info-block-users').html(response);
+                        mdl.modal("show");
+                    }
+                },
+                fail:    "standart"
+            })
+        }
+    });
+    $('.spec').change(function(){
+        var rank = false;
+       $('.spec:checked').each(function(){
+           if($(this).val() == 'Тренер' || $(this).val() == 'Спортсмен') rank = true;
+       });
+        if(rank){
+            $('.rank').css('display','');
+        }else{
+            $('.rank option[value="0"]').prop('selected',true);
+            $('.rank').css('display','none');
+        }
+    });
 });
 </script>
 {/literal}
@@ -95,8 +141,8 @@ $(document).ready(function()
 							
 							<div class="controls controls-row">
 								<label class="span7">Как вас зовут? <span class="req">*</span></label>
-								<input type="text" class="span3" placeholder="Имя" name="fname">
-								<input type="text" class="span3" placeholder="Фамилия" name="lname"> <br/>
+								<input type="text" class="span3 fname" placeholder="Имя" name="fname">
+								<input type="text" class="span3 lname" placeholder="Фамилия" name="lname"> <br/>
 								<div class="span6"><input type="text" placeholder="Отчество" name="mname"> (не обязательно)</div>
 							</div>
 							
@@ -132,8 +178,16 @@ $(document).ready(function()
 							<div class="controls controls-row">
 								<label class="span6">Я - ...</label>
 								{foreach $const_work as $work}
-									<div class="span2"><label class="checkbox pull-left"><input name="work[]" type="checkbox" value="{$work}">{$work}</label></div>
+									<div class="span2"><label class="checkbox pull-left"><input name="work[]" type="checkbox" class="spec" value="{$work}">{$work}</label></div>
 								{/foreach}
+							</div>
+                            <div class="controls controls-row rank" style="display: none">
+								<label class="span6">Разряд</label>
+                                <select class="span2 rank" name="rank">
+                                    {foreach $const_rank as $key=>$rank}
+                                        <option value="{$key}">{$rank}</option>
+                                    {/foreach}
+                                </select>
 							</div>
 							
 						</div>
@@ -163,6 +217,23 @@ $(document).ready(function()
 			</div>
 		</div>	
 
+</div>
+<div id="modal-info-users" class="modal hide" tabindex="-1" role="dialog" aria-hidden="true" style="z-index:999999 !important">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 >Возможно вы уже есть в нашем списке</h3>
+    </div>
+    <div class="modal-body">
+        <div id="info-block-users" class="friends-list"></div>
+        <hr/>
+        <div class="row">
+            <div class="controls controls-row">
+                <center>
+                    <button class="btn btn-warning offset2 span"  data-dismiss="modal" aria-hidden="true">Нет, продолжить регистрацию</button>
+                </center>
+            </div>
+        </div>
+    </div>
 </div>
 
 {include "modules/footer.tpl"}

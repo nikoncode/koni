@@ -14,6 +14,7 @@
 	<link href="style.css" rel="stylesheet">
 	<link href="style_temp.css" rel="stylesheet">
 	<script src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/tinymce/tinymce.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/api.js"></script>
 		
@@ -166,7 +167,7 @@
                         <a href="/inner.php" class="brand span2 logo"><center><img src="images/logo.png" /></center></a>
                         <ul class="nav span5 main-nav-2">
                             <li><a href="find-users.php">Люди</a></li>
-                            <li><a href="ratings.php">Рейтинги</a></li>
+                            <li><a href="ratings.php">Статистика</a></li>
                             <li><a href="adv.php">Объявления</a></li>
                         </ul>
                     </div>

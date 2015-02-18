@@ -9,12 +9,12 @@ function api_club_edit1() {
 		"phones",
 		"p_desc",
 		"coords",
+        "type",
 		"metro"
 	), array(
 		"id",
-		"name",
-		"type",
-		"country"
+		"name|Название клуба",
+		"country|Страна"
 	), array(
 		"site" => "url",
 		"email" => "email"
@@ -36,7 +36,10 @@ function api_club_edit1() {
 
     if (isset($fields["type"])) {
 		$fields["type"] = implode(",", $fields["type"]);
-	}
+	}else{
+        $fields['type'] = '';
+    }
+
 
 	if (isset($fields["phones"]) && isset($fields["p_desc"])) {
 		$phones = array();
@@ -64,7 +67,7 @@ function api_club_edit2() {
 		aerr($errors);
 	}
 
-	if (strlen($fields["sdesc"]) > 450) {
+	if (strlen($fields["sdesc"]) > 800) {
 		aerr(array("Слишком длинное 'Краткое описание'."));
 	}
 
@@ -169,7 +172,7 @@ function api_club_search() {
 		"amount_start",
 		"amount_end",
 		"metro"
-	), array("range_type"), array(), $errors);
+	), array("range_type"), array(), $errors,false);
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -217,6 +220,7 @@ function api_club_search() {
 									country,
 									city,
 									(SELECT COUNT(id) FROM users WHERE cid = clubs.id) as members_cnt,
+									(SELECT COUNT(id) FROM club_reviews WHERE cid = clubs.id) as reviews,
 									CONCAT(with_inst, ' / ', without_inst, ' / ', horse) as prices
 							FROM clubs 
 							WHERE id IN (?a)", $ids);
@@ -270,16 +274,71 @@ function api_rating_search(){
         $get_where .= " c.city = '".$fields['city']."'";
     }
     if($get_where != '') $get_where = ' WHERE '.$get_where;
-    $clubs = $db->getAll("SELECT c.avatar, cr.cid,SUM(cr.rating)/COUNT(cr.cid) as rating, c.name, CONCAT(c.country,', ',c.city) as address,
-                                            (SELECT COUNT(id) as members FROM users WHERE cid = cr.cid) as members
-                                            FROM `club_reviews` as cr
-                                            INNER JOIN clubs as c ON(c.id = cr.cid) ".$get_where."
-                                            GROUP BY cr.cid ORDER BY rating DESC");
+    $clubs = $db->getAll("SELECT c.avatar, c.id as cid,SUM(cr.ball) as rating, c.name, CONCAT(c.country,', ',c.city) as address,
+                                            (SELECT COUNT(id) as members FROM users WHERE cid = c.id) as members
+                                            FROM `clubs` as c
+                                            INNER JOIN comp_results as cr ON(c.id = cr.club_id)
+											INNER JOIN routes_heights AS rh ON (rh.id = cr.rid)
+											INNER JOIN routes AS r ON (r.id = rh.route_id)
+                                            ".$get_where."
+                                            GROUP BY c.id ORDER BY rating DESC");
     $result = template_render_to_var(array(
         "clubs" => $clubs
     ), "iterations/rating_row.tpl");
     aok(array(
         "rendered" 	=> $result,
         "source"	=> $clubs
+    ));
+}
+function api_rating_search_users(){
+    validate_fields($fields, $_POST, array(
+        "period",
+        "vozrast",
+        "height",
+        "country",
+        "city"
+    ), array(), array(), $errors);
+
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    $vozrast = array(
+        "vzroslie" => 'TIMESTAMPDIFF( YEAR, u.bdate, CURDATE( ) ) > 22',
+        "uniori" => 'TIMESTAMPDIFF( YEAR, u.bdate, CURDATE( ) ) > 19 AND TIMESTAMPDIFF( YEAR, u.bdate, CURDATE( ) ) < 22',
+        "unoshi" => 'TIMESTAMPDIFF( YEAR, u.bdate, CURDATE( ) ) < 22',
+        "deti" => 'TIMESTAMPDIFF( YEAR, u.bdate, CURDATE( ) ) < 15',
+    );
+    $db = new db;
+    $get_where = '';
+    if($fields['period'] == 12) $get_where = " r.bdate >= '".date("Y-m-d H:i:s",time()-31556926)."'";
+    if($fields['country'] != '') {
+        if($get_where != '') $get_where .= ' AND';
+        $get_where .= " u.country = '".$fields['country']."'";
+    }
+    if($fields['city'] != '') {
+        if($get_where != '') $get_where .= ' AND';
+        $get_where .= " u.city = '".$fields['city']."'";
+    }
+    if($fields['height'] != '') {
+        if($get_where != '') $get_where .= ' AND';
+        $get_where .= " r.height = '".$fields['height']."'";
+    }
+    if($fields['vozrast'] != '' && isset($vozrast[$fields['vozrast']])) {
+        if($get_where != '') $get_where .= ' AND ';
+        $get_where .= $vozrast[$fields['vozrast']];
+    }
+    if($get_where != '') $get_where = ' WHERE '.$get_where;
+    $users = $db->getAll("SELECT u.*, c.name as club, SUM(cr.ball) as ball FROM users AS u
+                            INNER JOIN comp_results AS cr ON (cr.user_id = u.id)
+                            INNER JOIN routes_heights AS rh ON (rh.id = cr.rid)
+                            INNER JOIN routes AS r ON (r.id = rh.route_id)
+                            LEFT JOIN clubs AS c ON (c.id = u.cid)
+                            ".$get_where."
+                            GROUP BY u.id ORDER BY ball DESC");
+    $result = template_render_to_var(array(
+        "users" => $users
+    ), "iterations/rating_user_row.tpl");
+    aok(array(
+        "rendered" 	=> $result
     ));
 }

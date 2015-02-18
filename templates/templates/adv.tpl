@@ -187,13 +187,13 @@
             <div class="row">
                 <ul id="advTab" class="nav nav-tabs new-tabs tabs2">
                     <li class="active"><a href="#adv-tab1" data-toggle="tab">Лошади</a></li>
-                    <li><a href="#adv-tab2" data-toggle="tab">Корма</a></li>
+                    <li><a href="#adv-tab2" data-toggle="tab" style="display:none;">Корма</a></li>
                     <li><a href="#adv-tab3" data-toggle="tab">Траспорт</a></li>
-                    <li><a href="#adv-tab4"data-toggle="tab">Для всадника</a></li>
-                    <li><a href="#adv-tab5"data-toggle="tab">Для лошади</a></li>
-                    <li><a href="#adv-tab6"data-toggle="tab">Для конюшни</a></li>
-                    <li><a href="#adv-tab7"data-toggle="tab">Ветеринару</a></li>
-                    <li><a href="#adv-tab8"data-toggle="tab">Сувениры</a></li>
+                    <li><a href="#adv-tab4"data-toggle="tab" style="display:none;">Для всадника</a></li>
+                    <li><a href="#adv-tab5"data-toggle="tab" style="display:none;">Для лошади</a></li>
+                    <li><a href="#adv-tab6"data-toggle="tab" style="display:none;">Для конюшни</a></li>
+                    <li><a href="#adv-tab7"data-toggle="tab" style="display:none;">Ветеринару</a></li>
+                    <li><a href="#adv-tab8"data-toggle="tab" style="display:none;">Сувениры</a></li>
                 </ul>
             </div>
 

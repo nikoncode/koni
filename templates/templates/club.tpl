@@ -5,8 +5,14 @@
 <script src="js/upload/jquery.ui.widget.js"></script>
 <script src="js/upload/jquery.iframe-transport.js"></script>
 <script src="js/upload/jquery.fileupload.js"></script>
-
-
+<script type="text/javascript">
+	tinymce.init({
+		selector: ".add-news textarea",
+		language : 'ru',
+		menubar : false,
+		toolbar: "undo redo | styleselect | bold italic | link image"
+	});
+</script>
 
 <script type="text/javascript" src="js/likes.js"></script>
 <script type="text/javascript" src="js/gallery.js"></script>
@@ -14,6 +20,8 @@
 <script type="text/javascript" src="js/news.js"></script>
 <script type="text/javascript" src="js/autoload.js"></script>
 <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+
+
 
 <script>
 	$(function () {
@@ -92,7 +100,7 @@
 					<li class="active"><a href="#news-club" data-toggle="tab">Новости/отзывы</a></li>
 					<li><a href="#about-club" data-toggle="tab">О клубе</a></li>
 					<li><a href="#competitions-club" data-toggle="tab">Соревнования</a></li>
-					<li><a>Рейтинги (156,16)</a></li>
+					<li style="display: none"><a>Рейтинги (156,16)</a></li>
 					<li><a href="#gallery-club" data-toggle="tab">Галерея</a></li>
 					<li><a href="#contact-club" data-toggle="tab">Контакты</a></li>
 				</ul>
@@ -240,12 +248,17 @@ function useless(review_id, type, el) {
 						<div class="span6">
 							{if $club.desc}
 								<h4>О клубе</h4>
-								<p>{$club.desc}</p>
+								<p class="club_desc">{$club.desc}</p>
 								<hr/>
 							{/if}
                             {if $club.ability}
                                 <h4>Тип клуба:</h4>
-                                <p>{$club.type}</p>
+								<ul class="club-additional-features">
+									{foreach $club.types as $ab}
+										<li>{$ab}</li>
+									{/foreach}
+								</ul>
+								<div class="clearfix"></div>
                                 <hr/>
                             {/if}
 							{if $club.ability}
@@ -274,8 +287,9 @@ function useless(review_id, type, el) {
 												</ul>
 											{else if $add.name == "Лошади"}
 												<ul class="unstyled">
-													<li>Самок: {$add.man}</li>
-													<li>Самцов: {$add.woman}</li>
+													<li>Жеребцов: {$add.man}</li>
+													<li>Меринов: {$add.merin}</li>
+													<li>Кобыл: {$add.woman}</li>
 												</ul>
 											{else if $add.name == "Обслуживающий персонал"}
 												<ul class="unstyled">

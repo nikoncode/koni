@@ -2,10 +2,13 @@
 {include "modules/header.tpl"}
 <script src="js/chosen.jquery.min.js"></script>
 <link  href="css/chosen.css" rel="stylesheet">
+<link  href="css/datepicker.css" rel="stylesheet">
 <!-- implement fileupload -->
 <script src="js/upload/jquery.ui.widget.js"></script>
 <script src="js/upload/jquery.iframe-transport.js"></script>
 <script src="js/upload/jquery.fileupload.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/bootstrap-datepicker.ru.js"></script>
 <script>
 	function add_comp(form) {
 		api_query({
@@ -18,7 +21,32 @@
 			fail: "standart"
 		});
 	}
+	function select_country() {
+		var country = $('.select-country option:selected').val();
+		var city = '{$club.city}';
+		{literal}
+		api_query({
+			qmethod: "POST",
+			amethod: "auth_get_city",
+			params:  {country_id:country},
+			success: function (response, data) {
+				$('select.select-city').html('<option value="0"></option>'+response);
+				$('select.select-city option').each(function(){
+					var tmp = $(this).html();
+					if(tmp == city) $(this).prop('selected',true);
+					$(this).val(tmp);
+				});
+				$(".select-city").trigger("chosen:updated");
+			},
+			fail:    "standart"
+		});
+		{/literal}
+	}
     $(function(){
+		$('.datepick').datepicker({
+			language: "ru",
+			format: "dd.mm.yyyy"
+		});
         {literal}$(".chosen-select").chosen({no_results_text: "Не найдено по запросу",inherit_select_classes: true, placeholder_text_multiple: "Выберите виды"});{/literal}
         $("#fileupload").fileupload({
             url: '/api/api.php?m=file_club_upload&id={$cid}',
@@ -33,6 +61,14 @@
             }
         });
     });
+	{literal}
+	$(document).ready(function()
+	{
+		$(".select-select").chosen({no_results_text: "Не найдено по запросу",placeholder_text_single: "Не выбрано",inherit_select_classes: true,search_contains: true,width:'150px'});
+		$(".select-select").css('width','150px');
+		select_country();
+	});
+	{/literal}
 </script>
 
 <div class="container clubs-page club-admin main-blocks-area club-block club-add-comp">
@@ -61,7 +97,7 @@
 								<div class="title-hr">
 									<div class="title span7">Новое соревнование</div>
 									<button href="club-admin-add-comp.php" class="btn btn-warning span3">Сохранить изменения</button>
-									<a href="/club-admin.php?id={$cid}" class="btn span1">Отмена</a>
+									<a href="/club-admin.php?id={$cid}" class="btn span2">Отмена</a>
 								</div>
 							</div>
 						</div>
@@ -75,18 +111,24 @@
 												<input type="text" class="span6" name="name">
 												<label class="span3">Дата начала</label>
 												<label class="span3">Дата завершения</label>
-												<input type="text" class="span3" placeholder="дд.мм.гггг" name="bdate">
-												<input type="text" class="span3" placeholder="дд.мм.гггг" name="edate">
+												<input type="text" class="span3 datepick" placeholder="дд.мм.гггг" name="bdate">
+												<input type="text" class="span3 datepick" placeholder="дд.мм.гггг" name="edate">
 												<label class="span3">Страна</label>
 												<label class="span3">Город</label>
-												<select class="span3" name="country">
-													{foreach $const_countries as $country}
-														<option>{$country}</option>
-													{/foreach}
-											   </select>
-												<input type="text" class="span3" name="city">
+												<div class="span3">
+													<select class="select-select select-country" name="country" onchange="select_country();">
+														{foreach $const_countries as $country}
+															<option {if $country == $club.country}selected="selected"{/if}>{$country}</option>
+														{/foreach}
+													</select>
+												</div>
+												<div class="span3">
+													<select class="select-select select-city span3" name="city">
+														<option value="0">Выбрать город</option>
+													</select>
+												</div>
 											   <label class="span6">Адрес проведения соревнования</label>
-												<input type="text" class="span6" name="address">
+												<input type="text" class="span6" name="address" value="{$club.address}">
 												<div class="span6"></div>
                                                 <label class="span6">Вид соревнований</label>
 												<select class="span6 chosen-select" name="type[]" multiple>

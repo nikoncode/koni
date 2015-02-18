@@ -2,7 +2,7 @@
 {if $clubs}
 	{foreach $clubs as $club}
 		<tr class="result">
-			<td class="club-name"><a href="/club.php?id={$club.id}"><img src="{$club.avatar}">{$club.name}</a></td>
+			<td class="club-name"><a href="/club.php?id={$club.id}"><div class="club_logo"><img src="{$club.avatar}"></div>{$club.name}</a></td>
 			<td class="club-place">
 				{$club.country}
 				{if $club.city}
@@ -10,8 +10,7 @@
 				{/if}
 			</td>
 			<td class="club-members">{$club.members_cnt}  чел.</td>
-			<td class="club-price">{$club.prices}</td>
-			<td class="club-rating">пока не готово</td>
+			<td class="club-rating">{$club.reviews}</td>
 		</tr>
 	{/foreach}
 {else}

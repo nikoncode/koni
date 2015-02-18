@@ -73,6 +73,19 @@
                     fail:    "standart"
                 })
             });
+            $('.spec').change(function(){
+                var rank = false;
+                $('.spec:checked').each(function(){
+                    if($(this).val() == 'Тренер' || $(this).val() == 'Спортсмен') rank = true;
+                });
+                if(rank){
+                    $('.rank').css('display','');
+                }else{
+                    $('.rank option[value="0"]').prop('selected',true);
+                    $('.rank').css('display','none');
+                }
+            });
+            $('.spec').change();
         });
     </script>
 {/literal}
@@ -168,8 +181,16 @@
 							<h5 class="title-hr">Изменить увлечения</h5>
 							<div class="control-group">
 								{foreach $u.profs as $prof}
-									<div class="span2"><label class="checkbox pull-left"><input type="checkbox" name="work[]" value="{$prof@key}" {$prof}>{$prof@key}</label></div>
+									<div class="span2"><label class="checkbox pull-left"><input type="checkbox" name="work[]" class="spec" value="{$prof@key}" {$prof}>{$prof@key}</label></div>
 								{/foreach}
+							</div>
+                            <h5 class="title-hr rank">Разряд</h5>
+							<div class="control-group rank">
+                                <select class="span2 rank" name="rank">
+                                    {foreach $const_rank as $key=>$rank}
+                                        <option value="{$key}" {if $key == $u.rank}selected="selected"{/if}>{$rank}</option>
+                                    {/foreach}
+                                </select>
 							</div>
 						</div>
 					</div>

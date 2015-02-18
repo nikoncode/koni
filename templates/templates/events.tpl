@@ -4,14 +4,23 @@
 <script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 <script type="text/javascript" src="js/prettify.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/bootstrap-datepicker.ru.js"></script>
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/datepicker.css" rel="stylesheet">
 <link rel="stylesheet" href="css/range.css">
+<link  href="css/chosen.css" rel="stylesheet">
 <script type="text/javascript">
     $(document).ready(function() {
         window.prettyPrint() && prettyPrint();
-
+        $('.datepick').datepicker({
+            language: "ru",
+            format: "dd.mm.yyyy"
+        });
         $('#event-clubs').multiselect({
             /*includeSelectAllOption: true,*/
             enableFiltering: true,
+            enableCaseInsensitiveFiltering:true,
             maxHeight: 150,
             numberDisplayed: 10,
             nonSelectedText: 'Выберите из списка',
@@ -50,7 +59,7 @@
                 success: function (data) {
                     if(data == ''){
                         $('#search-results').html('<tr>\
-                                <th>Дата</th>\
+                                <th width="70">Дата</th>\
                                 <th>Соревнование</th>\
                                 <th>Вид</th>\
                                 <th>Местоположение</th>\
@@ -59,7 +68,7 @@
                         </tr><tr><td colspan="6"><div class="text-center"><strong>Ничего не найдено</strong></div></td></tr>');
                     }else{
                         $('#search-results').html('<tr>\
-                                <th>Дата</th>\
+                                <th width="70">Дата</th>\
                                 <th>Соревнование</th>\
                                 <th>Вид</th>\
                                 <th>Местоположение</th>\
@@ -72,6 +81,23 @@
                 fail:    "standart"
             })
         }
+        function select_country() {
+            var country = $('.select-country option:selected').val();
+            api_query({
+                qmethod: "POST",
+                amethod: "auth_get_city",
+                params:  {country_id:country},
+                success: function (response, data) {
+                    $('select.select-city').html('<option value="">Все</option>'+response);
+                    $('select.select-city option').each(function(){
+                        var tmp = $(this).html();
+                        if(tmp != 'Все')$(this).val(tmp);
+                    });
+                    $(".select-city").trigger("chosen:updated");
+                },
+                fail:    "standart"
+            });
+        }
         function clear_filter(form){
             $(form).find('input[type="text"]').val('');
             $(form).find('select option:first-child').prop('selected',true);
@@ -82,8 +108,15 @@
             $('#adv-height-amount').html(startAmount);
             search('#find_events');
         }
+        $(document).ready(function()
+        {
+            $(".select-select").chosen({no_results_text: "Не найдено по запросу",placeholder_text_single: "Все",inherit_select_classes: true,search_contains: true,width:'150px'});
+            $(".select-select").css('width','150px');
+            select_country();
+        });
     </script>
 {/literal}
+
 <div class="container main-blocks-area events-page">
     <div class="row">
         <div class="span12 lthr-bgborder filter-block block">
@@ -104,7 +137,7 @@
                                 <select name="type" class="span3">
                                     <option value="">Любой</option>
                                     {foreach $const_types as $type}
-                                        <option>{$type}</option>
+                                        {if $type == 'Конкур' || $type == 'Выездка'}<option>{$type}</option>{/if}
                                     {/foreach}
                                 </select>
                             </td>
@@ -121,11 +154,11 @@
                         <tr>
                             <td>
                                 <label>Дата начала</label>
-                                <input type="text" name="bdate" class="span3">
+                                <input type="text" name="bdate" class="span3 datepick">
                             </td>
                             <td>
                                 <label>Дата окончания</label>
-                                <input type="text" name="edate" class="span3">
+                                <input type="text" name="edate" class="span3 datepick">
                             </td>
                             <td>
                                 <label>Статус</label>
@@ -140,11 +173,18 @@
                         <tr>
                             <td>
                                 <label>Страна</label>
-                                <input type="text" name="country" class="span3">
+                                <select class="select-select select-country span3" name="country" onchange="select_country();">
+                                    <option value="">Все</option>
+                                    {foreach $const_countries as $country}
+                                        <option>{$country.country_name_ru}</option>
+                                    {/foreach}
+                                </select>
                             </td>
                             <td>
                                 <label>Город</label>
-                                <input type="text" name="city" class="span3">
+                                <select class="select-select select-city span3" name="city">
+                                    <option value="0">Выбрать город</option>
+                                </select>
                             </td>
                             <td>
                                 <label>Вид</label>

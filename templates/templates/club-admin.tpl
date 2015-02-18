@@ -235,10 +235,12 @@ function additions_type_change(el) {
 		 </div> \
 		',
 		'	<div class="controls controls-row"> \
-				<label class="span1">Самцы:</label> \
-				<input class="span5" type="text" name="opt['+id+'][man]" placeholder="Кол-во самцов"> \
-				<label class="span1">Самки:</label> \
-				<input class="span5" type="text" name="opt['+id+'][woman]" placeholder="Кол-во самок"> \
+				<label class="span1">Жеребцы:</label> \
+				<input class="span5" type="text" name="opt['+id+'][man]" placeholder="Кол-во жеребцов"> \
+				<label class="span1">Мерины:</label> \
+				<input class="span5" type="text" name="opt['+id+'][merin]" placeholder="Кол-во меринов"> \
+				<label class="span1">Кобылы:</label> \
+				<input class="span5" type="text" name="opt['+id+'][woman]" placeholder="Кол-во кобыл"> \
 			</div>'
 	];
 	$(el).closest(".ability").find(".second_block").html(left_sides[$(el).prop('selectedIndex')]);
@@ -333,7 +335,7 @@ function user_permission(qid, qtype, qdesc, show_mail, show_phone) {
 											<div class="row">
 											<div class="controls controls-row">
 												<label class="span6">Название клуба</label>
-												<input type="text" class="span6" name="name" value="{$club.name}">
+												<input type="text" class="span6" name="name" value="{$club.name|escape}">
 												
 												{*<!-- new 28-03-14 -->
 												<label class="span6">Вид клуба</label>

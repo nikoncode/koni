@@ -10,6 +10,7 @@ $assigned_vars = array(
 	"page_title" 		=> "Регистрация > Одноконники",
 	"const_mounth" 		=> $const_mounth,
 	"const_work" 		=> $const_work,
+	"const_rank" 		=> $const_rank,
 	"const_countries" 	=> $const_countries
 );
 template_render($assigned_vars, "registration.tpl");
