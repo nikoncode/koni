@@ -45,4 +45,5 @@ $assigned_vars["const_horses_sex"] = $const_horses_sex;
 $assigned_vars["const_horses_poroda"] = $const_horses_poroda;
 $assigned_vars["const_horses_mast"] = $const_horses_mast;
 $assigned_vars["const_horses_spec"] = $const_horses_spec;
+$assigned_vars["countries"] = $const_countries;
 template_render($assigned_vars, "horses.tpl");

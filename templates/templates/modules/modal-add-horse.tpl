@@ -1,6 +1,7 @@
 <!-- implement jcrop -->
 <script src="js/upload/jquery.Jcrop.min.js"></script>
 <link rel="stylesheet" href="js/upload/jquery.Jcrop.min.css" type="text/css" />
+
 {* Smarty *}
 <script>
 function add_parents() {
@@ -50,7 +51,7 @@ function crop_horse(el) {
 function new_horse_prepare() {
 	$("#modal-add-horse form").attr("onsubmit", "new_horse(this);return false;");
 	$("#modal-add-horse input[type=text]").val("");
-	$("#modal-add-horse input[type=hidden]").val("");
+	$("#modal-add-horse input[type=hidden]:not(.admin_user_id)").val("");
 	$("#modal-add-horse #parents").html("");
 	//avatar
 	$("#modal-add-horse img").attr("src", "http://placehold.it/200x200");
@@ -60,12 +61,12 @@ function new_horse_prepare() {
 }
 
 {literal}
-function delete_horse(hid, element) {
+function delete_horse(hid, element,id) {
 	if (confirm("Вы действительно хотите удалить лошадь?")) {
 		api_query({
 			qmethod: "POST",
 			amethod: "horses_delete",
-			params:  {id : hid},
+			params:  {id : hid,uid:id},
 			success: function (data) {
 				$(element).closest(".my-horse").remove();
 			},
@@ -264,6 +265,8 @@ $(function () {
 						<div class="row">	
 							<div class="controls controls-row">
 								<center>
+                                    <input type="hidden" name="user_id" class="user_id" value="">
+                                    <input type="hidden" name="admin_user_id" class="admin_user_id" value="">
                                     <input type="hidden" name="name" class="name" value="">
                                     <input type="hidden" name="lname" class="lname" value="">
 								<button type="submit" class="btn btn-warning span3">Сохранить</button>

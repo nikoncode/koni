@@ -8,6 +8,8 @@
             params: {id : id},
             success: function (resp, data) {
                 $(element).closest('.event-block').remove();
+                var count = $('#modal-myEvents .event-block').size() || 0;
+                if(count == 0) $('#modal-myEvents').modal('hide');
             },
             fail: "standart"
         });

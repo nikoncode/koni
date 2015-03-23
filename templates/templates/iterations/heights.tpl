@@ -1,5 +1,5 @@
-<select name="rhid" class="heights span3" multiple>
+{if $heights}
     {foreach $heights as $h}
-        <option value="{$h.id}">{$h.height},{$h.exam}</option>
+        <label><input type="radio" name="rhid" class="heights" value="{$h.id}"> {$h.height} см,{$h.exam}</label>
     {/foreach}
-</select>
+{/if}

@@ -17,14 +17,29 @@ $assigned_vars["comp"] = $db->getRow("SELECT *,
 													WHERE uid = ?i
 													AND cid = comp.id) as member_mask
 										FROM comp WHERE id = ?i", $_SESSION["user_id"], $_GET["id"]);
-$dennik_razv = $db->getRow("SELECT SUM(cr.dennik) as dennik, SUM(cr.razvyazki) AS razvyazki FROM comp_riders AS cr
-					INNER JOIN routes AS r ON (r.id = cr.rid)
+$dennik = $db->getRow("SELECT COUNT(cr.dennik) as dennik FROM comp_riders AS cr
+                    INNER JOIN routes_heights AS rh ON (rh.id = cr.rid)
+					INNER JOIN routes AS r ON (r.id = rh.route_id)
+					WHERE r.cid = ?i AND cr.dennik > 0
+					", $_GET["id"]);
+$razv = $db->getRow("SELECT SUM(cr.razvyazki) AS razvyazki FROM comp_riders AS cr
+					 INNER JOIN routes_heights AS rh ON (rh.id = cr.rid)
+					INNER JOIN routes AS r ON (r.id = rh.route_id)
+					WHERE r.cid = ?i
+					", $_GET["id"]);
+$boxes = $db->getRow("SELECT SUM(cr.boxes) AS boxes FROM comp_riders AS cr
+					 INNER JOIN routes_heights AS rh ON (rh.id = cr.rid)
+					INNER JOIN routes AS r ON (r.id = rh.route_id)
 					WHERE r.cid = ?i
 					", $_GET["id"]);
 //$assigned_vars["comp"]["dennik"] -= $dennik_razv['dennik'];
-$assigned_vars["comp"]["dennik_res"] = $assigned_vars["comp"]["dennik"]-$dennik_razv['dennik'];
+$assigned_vars["comp"]["dennik_res"] = $assigned_vars["comp"]["dennik"]-$dennik['dennik'];
+if($assigned_vars["comp"]["dennik_res"] < 0 ) $assigned_vars["comp"]["dennik_res"] = 0;
 //$assigned_vars["comp"]["razvyazki"] -= $dennik_razv['razvyazki'];
-$assigned_vars["comp"]["razvyazki_res"] = $assigned_vars["comp"]["razvyazki"]-$dennik_razv['razvyazki'];
+$assigned_vars["comp"]["razvyazki_res"] = $assigned_vars["comp"]["razvyazki"]-$razv['razvyazki'];
+if($assigned_vars["comp"]["razvyazki_res"] < 0 ) $assigned_vars["comp"]["razvyazki_res"] = 0;
+$assigned_vars["comp"]["boxes_res"] = $assigned_vars["comp"]["boxes"]-$boxes['boxes'];
+if($assigned_vars["comp"]["boxes_res"] < 0 ) $assigned_vars["comp"]["boxes_res"] = 0;
 if ($assigned_vars["comp"] == NULL) {
 	template_render_error("Соревнование не найдено.");
 }
@@ -38,12 +53,7 @@ $assigned_vars["comp"]["is_photographer"] = (bool)$temp[1];
 $assigned_vars["comp"]["is_fan"] = (bool)$temp[2];
 
 
-$assigned_vars["comp"]["routes"] = $db->getAll("SELECT *,
-															(SELECT COUNT(id)
-															FROM comp_riders
-															WHERE uid = ?i
-															AND rid = routes_heights.id) as is_rider
-													FROM routes, routes_heights WHERE routes_heights.route_id = routes.id AND routes.cid = ?i GROUP BY routes.id ORDER BY routes.bdate, routes.id", $_SESSION["user_id"], $_GET["id"]);
+$assigned_vars["comp"]["routes"] = $db->getAll("SELECT * FROM routes WHERE cid = ?i ORDER BY bdate, id", $_GET["id"]);
 foreach($assigned_vars["comp"]["routes"] as $key=>$row){
 	$tmp = explode(' ',$row['bdate']);
 	if($tmp[1] == '23:59:59') {
@@ -56,15 +66,29 @@ $assigned_vars["comp"]["files"] = $db->getAll("SELECT * FROM comp_files WHERE ci
 $assigned_vars["comp"]["results"] = array();
 $date = date('Y-m-d').' 23:59:59';
 $date = strtotime($date);
+$routes_heights = array();
+$horses = $db->getAll("SELECT id, nick FROM horses WHERE o_uid = ?i", $_SESSION["user_id"]);
+foreach($horses as $h){
+    $assigned_vars["horses"][$h['id']] = $h;
+}
 foreach ($assigned_vars["comp"]["routes"] as &$route) {
 	$route["options"] = unserialize($route["options"]);
 	$route["complete"] = (strtotime($route['bdate']) <= $date)?true:false;
+    $route['height'] = '';
+    $route['exam'] = '';
+    $route['vznos'] = '';
+    $route['fond'] = '';
 	$heights = $db->getAll("SELECT * FROM routes_heights WHERE route_id = ?i", $route['id']);
+    $i = 0;
 	foreach($heights as $height){
+        $i++;
+        $routes_heights[$height['id']] = ($i == 1)?$route['name'].', '.$height['height'].'см':$height['height'].'см';
 		$route['height'] .= $height['height'].'<br/>';
 		$route['exam'] .= $height['exam'].'<br/>';
+        $route['vznos'] .= ($height['vznos'] == '')?'-<br/>':$height['vznos'].'<br/>';
+        $route['fond'] .= ($height['fond'] == '')?'-<br/>':$height['fond'].'<br/>';
 		$assigned_vars["comp"]["heights"][$route['id']][$height['id']] = $height;
-		$assigned_vars["comp"]["startlist"][$height['id']] = $db->getAll("SELECT 	users.id,
+		$assigned_vars["comp"]["startlist"][$height['id']] = $db->getAll("SELECT 	users.id, users.rank,
 															fname,
 															lname,
 															horses.nick as horse,
@@ -74,6 +98,7 @@ foreach ($assigned_vars["comp"]["routes"] as &$route) {
 															clubs.id as club_id,
 															(SELECT CONCAT(fname, ' ', lname) as fio FROM users WHERE id = horses.o_uid) as ownerName,
 															comp_riders.id as ride_id,
+															comp_riders.dennik,
 															comp_riders.ordering
 													FROM comp_riders
 													INNER JOIN users ON (comp_riders.uid = users.id)
@@ -82,6 +107,11 @@ foreach ($assigned_vars["comp"]["routes"] as &$route) {
 													WHERE
 													comp_riders.rid = ?i ORDER BY ordering
 													", $height['id']);
+        foreach($assigned_vars["comp"]["startlist"][$height['id']] as &$rider){
+            if($rider['id'] == $_SESSION["user_id"]) $route['is_rider'] = $rider['id'];
+            $rider['rank'] = $const_rank[$rider['rank']];
+            if($rider['dennik'] > 0 && isset($assigned_vars["horses"][$rider['horse_id']])) $assigned_vars["horses"][$rider['horse_id']]['dennik'] = $rider['dennik'];
+        }
 		$assigned_vars["comp"]["results"][$height['id']] = $db->getAll("SELECT 	users.id,
 															fname,
 															lname,
@@ -99,7 +129,7 @@ foreach ($assigned_vars["comp"]["routes"] as &$route) {
 	}
 
 }
-
+$assigned_vars['routes_list'] = $routes_heights;
 $members = $db->getAll("SELECT 	users.id,
 									users.avatar,
 									CONCAT(fname, ' ', lname) as fio,
@@ -112,19 +142,25 @@ $members = $db->getAll("SELECT 	users.id,
 $assigned_vars["comp"]["riders"] = $db->getAll("SELECT 	users.id,
 															users.avatar,
 															CONCAT(fname, ' ', lname) as fio,
-															GROUP_CONCAT(DISTINCT CONCAT(horses.nick,',',horses.poroda )) as horse,
-															clubs.name as club, clubs.city
-													FROM comp_riders, users, horses, clubs
+															(SELECT CONCAT(nick,',',poroda ) FROM horses WHERE id = comp_riders.hid ) as horse,
+															(SELECT name FROM clubs WHERE id = users.cid ) as club,
+															(SELECT city FROM clubs WHERE id = users.cid ) as city
+													FROM comp_riders, users
 													WHERE comp_riders.rid IN
 														(SELECT routes_heights.id FROM routes,routes_heights WHERE routes.id = routes_heights.route_id AND routes.cid = ?i)
-													AND comp_riders.uid = users.id AND horses.id = comp_riders.hid
+													AND comp_riders.uid = users.id
 													GROUP BY id", $assigned_vars["comp"]["id"]);
 
 $assigned_vars["comp"]["viewers"] =
 $assigned_vars["comp"]["photographers"] =
 $assigned_vars["comp"]["fans"] =
 	array();
-
+$assigned_vars["club"]['additions'] = ($assigned_vars["club"]['additions'] != '')?json_decode($assigned_vars["club"]['additions'],true):array();
+foreach($assigned_vars["club"]['additions'] as $opt){
+    foreach($opt as $key_opt=>$value){
+        $assigned_vars["club"]['options'][$key_opt] = $value;
+    }
+}
 foreach ($members as $member) {
 	$temp = array(
 		"id" => $member["id"],
@@ -141,6 +177,7 @@ foreach ($members as $member) {
 		$assigned_vars["comp"]["fans"][] = $temp;
 	}
 }
+
 if(isset($_GET['album'])){
 	$ids = array();
 	$assigned_vars["gallery"] = $db->getRow("SELECT * FROM albums_clubs WHERE id = ?i AND comp_id = ?i", $_GET['album'], $_GET['id']);
@@ -207,5 +244,5 @@ $comments_bl = template_render_to_var(array(
 	"user" => array("id" => $_SESSION["user_id"])
 ), "iterations/comments_block.tpl");
 $assigned_vars['comments_bl'] = $comments_bl;
-$assigned_vars["horses"] = $db->getAll("SELECT id, nick FROM horses WHERE o_uid = ?i", $_SESSION["user_id"]);
+
 template_render($assigned_vars, "competition.tpl");

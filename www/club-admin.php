@@ -20,7 +20,7 @@ if (!session_check()) {
 	$assigned_vars["page_title"] = "Редактирование '" . $assigned_vars["club"]["name"] . "' > Одноконники";
 	$assigned_vars["user"] = template_get_short_user_info($_SESSION["user_id"]);
 	
-	if ($assigned_vars["club"]["o_uid"] != $_SESSION["user_id"]) {
+	if ($assigned_vars["club"]["o_uid"] != $_SESSION["user_id"] && $assigned_vars["user"]["admin"] == 0) {
 		template_render_error("Вы не можете редактировать этот клуб.");
 	}
     $assigned_vars['cities'] = array();

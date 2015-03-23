@@ -25,8 +25,8 @@ function api_comp_add() {
     }
 	$db = new db;
 	$permission = $db->getOne("SELECT o_uid FROM clubs WHERE id = ?i", $fields["o_cid"]);
-
-	if ($permission == NULL || $permission != $_SESSION["user_id"]) {
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+	if ($permission == NULL || ($permission != $_SESSION["user_id"] && $user['admin'] == 0)) {
 		aerr(array("Вы не можете добавить событие в этот клуб."));
 	}
 
@@ -42,7 +42,7 @@ function api_comp_add() {
 }
 
 function api_comp_edit() {
-	validate_fields($fields, $_POST, array("combat_field","training_field","dennik","razvyazki"), array(
+	validate_fields($fields, $_POST, array("combat_field","training_field","dennik","razvyazki","boxes"), array(
 		"name",
 		"type",
 		"country",
@@ -67,12 +67,14 @@ function api_comp_edit() {
     if(!isset($fields['combat_field'])) $fields['combat_field'] = '';
     if(!isset($fields['training_field'])) $fields['training_field'] = '';
     if(!isset($fields['razvyazki'])) $fields['razvyazki'] = 0;
+    if(!isset($fields['boxes'])) $fields['boxes'] = 0;
 	if($fields['dennik'] < 0 ) $fields['dennik'] = 0;
 	if($fields['razvyazki'] < 0 ) $fields['razvyazki'] = 0;
+	if($fields['boxes'] < 0 ) $fields['boxes'] = 0;
 	$db = new db;
 	$perm = $db->getOne("SELECT o_uid FROM clubs, comp WHERE comp.id = ?i AND comp.o_cid = clubs.id", $fields["id"]);
-
-	if ($perm == NULL || $perm != $_SESSION["user_id"]) {
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+	if ($perm == NULL || ($perm != $_SESSION["user_id"] && $user['admin'] == 0)) {
 		aerr(array("Вы не можете редактировать это соревнование."));
 	}
 	
@@ -90,7 +92,7 @@ function api_change_riders_ordering() {
 	$db = new db;
     foreach($_POST['ordering'] as $ride_id => $routes){
         foreach($routes as $route_id => $order){
-            $db->query("UPDATE comp_riders SET rid = ?i, ordering = ?i WHERE id = ?i", $route_id, $order, $ride_id);
+            $db->query("UPDATE comp_riders SET rid = ?i, ordering = ?i WHERE id = ?i", $_POST['height'][$ride_id][$route_id], $order, $ride_id);
         }
     }
 	aok(array("Данные изменены успешно."));
@@ -140,7 +142,7 @@ function api_comp_fan_member() {
 }
 
 function api_comp_rider() {
-	validate_fields($fields, $_POST, array("act","rid","dennik","razvyazki"), array("id", "hid|Лошадь"), array(), $errors); //act==0 remove
+	validate_fields($fields, $_POST, array("act","rid","dennik","razvyazki","boxes"), array("id", "hid|Лошадь"), array(), $errors); //act==0 remove
 
 	if (!empty($errors)) {
 		aerr($errors);
@@ -153,20 +155,23 @@ function api_comp_rider() {
     }
 	if(!isset($fields['dennik'])) $fields['dennik'] = 0;
 	if(!isset($fields['razvyazki'])) $fields['razvyazki'] = 0;
-	if($fields['dennik'] > 0 || $fields['razvyazki'] > 0){
-		$comp = $db->getRow("SELECT c.dennik,c.razvyazki,c.id
+	if(!isset($fields['boxes'])) $fields['boxes'] = 0;
+	if($fields['dennik'] > 0 || $fields['razvyazki'] > 0 || $fields['boxes'] > 0){
+		$comp = $db->getRow("SELECT c.dennik,c.boxes,c.razvyazki,c.id
 										FROM comp AS c
 										INNER JOIN routes AS r ON (r.cid = c.id)
 										WHERE r.id = ?i", $fields["id"]);
-		$dennik_razv = $db->getRow("SELECT SUM(cr.dennik) as dennik, SUM(cr.razvyazki) AS razvyazki FROM comp_riders AS cr
+		$dennik_razv = $db->getRow("SELECT SUM(cr.dennik) as dennik, SUM(cr.razvyazki) AS razvyazki, SUM(cr.boxes) AS boxes FROM comp_riders AS cr
 					INNER JOIN routes_heights AS rh ON (rh.id = cr.rid)
                     INNER JOIN routes AS r ON (r.id = rh.route_id)
 					WHERE r.cid = ?i
 					", $comp["id"]);
 		$dennik_res = $comp['dennik']-$dennik_razv['dennik'];
 		$razvyazki_res = $comp['razvyazki']-$dennik_razv['razvyazki'];
+		$boxes_res = $comp['boxes']-$dennik_razv['razvyazki'];
 		if($fields['dennik'] > $dennik_res) $errors[] = 'Укажите количество денников до '.$dennik_res;
 		if($fields['razvyazki'] > $razvyazki_res) $errors[] = 'Укажите количество развязок до '.$razvyazki_res;
+		if($fields['boxes'] > $boxes_res) $errors[] = 'Укажите количество боксов до '.$boxes_res;
 	}
 	if (!empty($errors)) {
 		aerr($errors);
@@ -174,9 +179,10 @@ function api_comp_rider() {
 	if ($fields["act"] && $fields['rid'] != '') {
         $fields['rid'] = explode('-',trim($fields['rid'],'-'));
         foreach($fields['rid'] as $rid){
-            $db->query("INSERT INTO comp_riders (uid, rid, hid, dennik, razvyazki) VALUES (?i, ?i, ?i, ?i, ?i)", $_SESSION["user_id"], $rid, $fields['hid'], intval($fields['dennik']), intval($fields['razvyazki']));
+            $db->query("INSERT INTO comp_riders (uid, rid, hid, dennik, razvyazki,boxes,data) VALUES (?i, ?i, ?i, ?i, ?i, ?i, ?i)", $_SESSION["user_id"], $rid, $fields['hid'], intval($fields['dennik']), intval($fields['razvyazki']), intval($fields['boxes']),time());
 			$fields['dennik'] = 0;
 			$fields['razvyazki'] = 0;
+			$fields['boxes'] = 0;
 		}
 		$comp = $db->getRow("SELECT comp.name, comp.id, comp.o_cid FROM comp, routes WHERE routes.id = ?i AND comp.id = routes.cid",$fields["id"]);
 		$message = 'Вы зарегистрировались на участие в соревновании <a href="/competition.php?id='.$comp["id"].'#start-list">'.$comp['name'].'</a>';
@@ -197,6 +203,27 @@ function api_add_member_admin() {
 	$db->query("DELETE FROM comp_riders WHERE uid = ?i AND rid = ?i AND hid = ?i", $fields['uid'], $fields["rid"], $fields["hid"]);
 	$db->query("INSERT INTO comp_riders (uid, rid, hid) VALUES (?i, ?i, ?i)", $fields['uid'], $fields["rid"], $fields['hid']);
 	aok(array($db->insertId()));
+}
+
+function api_delete_dennik() {
+	validate_fields($fields, $_POST, array(), array("id"), array(), $errors); //act==0 remove
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+
+	$db = new db;
+    $info = $db->getRow("SELECT h.nick AS horse, cr.uid, c.name AS club, r.name AS route,cm.name,cm.o_cid,r.bdate,cr.hid,cm.id AS comp_id FROM comp_riders AS cr
+                          INNER JOIN horses AS h ON(h.id = cr.hid)
+                          INNER JOIN routes_heights AS rh ON(rh.id = cr.rid)
+                          INNER JOIN routes AS r ON(r.id = rh.route_id)
+                          INNER JOIN comp AS cm ON(cm.id = r.cid)
+                          INNER JOIN clubs AS c ON(c.id = cm.o_cid)
+                          WHERE cr.id = ?i",$fields['id']);
+    $message = 'К сожалению, администратор клуба отказал вам в деннике для лошади <a href="/horse.php?id='.$info['hid'].'">'.$info['horse'].'</a> на соревнование <a href="/competition.php?id='.$info['comp_id'].'">'.$info['name'].'</a>, маршрут '.$info['route'].', которое будет проходить '.date('d.m.Y',strtotime($info['bdate']));
+	$db->query("UPDATE comp_riders SET dennik = 0 WHERE id = ?i", $fields['id']);
+    api_add_notice($info['uid'],$info['o_cid'],$message,'club');
+	aok(array('ok'));
 }
 
 function api_delete_rider() {
@@ -232,6 +259,8 @@ function api_comp_route_add() {
 		"opt_name",
 		"sub_type",
         "time",
+        "vznos",
+        "fond",
 		"opt"
 	), array(
 		"type", 
@@ -249,7 +278,8 @@ function api_comp_route_add() {
 
 	$db = new db;
 	$perm = $db->getOne("SELECT o_uid FROM clubs, comp WHERE comp.id = ?i AND comp.o_cid = clubs.id", $fields["cid"]);
-	if ($perm == NULL || $perm != $_SESSION["user_id"]) {
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+	if ($perm == NULL || ($perm != $_SESSION["user_id"] && $user['admin'] == 0)) {
 		aerr(array("Вы не можете добавлять маршрут в этот клуб."));
 	}
 	$fields['options'] = array();
@@ -266,8 +296,10 @@ function api_comp_route_add() {
 	unset($fields["date"]);
 	unset($fields["time"]);
 	$fields_h = $fields;
-	unset($fields['exam']);
-	unset($fields['height']);
+    unset($fields['exam']);
+    unset($fields['vznos']);
+    unset($fields['height']);
+    unset($fields['fond']);
 	$db->query("INSERT INTO routes SET ?u", $fields);
 	$insert_id = $db->insertId();
 	foreach($fields_h['height'] as $key=>$h){
@@ -275,6 +307,8 @@ function api_comp_route_add() {
 			'route_id' => $insert_id,
 			'height' => $h,
 			'exam' => $fields_h['exam'][$key],
+			'vznos' => $fields_h['vznos'][$key],
+			'fond' => $fields_h['fond'][$key],
 		);
 		$db->query("INSERT INTO routes_heights SET ?u", $insert);
 	}
@@ -314,7 +348,8 @@ function api_comp_route_delete() {
 		WHERE routes.id = ?i 
 		AND routes.cid = comp.id 
 		AND comp.o_cid = clubs.id", $fields["id"]);
-	if ($perm == NULL || $perm != $_SESSION["user_id"]) {
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+	if ($perm == NULL || ($perm != $_SESSION["user_id"] && $user['admin'] == 0)) {
 		aerr(array("Вы не можете удалить этот маршрут"));
 	}
 	$db->query("DELETE FROM routes WHERE id = ?i", $fields["id"]);
@@ -327,6 +362,8 @@ function api_comp_route_edit() {
 		"opt_name",
         "sub_type",
         "time",
+        "vznos",
+        "fond",
 		"opt"
 	), array(
 		"type", 
@@ -347,7 +384,8 @@ function api_comp_route_edit() {
 		WHERE routes.id = ?i 
 		AND routes.cid = comp.id 
 		AND comp.o_cid = clubs.id", $fields["id"]);
-	if ($perm == NULL || $perm != $_SESSION["user_id"]) {
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+	if ($perm == NULL || ($perm != $_SESSION["user_id"] && $user['admin'] == 0)) {
 		aerr(array("Вы не можете изменить этот маршрут"));
 	}
 
@@ -366,25 +404,38 @@ function api_comp_route_edit() {
 	unset($fields["time"]);
 	$fields_h = $fields;
 	unset($fields['exam']);
+	unset($fields['vznos']);
 	unset($fields['height']);
+	unset($fields['fond']);
 	$db->query("UPDATE routes SET ?u WHERE id = ?i", $fields, $fields["id"]);
-	$heights = $db->getAll("SELECT * FROM routes_heights WHERE route_id = ?i",$fields["id"]);
+	$heights = $db->getAll("SELECT * FROM routes_heights WHERE route_id = ?i ORDER BY id",$fields["id"]);
+    $last_h = '';
+    $insert_id = 0;
 	foreach($heights as $h){
 		if(isset($fields_h['height'][$h['id']])){
-			$db->query("UPDATE routes_heights SET height = ?s, exam = ?s WHERE id = ?i", $fields_h['height'][$h['id']], $fields_h['exam'][$h['id']],$h['id']);
-			unset($fields_h['height'][$h['id']]);
+            $parent_id = ($fields_h['height'][$h['id']] == $last_h)?$insert_id:0;
+			$db->query("UPDATE routes_heights SET height = ?s, exam = ?s, vznos = ?s, fond = ?s, parent_id = ?i WHERE id = ?i", $fields_h['height'][$h['id']], $fields_h['exam'][$h['id']],$fields_h['vznos'][$h['id']],$fields_h['fond'][$h['id']],$parent_id,$h['id']);
+            if($fields_h['height'][$h['id']] != $last_h) $insert_id = $h['id'];
+            $last_h = $fields_h['height'][$h['id']];
+            unset($fields_h['height'][$h['id']]);
 			unset($fields_h['exam'][$h['id']]);
 		}else{
 			$db->query("DELETE FROM routes_heights WHERE id = ?i", $h['id']);
 		}
 	}
+
 	foreach($fields_h['height'] as $key=>$h){
 		$insert = array(
 			'route_id' => $fields["id"],
 			'height' => $h,
 			'exam' => $fields_h['exam'][$key],
+            'vznos' => $fields_h['vznos'][$key],
+            'fond' => $fields_h['fond'][$key],
+            'parent_id' => ($h == $last_h)?$insert_id:0,
 		);
 		$db->query("INSERT INTO routes_heights SET ?u", $insert);
+        if($h != $last_h) $insert_id = $db->insertId();
+        $last_h = $h;
 	}
 
 
@@ -505,7 +556,8 @@ function api_comp_results_update() {
 
 	$db = new db;
 	$perm = $db->getOne("SELECT o_uid FROM comp, clubs WHERE comp.id = ?i AND comp.o_cid = clubs.id", $fields["id"]);
-	if ($perm == NULL && $perm != $_SESSION["user_id"]) {
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+	if ($perm == NULL || ($perm != $_SESSION["user_id"] && $user['admin'] == 0)) {
 		aerr(array("Вы не можете менять результаты этого соревнования."));
 	}
 
@@ -544,9 +596,9 @@ function api_comp_results_update() {
         }
         //usort($results[$route_id], others_results_position_sort);
     }
-
+    $heights = $db->getRow("SElECT GROUP_CONCAT(routes_heights.id) as ids FROM routes, routes_heights WHERE routes.id = routes_heights.route_id AND routes.cid = ?i", $fields["id"]);
+    $db->query("DELETE FROM comp_results WHERE rid IN (".$heights['ids'].")");
     foreach($results as $route_id=>$users){
-        $db->query("DELETE FROM comp_results WHERE rid = ?i", $route_id);
         foreach($users as $user){
             $check_event = $db->getOne("SELECT id FROM comp_riders WHERE rid = ?i AND hid = ?i AND uid = ?i", $user['rid'], intval($user['horse']), $user['user_id']);
             if($check_event === FALSE){
@@ -700,7 +752,7 @@ function api_find_events() {
         $add_sql .= ' AND c.bdate = "'.mysql_escape_string(date("Y-m-d",strtotime($fields['bdate']))).'"';
     }
     if($fields['edate'] != ''){
-        $add_sql .= ' AND r.edate = "'.mysql_escape_string(date("Y-m-d",strtotime($fields['edate']))).'"';
+        $add_sql .= ' AND c.edate = "'.mysql_escape_string(date("Y-m-d",strtotime($fields['edate']))).'"';
     }
     if($fields['status'] != ''){
         $add_sql .= ' AND r.status = "'.mysql_escape_string($fields['status']).'"';
@@ -788,7 +840,8 @@ function api_comp_delete(){
 
 	$db = new db;
 	$access = $db->getOne("SELECT comp.id FROM comp,clubs WHERE clubs.id = comp.o_cid AND comp.id = ?i AND clubs.o_uid = ?i",$fields['id'],$_SESSION['user_id']);
-	if($access === false){
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+	if($access === false && $user['admin'] == 0){
 		$errors[] = "У вас нет доступа";
 	}else{
 		$routes = $db->getRow("SELECT GROUP_CONCAT(DISTINCT(routes_heights.id)) AS hids, GROUP_CONCAT(DISTINCT(routes.id)) AS rids FROM routes,routes_heights WHERE routes.id = routes_heights.route_id AND routes.cid = ?i",$fields['id']);

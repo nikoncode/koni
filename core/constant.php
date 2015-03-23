@@ -26,9 +26,11 @@ $const_rank = array(
 	7 => "ЗМС"
 );
 global $const_rank;
+global $const_mounth;
 function get_ranks(){
     return $GLOBALS['const_rank'];
 }
+
 $db = new db;
 $const_countries = $db->getAll("SELECT id,country_name_ru
                                                 FROM country_
@@ -350,3 +352,17 @@ $const_club_type = array(
 	"Открытый клуб",
 	"Закрытый клуб"
 );
+global $const_ability;
+global $const_countries;
+global $const_work;
+global $const_horses_mast;
+global $const_horses_sex;
+global $const_horses_spec;
+global $const_horses_poroda;
+function get_const(){
+    return array(
+        'const_mounth' => $GLOBALS['const_mounth'],
+        'const_ability' => $GLOBALS['const_ability'],
+        'const_countries' => $GLOBALS['const_countries'],
+    );
+}

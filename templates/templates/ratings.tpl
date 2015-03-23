@@ -260,7 +260,7 @@
                         </ul>
                         <ul class="inline choose-age choose-height unoshi" style="display: none">
                             {assign var = "height" value="110"}
-                            {while $height <= 145}
+                            {while $height <= 150}
                                 <li><h5>{$height}</h5></li>
                                 {$height = $height + 5}
                             {/while}

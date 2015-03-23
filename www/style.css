@@ -545,12 +545,12 @@ ul.dropdown-menu {position: absolute; z-index: 9999;}
 .current-compt .compt-descr a.span3 {width: 190px; margin-left: 0}
 table.competitions-table.curr-compt-levels {border-bottom: 1px #cccccc solid}
 table.competitions-table.curr-compt-levels td.td-complex {padding: 0}
-table.competitions-table.curr-compt-levels td.td-complex .curr-compt-date{font-size: 20px; font-weight: 200; color: #6d3512}
+table.competitions-table.curr-compt-levels td.td-complex .curr-compt-date{font-size: 14px; font-weight: 200; color: #6d3512}
 table.competitions-table.curr-compt-levels td.td-complex .curr-compt-path a{font-size: 20px; font-weight: 200; color: #bb7a1f}
 table.competitions-table.curr-compt-levels td.td-complex .curr-compt-more {display: none}
 table.competitions-table.curr-compt-levels td.td-complex:hover {background:  url(images/bg-curr-compt-select.jpg) top left}
 table.competitions-table.curr-compt-levels td.td-complex:hover .curr-compt-more{display: block}
-table.competitions-table.curr-compt-levels td.td-complex div.span2{padding: 8px; margin-left: 0}
+table.competitions-table.curr-compt-levels td.td-complex div.span2,table.competitions-table.curr-compt-levels td.td-complex div.span1{padding: 8px; margin-left: 0}
 table.competitions-table.curr-compt-levels td.td-complex div.curr-compt-go {padding-top: 8px;}
 table.competitions-table.curr-compt-levels td.td-complex .curr-compt-more ul.span12{width: 932px; margin: 0}
 table.competitions-table.curr-compt-levels td.td-complex .curr-compt-more ul > li{float: left; width: 302px; margin-left: 8px}
@@ -713,6 +713,7 @@ ul.user-friends-menu li a{text-decoration: none}
 .modal700 {width: 700px; margin-left: -350px}
 .modal800 {width: 816px; margin-left: -408px}
 .modal900 {width: 900px; margin-left: -450px}
+.modal990 {width: 990px; margin-left: -495px}
 .modal .modal-header {border-bottom: none; padding-bottom: 15px}
 .modal .modal-header h3{padding-bottom: 0px !important; margin-bottom: 0px !important}
 .modal .modal-header h3 span{font-size: 13px; font-style: italic; font-weight: normal; text-transform: none; text-decoration: none; color: #fff; margin-right: 20px}
@@ -1036,3 +1037,36 @@ ul.choose-age li small {font-size: 12px; font-style: italic; line-height: 10px;}
 
 .tab-content {overflow-y: visible}
 table.controls-row td.my-avatar img.my-avatar {left: 0; top: 0; padding-right: 0 !important}
+.curr-compt-path{text-align: center}
+.pagination > li {
+    display: inline;
+}
+
+*::after, *::before {
+    box-sizing: border-box;
+}
+*::after, *::before {
+    box-sizing: border-box;
+}
+.pagination > li > a, .pagination > li > span {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    float: left;
+    line-height: 1.42857;
+    margin-left: -1px;
+    padding: 6px 12px;
+    position: relative;
+    text-decoration: none;
+}
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    background-color: #930;
+    border-color: #930;
+    color: #fff;
+    cursor: default;
+    z-index: 2;
+}
+.dennik_list th{text-align: left}
+#select_height li {cursor: pointer}
+.blocked_user{color:#CC1111; font-size: 16px; padding: 5px;font-weight: bold;}
+.access_sending td{background: #57a957 !important;}
+.access_canceled td{background: #b79a88 !important;}

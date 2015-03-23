@@ -60,7 +60,7 @@ foreach ($routes as $route) {
 		}
 	}
 
-	if($route['sub_type'] == 'на чистоту и трезвость')
+	if($route['sub_type'] == 'на чистоту и резвость')
 	{
 		$new_sheet->removeColumn('M', 1);
 		$new_sheet->removeColumn('L', 1);

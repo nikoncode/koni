@@ -210,12 +210,18 @@ function additions_type_change(el) {
 	var left_sides = [
 		'',
 		'	<div class="controls controls-row"> \
-				<label class="span2">С инструктором:</label> \
-				<input class="span4" type="text" name="opt['+id+'][with_inst]" placeholder="Введите цену за час"> \
-				<label class="span2">Без инструктора:</label> \
-				<input class="span4" type="text" name="opt['+id+'][without_inst]" placeholder="Введите цену за час"> \
-				<label class="span2">Постой лошади:</label> \
-				<input class="span4" type="text" name="opt['+id+'][horse]" placeholder="Введите цену за час"> \
+				<label class="span3">С инструктором:</label> \
+				<input class="span3" type="text" name="opt['+id+'][with_inst]" placeholder="Введите цену за час"> \
+				<label class="span3">Без инструктора:</label> \
+				<input class="span3" type="text" name="opt['+id+'][without_inst]" placeholder="Введите цену за час"> \
+				<label class="span3">Постой лошади без кормов:</label> \
+				<input class="span3" type="text" name="opt['+id+'][horse]" placeholder="Введите цену за сутки"> \
+				<label class="span3">Постой лошади c кормами:</label> \
+				<input class="span3" type="text" name="opt['+id+'][horse_food]" placeholder="Введите цену за сутки"> \
+				<label class="span3">Постой лошади за месяц:</label> \
+				<input class="span3" type="text" name="opt['+id+'][horse_month]" placeholder="Введите цену за месяц"> \
+				<label class="span3">Стоимость бокса:</label> \
+				<input class="span3" type="text" name="opt['+id+'][horse_box]" placeholder="Введите цену за день"> \
 			</div>',
 		'	<div class="controls controls-row"> \
 				<input class="span5" name="opt['+id+'][l_city]" type="text" placeholder="Введите расстояние"><span> км.</span> \
@@ -257,7 +263,7 @@ function add_new_addition() {
 							<div class="controls controls-row"> \
 									<select class="span5" name="opt['+window.addition_id+'][name]" onchange="additions_type_change(this);"> \
 										<option selected="" disabled="">Выберите из списка</option> \
-										<option>Аренда лошади</option> \
+										<option>Цены аренды</option> \
 										<option>Расстояние от города</option> \
 										<option>Расстояние от остановки общественного транспорта</option> \
 										<option>Обслуживающий персонал</option> \

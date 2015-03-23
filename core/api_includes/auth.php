@@ -218,6 +218,36 @@ function api_auth_register_admin() {
     aok($insert_id);
 }
 
+function api_add_user_owner(){
+    validate_fields($fields, $_POST, array(), array(
+        "fname|Имя",
+        "lname|Фамилия",
+        "country|Страна",
+        "city|Страна"
+    ), array(
+    ),
+        $errors, false);
+    $db = new db;
+    $fields['login'] = time();
+    $fields['mail'] = $fields['login'].'@odnokonniki.ru';
+    $fields["passwd1"] = '1111111q';
+    $fields["hand"] = '1';
+    $fields["password"] = password_hash($fields["passwd1"], PASSWORD_DEFAULT);
+    $city = $db->getRow("SELECT city_name_ru FROM city_ WHERE id=?i", $fields["city"]);
+    if(!isset($city['city_name_ru'])){
+        $errors[] = "Не выбран город.";
+    }else{
+        $fields['city'] = $city['city_name_ru'];
+    }
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    unset($fields["passwd1"]);
+    $db->query("INSERT INTO users (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
+    $insert_id = $db->insertId();
+    aok($insert_id);
+}
+
 function api_auth_get_city(){
     validate_fields($fields, $_POST, array("city"), array(
         "country_id",
@@ -323,11 +353,17 @@ function api_auth_login() {
 
 	/* Getting client details of entered user */
 	$db = new db;
-	$details = $db->getRow("SELECT id, password, hash FROM users WHERE ?n = ?s", $field_name, $fields["login"]);
+	$details = $db->getRow("SELECT id, password, hash, blocked,hand FROM users WHERE ?n = ?s", $field_name, $fields["login"]);
 
 	/* Check and auth */
-	if (password_verify($fields["pass"], $details["password"]) && strlen($details["hash"]) != 5) {
+    if($details['blocked'] > 0){
+        aerr(array("Ваш аккаунт заблокирован"));
+    }elseif (password_verify($fields["pass"], $details["password"]) && strlen($details["hash"]) != 5) {
 		session_auth($details["id"]);
+        if($details['hand'] > 0){
+            $db->query("UPDATE users SET hand = 0 WHERE id = ?i",$details['id']);
+            $db->query("DELETE FROM support WHERE user_id = ?i",$details['id']);
+        }
 		aok(array("Вход осуществлен успешно."), "/inner.php");
 	} else {
 		aerr(array("Данные неверны или пользователь не зарегистрирован (не верифицирован)."));
@@ -369,10 +405,12 @@ function api_auth_user_change() {
 	/* Validate data */
     validate_fields($fields, $_POST, array(
             "site",
+            "user_id",
             "mname",
             "work",
             "passwd1",
             "rank",
+            "adress",
             "passwd2"
         ), array(
             "fname|Имя",
@@ -384,7 +422,6 @@ function api_auth_user_change() {
             "city|Город",
             "mail|E-mail",
             "phone|Телефон",
-            "adress|Улица, дом"
         ), array(
             "login|Ваш логин" 	=> "login",
             "passwd1|Ваш пароль" 	=> "pass",
@@ -402,8 +439,6 @@ function api_auth_user_change() {
 	if (!checkdate($fields["bmounth"], $fields["bday"], $fields["byear"])) {
 		$errors[] = "Дата рождения неверна.";
 	}
-
-
 
 	/* Hashing password */
 	if (isset($fields["passwd1"]) && isset($fields["passwd2"])) {
@@ -441,10 +476,21 @@ function api_auth_user_change() {
         aerr($errors);
     }
     if(!isset($fields['rank'])) $fields['rank'] = 0;
-	$db->query("UPDATE users SET ?u WHERE id = ?i", $fields, $_SESSION["user_id"]);
+    if (isset($fields['user_id']) && $fields['user_id'] > 0) {
+        $user_id = $fields['user_id'];
+        unset($fields['user_id']);
+        $user = template_get_short_user_info($_SESSION["user_id"]);
+        if($user['admin'] == 0) {
+            $errors[] = "Нет доступа.";
+            aerr($errors);
+        }else{
+            $db->query("UPDATE users SET ?u WHERE id = ?i", $fields, $user_id);
+        }
+    }else{
+        $db->query("UPDATE users SET ?u WHERE id = ?i", $fields, $_SESSION["user_id"]);
+    }
 
 	/* Mail client details to user */
-
 
 	aok(array("Данные изменены"));
 }

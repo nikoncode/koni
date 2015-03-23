@@ -9,17 +9,17 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700,800&subset=latin,cyrillic-ext' rel='stylesheet' type='text/css'>
-	<link href="css/bootstrap.css" rel="stylesheet">
-	<link href="css/bootstrap-responsive.css" rel="stylesheet">
-	<link href="style.css" rel="stylesheet">
-	<link href="style_temp.css" rel="stylesheet">
-	<script src="js/jquery.js"></script>
-		<script type="text/javascript" src="js/tinymce/tinymce.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/api.js"></script>
+	<link href="/css/bootstrap.css" rel="stylesheet">
+	<link href="/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="/style.css" rel="stylesheet">
+	<link href="/style_temp.css" rel="stylesheet">
+	<script src="/js/jquery.js"></script>
+		<script type="text/javascript" src="/js/tinymce/tinymce.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/api.js"></script>
 		
 	<!--[if IE]>
-    <link rel="stylesheet" type="text/css" href="style-ie.css" />
+    <link rel="stylesheet" type="text/css" href="/style-ie.css" />
 	<![endif]-->
 
  </head>
@@ -164,7 +164,7 @@
                             <li><a href="events.php">Мероприятия</a></li>
                             <li><a href="clubs.php">Клубы</a></li>
                         </ul>
-                        <a href="/inner.php" class="brand span2 logo"><center><img src="images/logo.png" /></center></a>
+                        <a href="/inner.php" class="brand span2 logo"><center><img src="/images/logo.png" /></center></a>
                         <ul class="nav span5 main-nav-2">
                             <li><a href="find-users.php">Люди</a></li>
                             <li><a href="ratings.php">Статистика</a></li>

@@ -4,7 +4,7 @@
 	<hr/>
 		<div class="row">
 			<div class="span4">
-				<img src="images/logo-footer.png">
+				<img src="/images/logo-footer.png">
 			</div>
 			<div class="span6">
 				<ul class="nodots foo-menu">
@@ -20,7 +20,7 @@
 				<p class="site-copyright"><strong>© Одноконники.ru</strong>. Все права защищены. 2012 - 2013 г.  </p>
 			</div>
 			<div class="span2">
-				<img src="i/liveinternet.png">
+				<img src="/i/liveinternet.png">
 			</div>
 		</div>
 	</div>

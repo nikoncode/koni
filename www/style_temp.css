@@ -14,7 +14,7 @@
 .ratings-page .btn-group label {font-weight: normal}
 #modal-gallery-post .image-info {width: 100%}
 .my-compts .i-fan a, .my-compts .my-fans a{color:#fff}
-input.dennik_count,input.razvyazki_count {width: 35px}
+input.dennik_count,input.razvyazki_count,input.boxes_count {width: 35px}
 ul.gallery-in-post {height: auto !important;}
 
 .dragabble, .dragabble * {
@@ -75,3 +75,4 @@ table.compt-results.admin-compts{ margin-bottom: 0 !important;}
 .clubs-results .club_name {width: 40%}
 th.mesto {line-height: 12px}
 #startlist-table .dragabble, .dragabble * {margin:0}
+.horse_checked {background: #E6EFC2}

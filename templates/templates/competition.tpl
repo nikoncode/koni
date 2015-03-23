@@ -6,11 +6,34 @@
 <script type="text/javascript" src="js/gallery.js"></script>
 <script type="text/javascript" src="js/news.js"></script>
 <script type="text/javascript" src="js/autoload.js"></script>
+<script src="js/chosen.jquery.min.js"></script>
+<link  href="css/chosen.css" rel="stylesheet">
 <script type="text/javascript">
+    {literal}
+    $(document).ready(function() {
+        $(".chosen-select").chosen({no_results_text: "Не найдено по запросу",placeholder_text_single: "Выберите страну",inherit_select_classes: true});
+        $('#select_height').on('click','li',function(){
+            var selected = $(this).attr('alt');
+            $('#select_height li').removeClass('active');
+            $(this).addClass('active');
+            $('.rows_height_block').css('display','');
+            $('#compt-results .competitions-table.compt-results').css('display','');
+            if(selected != 'all'){
+                $('#compt-results .competitions-table.compt-results').each(function(){
+                    var this_route = false;
+                    $('.rows_height_block',this).each(function(){
+                        var tmp = $(this).attr('alt');
+                        if(tmp != selected) $(this).css('display','none');
+                        if(tmp == selected) this_route = true;
+                    });
+                    if(!this_route) $(this).css('display','none');
+                });
+
+            }
+        })
+    });
+    {/literal}
 	$(function(){
-
-
-
         $('.fans-member-list').on('click','.fan_btn',function(){
             var $this = $(this).closest('td');
             $this.find('input').prop('checked',true);
@@ -125,7 +148,7 @@ function i_fan(cid){
         })
         return false;
     }
-function query_to_ride(rid, hid, act, dennik, razvyazki,rhid, callback) {
+function query_to_ride(rid, hid, act, dennik, razvyazki,rhid,boxes, callback) {
 	api_query({
 		amethod: "comp_rider",
 		qmethod: "POST",
@@ -135,6 +158,7 @@ function query_to_ride(rid, hid, act, dennik, razvyazki,rhid, callback) {
 			hid: hid,
             dennik: dennik,
 			razvyazki: razvyazki,
+            boxes: boxes,
 			act : act
 		},
 		success: function (data) {
@@ -225,10 +249,12 @@ function rider(rid, act) {
 								<dd>{$comp.country}</dd>
 								<dt>Город:</dt>
 								<dd>{$comp.city}</dd>
-								<dt>Денников:</dt>
-								<dd>{$comp.dennik} ({$comp.dennik_res} свободно)</dd>
-								<dt>Развязок:</dt>
-								<dd>{$comp.razvyazki} ({$comp.razvyazki_res} свободно)</dd>
+                                {if $comp.dennik}<dt>Денников:</dt>
+								<dd>{$comp.dennik} ({$comp.dennik_res} свободно)</dd>{/if}
+                                {if $comp.razvyazki}<dt>Развязок:</dt>
+								<dd>{$comp.razvyazki} ({$comp.razvyazki_res} свободно)</dd>{/if}
+                                {if $comp.boxes}<dt>Боксов:</dt>
+								<dd>{$comp.boxes} ({$comp.boxes_res} свободно)</dd>{/if}
 							</dl>
 						</div>
 						<div class="span6 compt-descr">
@@ -268,22 +294,26 @@ function rider(rid, act) {
 	<div class="span12">
 	<table class="table table-striped competitions-table curr-compt-levels" id="routes">
 						<tr>
-							<th class="span2">Дата</th>
-							<th class="span2">Маршрут</th>
-							<th class="span2">Высота</th>
+							<th class="span1" style="width:100px;">Дата</th>
+							<th class="span1" style="width:80px;">Маршрут</th>
+							<th class="span1">Высота</th>
 							<th class="span2">Зачёт для</th>
+							<th class="span1">Стартовый взнос</th>
+							<th class="span1">Призовой фонд</th>
 							<th class="span2">Статус</th>
 							<th class="span2"></th>
 						</tr>
 						{if $comp.routes}
 							{foreach $comp.routes as $route}
 							 <tr>
-								<td colspan="6" class="td-complex">
+								<td colspan="8" class="td-complex">
 										<div class="row">
-											<div class="curr-compt-date span2">{$route.bdate}</div>
+											<div class="curr-compt-date span1">{$route.bdate}</div>
 											<div class="curr-compt-path span2"><a href="#startlist{$route.id}" class="get_startlist">{$route.name}</a></div>
-											<div class="curr-compt-height span2">{$route.height}</div>
+											<div class="curr-compt-height span1">{$route.height}</div>
 											<div class="curr-compt-for span2">{$route.exam}</div>
+                                            <div class="curr-compt-for span1"><p>{$route.vznos}</p></div>
+                                            <div class="curr-compt-for span1" style="width:86px;"><p>{$route.fond}</p></div>
 											<div class="curr-compt-status span2">{$route.status}</div>
 											<div class="curr-compt-go">
                                                 {if $route.complete}
@@ -364,6 +394,7 @@ function rider(rid, act) {
               </div> <!-- compt-members -->
               
 			  <div class="tab-pane" id="start-list">
+
 				<table class="table table-striped competitions-table compt-results admin-compts">
 						<tbody><tr>
                             <th>№</th>
@@ -375,19 +406,19 @@ function rider(rid, act) {
                         </tr>
 						{if $comp.routes}
 							{if $comp.publish}
-								<tr><td colspan="6"><a href="/api/generate_startlist.php?id={$comp.id}" target="_blank" class="btn btn-warning">Скачать стартовый лист</a></td></tr>
+
 								{foreach $comp.routes as $route}
 									<tr id="startlist{$route.id}"><td colspan="6" class="table-caption">{$route.name}</td></tr>
 									{foreach $comp.heights.{$route.id} as $height}
-										<tr><td colspan="6" class="height-caption">{$height.height},{$height.exam}</td></tr>
+										<tr><td colspan="6" class="height-caption">{$height.height}см,{$height.exam}</td></tr>
 										{if $comp.startlist.{$height.id}}
 											{foreach $comp.startlist.{$height.id} as $res}
 												<tr>
 													<td class="">
 														{$res.ordering}
 													</td>
-													<td>{$res.fname}<br/>{$res.lname}</td>
-													<td>-</td>
+													<td>{$res.lname}<br/>{$res.fname}</td>
+													<td>{$res.rank}</td>
 													<td>{$res.horse}</td>
 													<td style="display: none">{if $res.owner}{$res.owner}{else}{$res.ownerName}{/if}</td>
 													<td>{$res.club}</td>
@@ -415,13 +446,20 @@ function rider(rid, act) {
 					</table>
               </div><!-- compt-startlist -->
                 <div class="tab-pane" id="compt-results">
-
                     {if $comp.routes}
 						{if $comp.publish_results}
+                    <div class="span8 search-filter-block">
+                        <ul class="inline choose-age age-filter" id="select_height">
+                            <li class="active" alt="all"><h5>Все</h5></li>
+                            {foreach $routes_list as $key=>$height}<li alt="{$key}"><h5>{$height}</h5></li>{/foreach}
+                        </ul>
+                    </div>
+                            <a href="/api/generate_xls.php?id={$comp.id}" target="_blank" class="btn btn-warning">Скачать результаты</a>
 							{foreach $comp.routes as $route}
+
 								<table class="table table-striped competitions-table compt-results admin-compts" id="result{$route.id}">
 									<tbody>
-									{if $route.sub_type == 'на чистоту и трезвость'}
+									{if $route.sub_type == 'на чистоту и резвость'}
 										<tr>
 											<th rowspan="2" class="mesto">М<br/>е<br/>с<br/>т<br/>о</th>
 											<th rowspan="2">Всадник</th>
@@ -485,22 +523,22 @@ function rider(rid, act) {
 									{/if}
 									<tr><td colspan="11" class="table-caption">{$route.name}</td></tr>
 							{foreach $comp.heights.{$route.id} as $height}
-								<tr><td colspan="11" class="height-caption">{$height.height},{$height.exam}</td></tr>
+								<tr class="rows_height_block" alt="{$height.id}"><td colspan="11" class="height-caption">{$height.height}см,{$height.exam}</td></tr>
 										{foreach $comp.results.{$height.id} as $res}
-											<tr {if $res.disq}class="disq{$res.disq}"{/if} data-disq={$res.disq}>
+											<tr class="rows_height_block {if $res.disq}disq{$res.disq}{/if}" alt="{$height.id}" data-disq={$res.disq} >
 												<td class="">
 													{if !$res.disq}{$res.rank}{/if}
 												</td>
-												<td><a href="/user.php?id={$res.user_id}">{$res.fname}<br/>{$res.lname}</a></td>
+												<td><a href="/user.php?id={$res.user_id}">{$res.lname}<br/>{$res.fname}</a></td>
 												<td>{$res.razryad}</td>
 												<td><a href="/horse.php?id={$res.horse}">{$res.horseName}</a> - {$res.horseInfo}</td>
 												<td>{if $res.club == ''}Частный владелец{else}<a href="/club.php?id={$res.club_id}">{$res.club}</a>{/if}</td>
 												<td class="standarts" {if $route.sub_type == '269'}style="display: none"{/if}>{$res.shtraf_route}</td>
 												<td class="standarts" {if $route.sub_type != '269'}style="display: none"{/if}>{$res.ball}</td>
 												<td class="standarts">{$res.time}</td>
-												<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость' || $route.sub_type == '269'}style="display: none"{/if}>{$res.shtraf}</td>
-												<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость' || $route.sub_type == '269'}style="display: none"{/if}>{$res.rerun}</td>
-												<td class="standarts" {if $route.sub_type == 'на чистоту и трезвость' || $route.sub_type == 'с перепрыжкой' || $route.sub_type == '269'}style="display: none"{/if}>{$res.norma}</td>
+												<td class="standarts" {if $route.sub_type == 'на чистоту и резвость' || $route.sub_type == '269'}style="display: none"{/if}>{$res.shtraf}</td>
+												<td class="standarts" {if $route.sub_type == 'на чистоту и резвость' || $route.sub_type == '269'}style="display: none"{/if}>{$res.rerun}</td>
+												<td class="standarts" {if $route.sub_type == 'на чистоту и резвость' || $route.sub_type == 'с перепрыжкой' || $route.sub_type == '269'}style="display: none"{/if}>{$res.norma}</td>
 												<td class="standarts">{$res.money} {$res.currency}</td>
 											</tr>
 										{/foreach}

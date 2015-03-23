@@ -279,11 +279,14 @@ function useless(review_id, type, el) {
 												{$add.l_city}
 											{else if $add.name == "Расстояние от остановки общественного транспорта"}
 												{$add.l_point}
-											{else if $add.name == "Аренда лошади"}
+											{else if $add.name == "Цены аренды"}
 												<ul class="unstyled">
 													<li>C инструктором: {$add.with_inst}</li>
 													<li>Без инструктора: {$add.without_inst}</li>
-													<li>Постой лошади: {$add.horse}</li>
+													<li>Постой лошади без кормов: {$add.horse}</li>
+													<li>Постой лошади c кормами: {$add.horse_food}</li>
+													<li>Постой лошади за месяц: {$add.horse_month}</li>
+													<li>Стоимость бокса за день: {$add.horse_box}</li>
 												</ul>
 											{else if $add.name == "Лошади"}
 												<ul class="unstyled">
@@ -305,9 +308,6 @@ function useless(review_id, type, el) {
 						</div>
 						
 						<div class="span6">
-							
-
-							
 							
 							<h3 class="inner-bg">Участники клуба<!--<span class="pull-right">223 человека</span>--></h3>
 							{if $club.members}

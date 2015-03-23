@@ -20,7 +20,7 @@
                     </ul>
                 </div>
                 <div class="span2 user-info-actions">
-                    <a href="javascript:void(0)" class="btn btn-warning select_user" alt="{$fu.id}">Выбрать</a>
+                    <a href="javascript:void(0)" class="btn btn-warning select_user" onclick="select_owner_horse(this)" alt="{$fu.id}">Выбрать</a>
                 </div>
             </div>
         </div>

@@ -117,7 +117,7 @@
 								<select  class="span3 country chosen-select" name="country" onchange="change_country(this);">
 									<option selected="" value="">Не важно</option>
 									{foreach $countries as $country}
-                                        <option country_id="{$country.id}" value="{$country.country_name_ru}" {if $country.country_name_ru == 'Россия'}selected="selected"{/if}>{$country.country_name_ru}</option>
+                                        <option country_id="{$country.id}" value="{$country.country_name_ru}" {if $my_country && $country.country_name_ru == $my_country.country_name_ru}selected="selected"{/if}>{$country.country_name_ru}</option>
 									{/foreach}
 								</select>
 							</div>

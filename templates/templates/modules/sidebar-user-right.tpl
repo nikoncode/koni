@@ -56,6 +56,11 @@ function delete_from_friend_callback(uid) {
         {else}
             Эта страница создана автоматически, если это Вы и хотите получить доступ к управлению своей страницей, то напишите <a href="#support" role="button" data-toggle="modal">Службу поддержки</a>
         {/if}
+        {if $another_user.blocked > 0}
+            <div class="blocked_user text-center">
+                Заблокирован
+            </div>
+        {/if}
 	</div>
 	
 	{if $another_user.friends}

@@ -26,3 +26,4 @@ define("SPHINX_PORT", 1338);
 define("SESSION_NAME", "ODK");
 define("SESSION_LIFETIME", 3000000);
 define("SESSION_ID_LIFETIME", 60);
+include_once(LIBRARIES_DIR.'geo/tabgeo_country_v4.php');

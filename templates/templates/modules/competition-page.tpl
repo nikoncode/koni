@@ -46,7 +46,7 @@ function filter_by_type(element) {
 										<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
 									</td>
 									<td class="compt-members">
-                                        {if $club.o_uid == $user.id}
+                                        {if $club.o_uid == $user.id || $user.admin == 1}
                                             [<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
                                         {/if}
 
@@ -83,7 +83,7 @@ function filter_by_type(element) {
 									<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
 								</td>
 								<td class="compt-members">
-                                    {if $club.o_uid == $user.id}
+                                    {if $club.o_uid == $user.id || $user.admin == 1}
 									[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
                                     {/if}
 									<!--<ul class="inline compt-members">
@@ -119,7 +119,7 @@ function filter_by_type(element) {
 									<a href="/competition.php?id={$comp.id}">{$comp.name}</a>
 								</td>
 								<td class="compt-members">
-                                    {if $club.o_uid == $user.id}
+                                    {if $club.o_uid == $user.id || $user.admin == 1}
 									[<a href="/competition-edit.php?id={$comp.id}">Редактировать или добавить маршруты</a>]
                                     {/if}
 									<!--<ul class="inline compt-members">

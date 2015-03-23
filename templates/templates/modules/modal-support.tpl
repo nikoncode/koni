@@ -44,6 +44,7 @@
                 <div class="controls controls-row">
                     <center>
                         <input type="hidden" name="url" value="{$url}">
+                        <input type="hidden" name="user_id" value="{$another_user.id}">
                         <button type="submit" class="btn btn-warning span3">Отправить</button>
                         <button class="btn  span3"  data-dismiss="modal" aria-hidden="true">Отмена</button>
                     </center>

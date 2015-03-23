@@ -20,6 +20,8 @@ function template_get_user_info($id) {
 								hand,
 								(SELECT count(id) FROM `friends` WHERE uid = ?i AND fid = users.id) as is_friends,
 								rank,
+								admin,
+								blocked,
 								id FROM users WHERE id = ?i", $_SESSION["user_id"], $id);
 
 	if ($user === NULL) 
@@ -45,7 +47,9 @@ function template_get_user_info($id) {
 									WHERE users.id = friends.fid 
 									AND friends.uid = ?i LIMIT 6", $id);
 
-	$user["horses_bar"] = $db->getAll("SELECT * FROM horses WHERE o_uid = ?i LIMIT 7", $id); //BOOM
+	$user["horses_bar"] = $db->getAll("SELECT h.* FROM horses AS h
+                                        LEFT JOIN horses_to_users AS htu ON (htu.hid = h.id)
+                                        WHERE h.o_uid = ?i OR htu.uid = ?i LIMIT 7", $id,$id); //BOOM
 	$user["notice"] = $db->getAll("SELECT n.*, u.avatar, c.avatar as avatarClub, CONCAT(u.fname, ' ', u.lname) as fio, c.name as clubName, u.id as user_id, c.id as club_id
 	                                FROM notice as n
 	                                LEFT JOIN users as u ON (u.id = n.sender_id)
@@ -95,6 +99,8 @@ function template_get_short_user_info($id) {
 								cid as club_id,
 								(SELECT name FROM clubs WHERE id = club_id) as club_name,
 								DATEDIFF(NOW(), bdate) as age,
+								admin,
+								blocked,
 								id FROM users WHERE id = ?i", $id);
 	return $user;
 }

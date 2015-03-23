@@ -14,7 +14,7 @@ if (!session_check()) {
 	$assigned_vars["const_types"] = $const_horses_spec;
 	$assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]); //fix
 	$assigned_vars["comp"] = $db->getRow("SELECT *, (SELECT o_uid FROM clubs WHERE id = comp.o_cid) as perm FROM comp WHERE id = ?i", $_GET["id"]);
-	if ($assigned_vars["comp"] == NULL || $assigned_vars["comp"]["perm"] != $_SESSION["user_id"]) {
+	if ($assigned_vars["comp"] == NULL || ($assigned_vars["comp"]["perm"] != $_SESSION["user_id"] && $assigned_vars["user"]["admin"] == 0)) {
 		template_render_error("Вы не можете редактировать это соревнование, простите.");	
 	}
 	$assigned_vars["page_title"] = "Редактирование соревнования '" . $assigned_vars["comp"]["name"] . "' > Одноконники";
@@ -23,6 +23,7 @@ if (!session_check()) {
 
 	$assigned_vars["comp"]["routes"] = $db->getAll("SELECT * FROM routes WHERE cid = ?i", $_GET["id"]);
     $assigned_vars["files"] = $db->getAll("SELECT * FROM comp_files WHERE cid = ?i", $_GET["id"]);
+    $dennik_list = array();
 	foreach ($assigned_vars["comp"]["routes"] as &$route) {
 		$route["options"] = unserialize($route["options"]);
 		$tmp = explode(' ',$route['bdate']);
@@ -31,37 +32,64 @@ if (!session_check()) {
 		}else{
 			$route['bdate'] = date("d.m.Y H:i:s",strtotime($route['bdate']));
 		}
-		$heights = $db->getAll("SELECT * FROM routes_heights WHERE route_id = ?i", $route['id']);
+		$heights = $db->getAll("SELECT * FROM routes_heights WHERE route_id = ?i AND parent_id = 0", $route['id']);
+        $route['vznos'] = '';
+        $route['fond'] = '';
 		foreach($heights as $height){
 			$route['height'] .= $height['height'].'<br/>';
 			$route['exam'] .= $height['exam'].'<br/>';
+			$route['vznos'] .= ($height['vznos'] == '')?'-<br/>':$height['vznos'].'<br/>';
+			$route['fond'] .= ($height['fond'] == '')?'-<br/>':$height['fond'].'<br/>';
+            $heights_parent = $db->getAll("SELECT * FROM routes_heights WHERE route_id = ?i AND parent_id = ?i", $route['id'],$height['id']);
+            $ids = $height['id'];
+            if(count($heights_parent) > 0){
+                foreach($heights_parent as $height_parent){
+                    $height['parents'][$height_parent['id']] = $height_parent;
+                    $ids .= ','.$height_parent['id'];
+                }
+            }
 			$assigned_vars["comp"]["heights"][$route['id']][$height['id']] = $height;
 			$temp = $db->getAll("SELECT 	users.id,
 															CONCAT(fname, ' ', lname) as fio,
+															CONCAT(lname, '<br>', fname) as fio_den,
 															horses.nick as horse,
 															horses.id as horse_id,
+															horses.sex,
+															horses.poroda,
 															horses.owner,
 															clubs.name as club,
 															clubs.id as club_id,
 															(SELECT CONCAT(fname, ' ', lname) as fio FROM users WHERE id = horses.o_uid) as ownerName,
 															comp_riders.id as ride_id,
+															comp_riders.rid,
+															comp_riders.dennik,
+															comp_riders.data,
 															comp_riders.ordering
 													FROM comp_riders
 													INNER JOIN users ON (comp_riders.uid = users.id)
 													LEFT JOIN horses ON (horses.id = comp_riders.hid)
 													LEFT JOIN clubs ON (clubs.id = users.cid)
 													WHERE
-													comp_riders.rid = ?i ORDER BY ordering
-													", $height['id']);
+													comp_riders.rid IN (".trim($ids,',').") ORDER BY ordering
+													");
 			$results = array();
 			foreach ($temp as $element) {
 				$horses = $db->getAll("SELECT * FROM horses WHERE o_uid = ?i", $element['id']);
 				$element['horses'] = $horses;
 				$results[] = $element;
+                if($element['dennik'] > 0){
+                    $element['korm'] = ($element['dennik'] == 1)?'Да':'Нет';
+                    $element['data'] = date('d.m.Y H:i:s',$element['data']);
+                    $dennik_list[] = $element;
+                }
+
+
 			}
 			$assigned_vars["comp"]["startlist"][$height['id']] = $results;
 		}
 	}
+    $assigned_vars['dennik_list'] = $dennik_list;
+    //print_r($assigned_vars["comp"]["startlist"]);
     $temp = $db->getAll("SELECT routes.id as route_id,
 								routes.name,
 								clubs.name as club,

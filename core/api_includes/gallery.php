@@ -8,7 +8,7 @@ include_once (CORE_DIR . "core_includes/templates.php");
 function api_gallery_photo_info() {
 	/* validate data */
 	validate_fields($fields, $_POST, array("video"), array("id"), array(), $errors,false);
-
+    session_check();
 	if (!empty($errors)) {
 		aerr($errors);
 	}
@@ -50,7 +50,8 @@ function api_gallery_photo_info() {
 	if ($info === NULL) {
 		aerr(array("Такой фотографии больше не существует."));
 	} else {
-		$info["own"] = ($_SESSION["user_id"] == $info["user_id"]);
+        $user = template_get_short_user_info($_SESSION["user_id"]);
+		$info["own"] = ($_SESSION["user_id"] == $info["user_id"] || $user['admin'] > 0)?1:0;
         if($info['album_club_id'] > 0) $info['album_name'] = $info['album_club_name'];
 		/* Getting comments to photo */
 		$comments = $db->getAll("SELECT c.*,
@@ -98,15 +99,29 @@ function api_gallery_photo_delete() {
         }
         aok(array("Видео было удалено."));
     }else{
-        $image = $db->GetRow("SELECT preview, full FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
-        if ($image === NULL) {
-            aerr(array("Фотография не может быть удалена."));
-        } else {
-            /* delete them */
-            $db->query("DELETE FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
-            others_delete_file(WEB_ROOT_DIR . $image["preview"]);
-            others_delete_file(WEB_ROOT_DIR . $image["full"]);
+        $user = template_get_short_user_info($_SESSION["user_id"]);
+        if($user['admin'] == 1){
+            $image = $db->GetRow("SELECT preview, full FROM gallery_photos WHERE id = ?i", $fields["id"]);
+            if ($image === NULL) {
+                aerr(array("Фотография не может быть удалена."));
+            } else {
+                /* delete them */
+                $db->query("DELETE FROM gallery_photos WHERE id = ?i", $fields["id"]);
+                others_delete_file(WEB_ROOT_DIR . $image["preview"]);
+                others_delete_file(WEB_ROOT_DIR . $image["full"]);
+            }
+        }else{
+            $image = $db->GetRow("SELECT preview, full FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+            if ($image === NULL) {
+                aerr(array("Фотография не может быть удалена."));
+            } else {
+                /* delete them */
+                $db->query("DELETE FROM gallery_photos WHERE id = ?i AND o_uid = ?i", $fields["id"], $_SESSION["user_id"]);
+                others_delete_file(WEB_ROOT_DIR . $image["preview"]);
+                others_delete_file(WEB_ROOT_DIR . $image["full"]);
+            }
         }
+
         aok(array("Фотография была удалена."));
     }
 

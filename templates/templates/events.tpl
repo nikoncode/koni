@@ -176,7 +176,7 @@
                                 <select class="select-select select-country span3" name="country" onchange="select_country();">
                                     <option value="">Все</option>
                                     {foreach $const_countries as $country}
-                                        <option>{$country.country_name_ru}</option>
+                                        <option {if $my_country && $country.country_name_ru == $my_country.country_name_ru}selected="selected"{/if}>{$country.country_name_ru}</option>
                                     {/foreach}
                                 </select>
                             </td>

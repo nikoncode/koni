@@ -10,6 +10,8 @@ session_check();
 $assigned_vars = array(
     "page_title" 		=> "Мероприятия > Одноконники",
 );
+$ip = $_SERVER['REMOTE_ADDR'];
+$assigned_vars["my_country"] = tabgeo_country_v4($ip);
 $assigned_vars["const_types"] = $const_horses_spec;
 $assigned_vars["const_countries"] = $const_countries;
 $db = new db;

@@ -212,11 +212,16 @@ function api_send_support(){
 		"name",
 		"lname",
 		"url",
+		"city",
+		"user_id",
 	), array("email|E-mail","message|Текст сообщения"), array(), $errors);
 
 	if (!empty($errors)) {
 		aerr($errors);
 	}
+    $db = new db;
+    $fields['dt'] = time();
+    $db->query("INSERT INTO support (`" . implode("` ,`", array_keys($fields)) . "`) VALUES (?a);", $fields);
 	$headers  = 'Content-type: text/plain; charset=utf-8';
 	mail("nostrag@gmail.com", "Запрос в службу поддержки", "
 	    	Имя:".$fields['name']."
@@ -230,6 +235,31 @@ function api_send_support(){
 	aok(array("Сообщение отправлено"));
 }
 
+function api_send_access(){
+	validate_fields($fields, $_POST, array(), array("id","status"), array(), $errors);
+
+	if (!empty($errors)) {
+		aerr($errors);
+	}
+    $db = new db;
+    $db->query("UPDATE support SET status = ?i WHERE id = ?i", $fields['status'],$fields['id']);
+    if($fields['status'] == 1){
+        $row = $db->getRow("SELECT * FROM support WHERE id = ?i",$fields['id']);
+        $rand = 'pass'.rand(100000,90000000);
+        $pass = password_hash($rand, PASSWORD_DEFAULT);
+        $db->query("UPDATE users SET mail = ?s, password = ?s, hash = '' WHERE id = ?i",$row['email'],$pass,$row['user_id']);
+        $headers  = 'Content-type: text/plain; charset=utf-8';
+        mail($row['email'], "Предоставление доступа > Odnokonniki.ru", "
+	    	Ваш логин для входа:".$row['email']."
+	    	Ваш пароль для входа:".$rand,$headers);
+        aok("Доступы отправлены");
+    }else{
+        aok("В доступе было отказано");
+    }
+
+
+}
+
 function api_find_users(){
 	validate_fields($fields, $_POST, array(), array("q"), array(), $errors);
 	if (!empty($errors)) {
@@ -238,9 +268,9 @@ function api_find_users(){
 	$db = new db;
 	$q = explode(" ",$fields['q']);
 	if(count($q) > 1){
-		$users = $db->getAll("SELECT id, CONCAT(fname,' ',lname,', ', city,', ',DATE_FORMAT(bdate,'%d.%m.%Y')) as fio FROM users WHERE (fname = '".$q[0]."' AND lname LIKE '".$q[1]."%') OR (lname = '".$q[0]."' AND fname LIKE '".$q[1]."%')");
+		$users = $db->getAll("SELECT id, CONCAT(fname,' ',lname,', ', city,', ',DATE_FORMAT(bdate,'%d.%m.%Y')) as fio FROM users WHERE ((fname = '".$q[0]."' AND lname LIKE '".$q[1]."%') OR (lname = '".$q[0]."' AND fname LIKE '".$q[1]."%')) AND `work` LIKE '%Спортсмен%'");
 	}else{
-		$users = $db->getAll("SELECT id, CONCAT(fname,' ',lname,', ', city,', ',DATE_FORMAT(bdate,'%d.%m.%Y')) as fio FROM users WHERE lname LIKE '".$q[0]."%' OR fname LIKE '".$q[0]."%'");
+		$users = $db->getAll("SELECT id, CONCAT(fname,' ',lname,', ', city,', ',DATE_FORMAT(bdate,'%d.%m.%Y')) as fio FROM users WHERE (lname LIKE '".$q[0]."%' OR fname LIKE '".$q[0]."%') AND `work` LIKE '%Спортсмен%'");
 	}
 
 	$results = array();
@@ -248,5 +278,96 @@ function api_find_users(){
 		$results[] = array('id' => $user['id'], 'text' => $user['fio']);
 	}
 	echo json_encode(array('q' => $fields['q'], 'results' => $results));
+}
+
+function api_get_user_profile(){
+    validate_fields($fields, $_POST, array(), array("id"), array(), $errors);
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+    if($user['admin'] == 0){
+        $errors[] = 'Нет доступа';
+    }
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    $db = new db;
+    /* user */
+    $assigned_vars["user"] = template_get_user_info($_SESSION["user_id"]);
+    $assigned_vars["page_title"] = "Редактирование данных > Одноконники";
+    $assigned_vars["u"] = $db->getRow("SELECT * FROM users WHERE id = ?i", $fields['id']);
+    $temp = explode("-", $assigned_vars["u"]["bdate"]);
+    unset($assigned_vars["u"]["bdate"]);
+    $assigned_vars["u"]["byear"] = $temp[0];
+    $assigned_vars["u"]["bmounth"] = $temp[1];
+    $assigned_vars["u"]["bday"] = $temp[2];
+    $assigned_vars["mounths"] = $GLOBALS['const_mounth'];
+    $assigned_vars["countries"] = $GLOBALS['const_countries'];
+    $assigned_vars["const_rank"] = $GLOBALS['const_rank'];
+    $temp = array_flip($GLOBALS['const_work']);
+    $works = explode(",", $assigned_vars["u"]["work"]);
+    unset($assigned_vars["u"]["work"]);
+    foreach ($works as $work) {
+        $temp[$work] = "checked";
+    }
+    $assigned_vars["u"]["profs"] = $temp;
+    $profile = template_render_to_var($assigned_vars, "iterations/user_prifile.tpl");
+    unset($assigned_vars);
+    /* horses */
+    $assigned_vars["horses"] = $db->getAll("SELECT id,
+													avatar,
+													nick,
+													sex,
+													byear,
+													spec,
+													(YEAR(NOW()) - byear) as age,
+													o_uid
+											FROM horses
+											WHERE o_uid = ?i", $fields['id']);
+    $assigned_vars["horses_owners"] = $db->getAll("SELECT h.id,
+													h.avatar,
+													h.nick,
+													h.sex,
+													h.byear,
+													h.spec,
+													(YEAR(NOW()) - h.byear) as age,
+													htu.uid AS o_uid
+											FROM horses as h,horses_to_users as htu
+											WHERE h.id=htu.hid AND htu.uid = ?i", $fields['id']);
+
+    $assigned_vars["const_horses_sex"] = $GLOBALS['const_horses_sex'];
+    $assigned_vars["const_horses_poroda"] = $GLOBALS['const_horses_poroda'];
+    $assigned_vars["const_horses_mast"] = $GLOBALS['const_horses_mast'];
+    $assigned_vars["const_horses_spec"] = $GLOBALS['const_horses_spec'];
+    $horses = template_render_to_var($assigned_vars, "iterations/user_horses.tpl");
+    unset($assigned_vars);
+    $albums = $db->getAll("SELECT 	gp.id,
+													a.name,
+													a.desc,
+													gp.preview,
+													gp.album_id
+											FROM albums AS a,gallery_photos AS gp  WHERE a.id = gp.album_id AND a.o_uid = ?i AND a.att = 0", $fields['id']);
+    $ids = array();
+    foreach($albums as $album){
+        $assigned_vars["albums"][$album['album_id']]['name'] = $album['name'];
+        $assigned_vars["albums"][$album['album_id']]['photos'][] = $album;
+        $ids[] = $album["id"];
+    }
+
+    $assigned_vars["photos_ids_list"] = implode(",", $ids);
+    $photos = template_render_to_var($assigned_vars, "iterations/user_photos.tpl");
+    aok(array('profile' => $profile,'horses' => $horses, 'photos' => $photos));
+}
+
+function api_user_blocked(){
+    validate_fields($fields, $_POST, array(), array("id","blocked"), array(), $errors);
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+    if($user['admin'] == 0){
+        $errors[] = 'Нет доступа';
+    }
+    if (!empty($errors)) {
+        aerr($errors);
+    }
+    $db = new db;
+    $db->query("UPDATE users SET blocked = ?i WHERE id = ?i",$fields['blocked'],$fields['id']);
+    aok(array('ок'));
 }
 

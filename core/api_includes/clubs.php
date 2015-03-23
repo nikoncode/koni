@@ -51,7 +51,13 @@ function api_club_edit1() {
 	unset($fields["phones"]); unset($fields["p_desc"]);
 
 	$db = new db;
-	$db->query("UPDATE clubs SET ?u WHERE o_uid = ?i AND id = ?i", $fields, $_SESSION["user_id"], $fields["id"]);
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+    $club = $db->getRow("SELECT o_uid FROM clubs WHERE id = ?i",$fields['id']);
+    if($club['o_uid'] != $user["id"] && $user['admin'] == 0){
+        $errors[] = 'Вы не можете редактировать этот клуб';
+        aerr($errors);
+    }
+	$db->query("UPDATE clubs SET ?u WHERE id = ?i", $fields, $fields["id"]);
 	aok(array("Данные обновлены."));
 }
 
@@ -80,7 +86,13 @@ function api_club_edit2() {
 		$fields["additions"] = json_encode($fields["opt"]);
 	}
 	unset($fields["opt"]);
-	$db->query("UPDATE clubs SET ?u WHERE id = ?i AND o_uid = ?i", $fields, $fields["id"], $_SESSION["user_id"]);
+    $user = template_get_short_user_info($_SESSION["user_id"]);
+    $club = $db->getRow("SELECT o_uid FROM clubs WHERE id = ?i",$fields['id']);
+    if($club['o_uid'] != $user["id"] && $user['admin'] == 0){
+        $errors[] = 'Вы не можете редактировать этот клуб';
+        aerr($errors);
+    }
+	$db->query("UPDATE clubs SET ?u WHERE id = ?i", $fields, $fields["id"]);
 	aok(array("Данные изменены.")); //check
 }
 
@@ -321,7 +333,7 @@ function api_rating_search_users(){
     }
     if($fields['height'] != '') {
         if($get_where != '') $get_where .= ' AND';
-        $get_where .= " r.height = '".$fields['height']."'";
+        $get_where .= " rh.height LIKE '".$fields['height']."%'";
     }
     if($fields['vozrast'] != '' && isset($vozrast[$fields['vozrast']])) {
         if($get_where != '') $get_where .= ' AND ';
@@ -335,6 +347,7 @@ function api_rating_search_users(){
                             LEFT JOIN clubs AS c ON (c.id = u.cid)
                             ".$get_where."
                             GROUP BY u.id ORDER BY ball DESC");
+
     $result = template_render_to_var(array(
         "users" => $users
     ), "iterations/rating_user_row.tpl");
